@@ -1,0 +1,19 @@
+import { Layout, Nav, Table, Button } from "@douyinfe/semi-ui";
+import { useProducts } from "../features/products/hooks/use-products";
+
+export default function Products() {
+  const { data, loading, page, setPage } = useProducts();
+  const columns = [
+    { title: "ID", dataIndex: "id", key: "id" },
+    { title: "名称", dataIndex: "name", key: "name" },
+    { title: "价格(分)", dataIndex: "priceCents", key: "priceCents" },
+    { title: "库存", dataIndex: "stock", key: "stock" },
+  ];
+
+  return (
+    <div>
+      <h2>商品列表</h2>
+      <Table columns={columns} dataSource={data?.list ?? []} rowKey="id" loading={loading} pagination={{ currentPage: page, total: data?.total ?? 0, onPageChange: setPage }} />
+    </div>
+  );
+}

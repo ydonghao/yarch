@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 720" font-family="PingFang SC, Microsoft YaHei, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"/>
+    </marker>
+  </defs>
+
+  <rect width="1180" height="720" fill="#f8fafc"/>
+  <text x="590" y="42" text-anchor="middle" font-size="24" font-weight="700" fill="#0f172a">yarch-web · 三层底座架构</text>
+  <text x="590" y="66" text-anchor="middle" font-size="12.5" fill="#64748b">契约唯一权威：yarch 仓 contract/ —— 一种规范，多种方言（React / Vue 通吃）</text>
+
+  <!-- L1 UI 档模板 -->
+  <rect x="60" y="90" width="1060" height="180" rx="10" fill="#eef2ff" stroke="#6366f1" stroke-width="1.5"/>
+  <text x="80" y="116" font-size="14" font-weight="700" fill="#3730a3">① UI 档模板（templates/，薄壳——差异只在 UI 库）</text>
+  <g font-size="12" fill="#0f172a">
+    <rect x="80" y="130" width="500" height="60" rx="8" fill="#fff" stroke="#a5b4fc"/>
+    <text x="330" y="154" text-anchor="middle" font-weight="600">templates/admin-antd（默认档 W1）</text>
+    <text x="330" y="174" text-anchor="middle" fill="#64748b" font-size="11">Vite + React + antd · src: app/ layouts/ pages/ features/ components/ ui/ stores/ types/</text>
+    <rect x="600" y="130" width="240" height="60" rx="8" fill="#fff" stroke="#a5b4fc" stroke-dasharray="4 3"/>
+    <text x="720" y="154" text-anchor="middle" font-weight="600">templates/admin-semi（第二档）</text>
+    <text x="720" y="174" text-anchor="middle" fill="#64748b" font-size="11">W1 拍板：Semi vs shadcn</text>
+    <rect x="860" y="130" width="240" height="60" rx="8" fill="#fff" stroke="#a5b4fc" stroke-dasharray="4 3"/>
+    <text x="980" y="154" text-anchor="middle" font-weight="600">examples/admin-demo</text>
+    <text x="980" y="174" text-anchor="middle" fill="#64748b" font-size="11">模板生成工程 + 契约联调回归场</text>
+  </g>
+  <rect x="80" y="202" width="1020" height="52" rx="8" fill="#e0e7ff" stroke="#a5b4fc"/>
+  <text x="590" y="224" text-anchor="middle" font-size="11.5" fill="#3730a3">机检三件（W3）：biome（规范=前端版 spotless）· dependency-cruiser（依赖方向=前端版 ArchUnit：pages→features→components/ui 禁反向）· vitest 契约断言</text>
+  <text x="590" y="242" text-anchor="middle" font-size="11" fill="#4f46e5">扩展名纪律（W5）：有 JSX 用 .tsx，纯逻辑/类型 .ts；Vue 用 .vue SFC（lang="ts"）</text>
+
+  <line x1="590" y1="270" x2="590" y2="308" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="604" y="296" font-size="11.5" fill="#475569">依赖（模板 = 底座 + UI 薄壳）</text>
+
+  <!-- L2 共享底座 -->
+  <rect x="60" y="310" width="1060" height="220" rx="10" fill="#ecfeff" stroke="#06b6d4" stroke-width="1.5"/>
+  <text x="80" y="336" font-size="14" font-weight="700" fill="#155e75">② 共享底座（packages/，pnpm workspace 单仓 W0）</text>
+  <g font-size="12" fill="#0f172a">
+    <rect x="80" y="350" width="500" height="150" rx="8" fill="#fff" stroke="#22d3ee"/>
+    <text x="330" y="374" text-anchor="middle" font-weight="600">@yarch/contract（全 .ts · 零框架依赖）</text>
+    <text x="330" y="396" text-anchor="middle" font-size="11" fill="#475569">rest-response（信封/分页类型 + 解包）· error-codes（13 码常量表）</text>
+    <text x="330" y="414" text-anchor="middle" font-size="11" fill="#475569">api-error（traceId 报障凭证 · shouldRedirectToLogin）</text>
+    <text x="330" y="432" text-anchor="middle" font-size="11" fill="#475569">trace-id（X-Trace-Id 生成/透传）· http（fetch 封装 + 401 映射）</text>
+    <text x="330" y="452" text-anchor="middle" font-size="11" fill="#475569">navigator（导航端口——依赖倒置，框架实现注入）</text>
+    <text x="330" y="476" text-anchor="middle" font-size="10.5" fill="#0891b2">对应 java：yarch-common + yarch-http</text>
+
+    <rect x="610" y="350" width="240" height="150" rx="8" fill="#fff" stroke="#67e8f9"/>
+    <text x="730" y="374" text-anchor="middle" font-weight="600">@yarch/react</text>
+    <text x="730" y="396" text-anchor="middle" font-size="11" fill="#475569">setupReactNavigator</text>
+    <text x="730" y="414" text-anchor="middle" font-size="11" fill="#475569">注入 react-router 导航</text>
+    <text x="730" y="440" text-anchor="middle" font-size="11" fill="#475569">其余全量 re-export</text>
+    <text x="730" y="476" text-anchor="middle" font-size="10.5" fill="#0891b2">对应 java：starter 薄适配</text>
+
+    <rect x="880" y="350" width="220" height="150" rx="8" fill="#fff" stroke="#67e8f9"/>
+    <text x="990" y="374" text-anchor="middle" font-weight="600">@yarch/vue</text>
+    <text x="990" y="396" text-anchor="middle" font-size="11" fill="#475569">setupVueNavigator</text>
+    <text x="990" y="414" text-anchor="middle" font-size="11" fill="#475569">注入 vue-router 导航</text>
+    <text x="990" y="440" text-anchor="middle" font-size="11" fill="#475569">.vue SFC（lang=ts）</text>
+    <text x="990" y="476" text-anchor="middle" font-size="10.5" fill="#0891b2">同上（方言差异在此吸收）</text>
+  </g>
+
+  <line x1="590" y1="530" x2="590" y2="568" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- L3 契约层 -->
+  <rect x="60" y="570" width="1060" height="120" rx="10" fill="#fefce8" stroke="#eab308" stroke-width="1.5"/>
+  <text x="80" y="596" font-size="14" font-weight="700" fill="#713f12">③ 统一契约（contract/，唯一权威——类型与常量从这里生成/同源，前端只是方言）</text>
+  <text x="80" y="622" font-size="12" fill="#422006">api 四件套：RestResponse 形状 · 错误码段位（0/1xxx/2xxx）· logging-trace（traceId 前端行：生成/透传/报障凭证）· REST 约定（kebab-case · /api/v1 · D6 分页）</text>
+  <text x="80" y="644" font-size="12" fill="#422006">跨栈同构：java RestResponse&lt;T&gt; ↔ ts RestResponse&lt;T&gt; · java GlobalErrorCode ↔ ts errorCodes · 实现与契约不一致即 bug（两侧均有防漂移断言）</text>
+  <text x="80" y="672" font-size="11" fill="#a16207">运行底座：Node ≥20 · pnpm workspace · Vite（W4）· vitest · biome · dependency-cruiser</text>
+</svg>

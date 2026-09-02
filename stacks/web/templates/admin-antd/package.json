@@ -1,0 +1,25 @@
+{
+  "name": "yarch-admin-antd",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build"
+  },
+  "dependencies": {
+    "react": "^19",
+    "react-dom": "^19",
+    "react-router-dom": "^7",
+    "@yarch/contract": "workspace:*",
+    "@yarch/react": "workspace:*",
+    "antd": "^5"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^4",
+    "typescript": "^5.6",
+    "vite": "^6"
+  }
+}
