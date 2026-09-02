@@ -1,0 +1,42 @@
+name: web-stack
+
+on:
+  push:
+    branches: [main]
+    paths: ['stacks/web/**', '.github/workflows/web-stack.yml']
+  pull_request:
+    paths: ['stacks/web/**', '.github/workflows/web-stack.yml']
+
+jobs:
+  build:
+    name: Node ${{ matrix.node }} · 全量验证
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['20', '22']
+    defaults:
+      run:
+        working-directory: stacks/web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: pnpm
+          cache-dependency-path: stacks/web/pnpm-lock.yaml
+      - name: 安装依赖
+        run: pnpm install --no-frozen-lockfile
+      - name: 契约断言测试
+        run: pnpm --filter @yarch/contract test
+      - name: 依赖方向机检
+        run: pnpm exec depcruise packages/contract/src templates/admin-antd/src templates/admin-semi/src templates/admin-arco/src --config depcruise.config.js
+      - name: 三档模板构建
+        run: |
+          for t in admin-antd admin-semi admin-arco; do
+            echo "=== $t ==="
+            cd templates/$t && npx tsc --noEmit && npx vite build && cd ../..
+          done

@@ -11,7 +11,7 @@
 | W1 | UI 档：**三档并行**——antd（蚂蚁，默认）/ Semi（抖音）/ Arco（字节），每档独立模板薄壳，共享底座不变 | **已拍板（2026-09-02）：三档都要** |
 | W2 | 组件分层流派：feature-first（features/ 按业务域） | **已拍板（2026-09-02）** |
 | W3 | 机检：dependency-cruiser 依赖方向规则 | **已拍板（2026-09-02）** |
-| W4 | 构建底座 Vite（默认）vs Rsbuild | Vite；Rsbuild 登记备选 | 待拍板 |
+| W4 | 构建底座 | **已冻结（2026-09-02）：Vite 默认**；Rsbuild 触发式（信号：模块过万或 build>30s；届时 Rolldown 可能已稳定） |
 | W5 | 文件扩展名纪律：有 JSX 用 .tsx，纯逻辑/类型 .ts；Vue 用 .vue SFC（lang="ts"） | 采纳 | 已冻结 |
 
 ## 结构基准（W0 冻结）
