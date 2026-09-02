@@ -75,8 +75,8 @@ yarch/
 **当前策略（2026-09-01 调整）：规约层先行。**
 
 1. ~~第一步：`contract/` 四件套梳理清楚、评审定稿~~ ✅ 2026-09-01 定稿 v1.0（D1-D6 按"业界标准优先于阿里手册"拍板）；infra 规约 18 份同步成文（3 定稿 + 15 草案）；
-2. **第二批**：`stacks/java` + `stacks/web-react`（ysaas 硬需求）；
-3. **第三批**：`stacks/golang`——从 yagent 既有实践反向沉淀，不重写；
+2. **第二批**：`stacks/java` + `stacks/web-react`（ysaas 硬需求）✅；
+3. **第三批**：`stacks/golang`——从 yagent 既有实践反向沉淀，不重写 ✅（2026-09-02 第一批构件落地：结构同构 coze-studio、语义按契约重铸，三 module 全绿）；
 4. **按需**：rust / web-vue / clients / archetype（`yarch init`）。
 
 > 2026-08-31 曾提前落地过四栈脚手架实现（构建与测试全绿），为聚焦规约层已清空 stacks/，定稿后按契约重做。

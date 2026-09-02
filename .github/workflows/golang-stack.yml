@@ -1,0 +1,59 @@
+name: golang-stack
+
+on:
+  push:
+    paths: ['stacks/golang/**', '.github/workflows/golang-stack.yml']
+  pull_request:
+    paths: ['stacks/golang/**', '.github/workflows/golang-stack.yml']
+
+defaults:
+  run:
+    working-directory: stacks/golang
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26'
+      - name: Lint main module
+        run: go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.5.0 run
+      - name: Lint template (depguard: domain 零框架依赖)
+        run: cd template && go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.5.0 run
+
+  verify:
+    strategy:
+      fail-fast: false
+      matrix:
+        go: ['1.26', '1.27']
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go }}
+      - name: Build
+        run: go build ./...
+      - name: Vet
+        run: go vet ./...
+      - name: Test (unit + middleware/web/httpx contract)
+        run: go test ./...
+      - name: Test (containers: PG/Redis behavior-level)
+        run: cd testcontainers && go test ./...
+        env:
+          CGO_ENABLED: '0'
+
+  template-smoke:
+    strategy:
+      matrix:
+        go: ['1.26']
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go }}
+      - name: Template build + smoke
+        run: cd template && go build ./... && go test ./...

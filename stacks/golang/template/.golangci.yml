@@ -1,0 +1,20 @@
+version: "2"
+linters:
+  enable: [depguard]
+  settings:
+    depguard:
+      rules:
+        domain-no-framework:
+          files: ["**/domain/**"]
+          deny:
+            - pkg: "github.com/cloudwego/**"
+              desc: "领域层零技术框架依赖（对偶 ArchUnit：port/adapter 分离）"
+            - pkg: "gorm.io/**"
+              desc: "领域层零技术框架依赖"
+            - pkg: "github.com/redis/**"
+              desc: "领域层零技术框架依赖"
+        api-no-infra:
+          files: ["**/api/**"]
+          deny:
+            - pkg: "gorm.io/**"
+              desc: "api 层不直依赖基础设施（跨层调用走 application/domain 接口）"
