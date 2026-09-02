@@ -30,8 +30,11 @@ type App struct {
 func Init(ctx context.Context, dsn, redisAddr, service string) (*App, error) {
 	app := &App{}
 
-	// 阶段一：基础件
+	// 阶段一：基础件（共享 PG 实例隔离：服务独立 database，启动自动建库）
 	if dsn != "" {
+		if err := persist.EnsureDatabase(dsn); err != nil {
+			return nil, err
+		}
 		if err := database.MigrateUp(dsn); err != nil {
 			return nil, err
 		}

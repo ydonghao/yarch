@@ -30,12 +30,15 @@ go run golang.org/x/tools/cmd/gonew@latest \
 
 生成后：服务名（= module 末段，过 registry.md 一-1 校验）去 yarch 仓登记；`types/errno` 业务码段在本仓 docs 登记；yarch-go 发版后删 go.mod 的 replace 行改正式号。
 
-## 本地起跑
+## 起跑
 
 ```bash
-docker compose up -d && go mod tidy && go run .    # :8080，迁移自动执行
-go test ./...                                       # 冒烟（stub 仓储，不需要容器）
+cp .env.example .env   # 填 PG/Redis 地址（内网用户连共享实例：每服务独立 database，启动自动建库）
+go mod tidy && go run .   # :8080，建库 + 迁移自动执行
+go test ./...             # 冒烟（stub 仓储，不需要容器）
 ```
+
+无共享 PG/Redis 环境时（本地档）：`docker compose up -d` 起本机 PG+Redis，.env 主机名改 localhost。
 
 ## 分层纪律（depguard 机检）
 

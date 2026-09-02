@@ -103,7 +103,7 @@ func main() {
 	fmt.Printf(`✅ 已生成 %s（%d 个文件）—— %s
 
 下一步：
-  1. cd %s && docker compose up -d && go mod tidy && go run .
+  1. cd %s && cp .env.example .env（填 PG/Redis 地址；独立 database 自动建库）&& go mod tidy && go run .
   2. service 已置为 %q——去 yarch 仓 contract/registry.md 登记
   3. types/errno 业务码段（3xxx+）在你的仓库 docs 登记后方可使用
   4. yarch-go 正式发版后：删除 go.mod 的 replace 行、版本改正式 tag（升级 = go get 升版）

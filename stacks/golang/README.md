@@ -37,8 +37,8 @@ stacks/golang/                        # module github.com/yuandonghao/yarch/stac
 go run github.com/yuandonghao/yarch/stacks/golang/cmd/yarch-init@latest \
   -module github.com/you/order-svc -out order-svc
 
-# ② 一键起跑（PG+Redis compose + 自动迁移）
-cd order-svc && docker compose up -d && go mod tidy && go run .
+# ② 填 .env 后起跑（连共享/自有 PG+Redis；独立 database 启动自动建库 + 迁移自动执行）
+cd order-svc && cp .env.example .env && vi .env && go mod tidy && go run .
 
 # ③ 平台升级（发版式升级 = go get 升版，业务工程自动跟进）
 go get github.com/yuandonghao/yarch/stacks/golang@vX.Y.Z

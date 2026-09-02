@@ -2,6 +2,7 @@ package testcontainers
 
 import (
 	"context"
+	"strings"
 	"embed"
 	"testing"
 	"time"
@@ -159,5 +160,33 @@ func TestRedixRedis(t *testing.T) {
 	}
 	if _, _, err := idem.Lookup(ctx, ikey, "digest-b"); err != middleware.ErrIdempotencyMismatch {
 		t.Fatalf("异参应 mismatch(1007), got %v", err)
+	}
+}
+
+// 行为级：EnsureDatabase——共享实例隔离模式（新服务 = 新 database，幂等）。
+func TestEnsureDatabase(t *testing.T) {
+	dsn := StartPG(t) // 指向 yarchtest 库
+	if err := persist.EnsureDatabase(dsn); err != nil {
+		t.Fatalf("existing db: %v", err)
+	}
+	// 换一个不存在的库名：应自动创建并可打开
+	created := strings.Replace(dsn, "/yarchtest", "/tenant_new", 1)
+	if err := persist.EnsureDatabase(created); err != nil {
+		t.Fatalf("create: %v", err)
+	}
+	if err := persist.EnsureDatabase(created); err != nil { // 幂等
+		t.Fatalf("idempotent: %v", err)
+	}
+	db, err := persist.Open(created)
+	if err != nil {
+		t.Fatalf("open created: %v", err)
+	}
+	if err := db.Exec("SELECT 1").Error; err != nil {
+		t.Fatalf("use created: %v", err)
+	}
+	// 非标识符安全库名拒绝
+	bad := strings.Replace(dsn, "/yarchtest", "/evil;drop", 1)
+	if err := persist.EnsureDatabase(bad); err == nil {
+		t.Fatal("unsafe ident must be rejected")
 	}
 }
