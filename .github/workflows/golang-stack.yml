@@ -46,14 +46,15 @@ jobs:
           CGO_ENABLED: '0'
 
   template-smoke:
-    strategy:
-      matrix:
-        go: ['1.26']
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          go-version: ${{ matrix.go }}
-      - name: Template build + smoke
-        run: cd template && go build ./... && go test ./...
+          go-version: '1.26'
+      - name: Template tests (in-module)
+        run: go test ./template/... ./cmd/...
+      - name: yarch-init E2E (generate → tidy → build → test)
+        run: |
+          go run ./cmd/yarch-init -module github.com/smoke/order-svc -out /tmp/order-svc
+          cd /tmp/order-svc && go mod tidy && go build ./... && go test ./...

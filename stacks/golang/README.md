@@ -23,7 +23,8 @@ stacks/golang/                        # module github.com/yuandonghao/yarch-go�
 ├── captcha/                          # 图形验证码：PNG + dataURL + Redis 一次性 token（GETDEL）+ GET /api/v1/captcha
 ├── testx/                            # 契约断言（信封/ndjson/PageData），零三方依赖
 ├── testcontainers/                   # 子 module：PG/Redis 容器基座（testcontainers-go，测试态专用）
-└── template/                         # yarch-go-template：DDD 七包 + users 示例（gonew 生成）
+├── template/                         # 脚手架模板：coze-studio 同构七包 + users 示例（在主 module 内，可直接生成）
+└── cmd/yarch-init/                   # 工程生成器（安装入口）
 ```
 
 依赖方向：契约内核三包零框架依赖；构件间禁止反向依赖（CI golangci-lint depguard 机检模板侧同步）。
@@ -31,16 +32,18 @@ stacks/golang/                        # module github.com/yuandonghao/yarch-go�
 ## 快速开始
 
 ```bash
-# 1. 生成业务工程（服务名须过 registry.md 一-1 校验）
-go run golang.org/x/tools/cmd/gonew@latest \
-  github.com/yuandonghao/yarch-go/template github.com/yourname/your-svc ~/code/your-svc
+# 1. 生成业务工程（安装入口；服务名=module 末段，自动过 registry.md 一-1 校验）
+cd yarch/stacks/golang
+go run ./cmd/yarch-init -module github.com/you/your-svc -out ~/code/your-svc
 
 # 2. 生成工程一键跑通（迁移自动执行）
-cd your-svc && docker compose up -d && make run
+cd ~/code/your-svc && docker compose up -d && go mod tidy && go run .
 
-# 3. 平台件升级 = go get 升版（发版式升级）
+# 3. 平台件升级 = go get 升版（发版式升级；发版后先删 go.mod 的 replace 行）
 go get github.com/yuandonghao/yarch-go@vX.Y.Z
 ```
+
+> 发版后等价安装路径（Go 官方工具）：`go run golang.org/x/tools/cmd/gonew@latest github.com/yuandonghao/yarch-go/template github.com/you/your-svc`
 
 ## 验收（随 CI 双矩阵 go 1.26/1.27）
 
