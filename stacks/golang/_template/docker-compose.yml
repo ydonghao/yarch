@@ -3,9 +3,9 @@ services:
   postgres:
     image: postgres:17-alpine
     environment:
-      POSTGRES_DB: my_svc
-      POSTGRES_USER: my_svc
-      POSTGRES_PASSWORD: my_svc
+      POSTGRES_DB: {{.ServiceSnake}}
+      POSTGRES_USER: {{.ServiceSnake}}
+      POSTGRES_PASSWORD: {{.ServiceSnake}}
     ports: ["5432:5432"]
     volumes: [pgdata:/var/lib/postgresql/data]
   redis:

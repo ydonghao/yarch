@@ -12,12 +12,12 @@ import (
 	"github.com/yuandonghao/yarch-go/logx"
 	"github.com/yuandonghao/yarch-go/web"
 
-	"github.com/yuandonghao/yarch-go/template/api/router"
-	"github.com/yuandonghao/yarch-go/template/application"
+	"{{.Module}}/api/router"
+	"{{.Module}}/application"
 )
 
 // 服务名须过 registry.md 一-1 校验（^[a-z][a-z0-9-]{1,31}$），生成工程后去 yarch 仓登记。
-const service = "my-svc"
+const service = "{{.Service}}"
 
 func main() {
 	ctx := context.Background()

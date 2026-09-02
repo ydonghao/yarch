@@ -13,7 +13,7 @@ import (
 	"github.com/yuandonghao/yarch-go/response"
 	"github.com/yuandonghao/yarch-go/xerror"
 
-	"github.com/yuandonghao/yarch-go/template/domain/entity"
+	"{{.Module}}/domain/entity"
 )
 
 // userDO 显式列清单模型（PG 规约：is_deleted 逻辑删除 + 审计时间戳）。

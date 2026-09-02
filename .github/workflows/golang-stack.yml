@@ -52,8 +52,8 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: '1.26'
-      - name: Template tests (in-module)
-        run: go test ./template/... ./cmd/...
+      - name: Generator tests (render engine)
+        run: go test ./cmd/...
       - name: yarch-init E2E (generate → tidy → build → test)
         run: |
           go run ./cmd/yarch-init -module github.com/smoke/order-svc -out /tmp/order-svc

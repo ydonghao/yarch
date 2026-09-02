@@ -25,7 +25,7 @@ go run ./cmd/yarch-init -module github.com/you/your-svc -out ~/code/your-svc
 
 # yarch-go 发 tag 后（Go 官方工具等价路径）
 go run golang.org/x/tools/cmd/gonew@latest \
-  github.com/yuandonghao/yarch-go/template github.com/you/your-svc ~/code/your-svc
+  {{.Module}} github.com/you/your-svc ~/code/your-svc
 ```
 
 生成后：服务名（= module 末段，过 registry.md 一-1 校验）去 yarch 仓登记；`types/errno` 业务码段在本仓 docs 登记；yarch-go 发版后删 go.mod 的 replace 行改正式号。

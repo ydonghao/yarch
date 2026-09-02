@@ -4,8 +4,8 @@ package router
 import (
 	"github.com/cloudwego/hertz/pkg/app/server"
 
-	"github.com/yuandonghao/yarch-go/template/api/handler"
-	"github.com/yuandonghao/yarch-go/template/application"
+	"{{.Module}}/api/handler"
+	"{{.Module}}/application"
 )
 
 // Register 注册全部路由（main.go 装配的最后一环）。

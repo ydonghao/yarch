@@ -1,0 +1,9 @@
+{
+  "description": "yarch-go DDD 七包工程模板（coze-studio 同构）",
+  "variables": [
+    { "name": "Module",       "desc": "新工程 module path（如 github.com/you/order-svc）", "required": true },
+    { "name": "Service",      "desc": "服务名（默认取 Module 末段；须过 contract/registry.md 一-1 校验）" },
+    { "name": "ServiceSnake", "desc": "服务名下划线形（compose db/user 名，由 Service 派生）" },
+    { "name": "YarchVersion", "desc": "平台件版本；发版前用 replace，正式发版后为 tag", "default": "v0.0.0" }
+  ]
+}

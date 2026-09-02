@@ -12,8 +12,8 @@ import (
 	"github.com/yuandonghao/yarch-go/persist"
 	"github.com/yuandonghao/yarch-go/redix"
 
-	"github.com/yuandonghao/yarch-go/template/domain/repository"
-	"github.com/yuandonghao/yarch-go/template/infra/database"
+	"{{.Module}}/domain/repository"
+	"{{.Module}}/infra/database"
 )
 
 // App 组装产物：handler 依赖的唯一入口（显式注入）。

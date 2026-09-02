@@ -7,15 +7,22 @@ import (
 	"testing"
 )
 
-// 生成器冒烟：完整生成一份工程——module/service 替换、目录结构齐全。
-func TestGenerate(t *testing.T) {
+// 渲染引擎冒烟：完整渲染一份工程——变量注入齐全、七包结构、archetype.json 不进生成物。
+func TestRender(t *testing.T) {
 	out := t.TempDir() + "/order-svc"
-	n, err := generate("../../template", out, "github.com/alice/order-svc", "order-svc")
+	v := vars{
+		Module:       "github.com/alice/order-svc",
+		Service:      "order-svc",
+		ServiceSnake: "order_svc",
+		YarchVersion: "v0.0.0",
+		ReplaceLine:  "\nreplace github.com/yuandonghao/yarch-go => /abs/yarch/stacks/golang",
+	}
+	n, err := render("../../_template", out, v)
 	if err != nil {
-		t.Fatalf("generate: %v", err)
+		t.Fatalf("render: %v", err)
 	}
 	if n < 20 {
-		t.Fatalf("generated files = %d, too few", n)
+		t.Fatalf("rendered files = %d, too few", n)
 	}
 
 	// 结构：coze-studio 同构七包 + 根 main.go
@@ -25,36 +32,44 @@ func TestGenerate(t *testing.T) {
 		}
 	}
 	if _, err := os.Stat(filepath.Join(out, "main.go")); err != nil {
-		t.Fatal("缺少根 main.go（单入口）")
+		t.Fatal("缺少根 main.go")
+	}
+	if _, err := os.Stat(filepath.Join(out, "archetype.json")); err == nil {
+		t.Fatal("archetype.json 是模板资产，不得进生成工程")
 	}
 
-	// 替换：import 路径 + 服务名
-	b, err := os.ReadFile(filepath.Join(out, "main.go"))
-	if err != nil {
-		t.Fatal(err)
-	}
+	// 变量注入
+	b, _ := os.ReadFile(filepath.Join(out, "main.go"))
 	s := string(b)
-	if strings.Contains(s, "yarch-go/template") || strings.Contains(s, "my-svc") {
-		t.Fatalf("替换不完全:\n%s", s)
+	if strings.Contains(s, "{{") {
+		t.Fatalf("占位符未渲染:\n%s", s)
 	}
 	if !strings.Contains(s, `const service = "order-svc"`) {
 		t.Fatalf("服务名未注入:\n%.200s", s)
 	}
 	h, _ := os.ReadFile(filepath.Join(out, "api", "handler", "user.go"))
 	if !strings.Contains(string(h), "github.com/alice/order-svc/domain") {
-		t.Fatal("handler import 未替换")
+		t.Fatal("handler import 未渲染")
+	}
+	g, _ := os.ReadFile(filepath.Join(out, "go.mod"))
+	gs := string(g)
+	if !strings.Contains(gs, "module github.com/alice/order-svc") ||
+		!strings.Contains(gs, "replace github.com/yuandonghao/yarch-go => /abs/yarch/stacks/golang") {
+		t.Fatalf("go.mod 渲染错误:\n%s", gs)
+	}
+	d, _ := os.ReadFile(filepath.Join(out, "docker-compose.yml"))
+	if !strings.Contains(string(d), "order_svc") {
+		t.Fatalf("compose 服务名蛇形未渲染:\n%s", d)
 	}
 }
 
 func TestServiceValidation(t *testing.T) {
-	valid := []string{"order-svc", "ab", "ysaas-billing"}
-	for _, s := range valid {
+	for _, s := range []string{"order-svc", "ab", "ysaas-billing"} {
 		if !servicePattern.MatchString(s) || genericWords[s] {
 			t.Errorf("%q 应合法", s)
 		}
 	}
-	invalid := []string{"MySvc", "my_svc", "1abc", "x", "a-very-long-service-name-over-32-chars"}
-	for _, s := range invalid {
+	for _, s := range []string{"MySvc", "my_svc", "1abc", "x", "a-very-long-service-name-over-32-chars"} {
 		if servicePattern.MatchString(s) {
 			t.Errorf("%q 应被格式拒绝", s)
 		}

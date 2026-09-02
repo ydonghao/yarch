@@ -14,9 +14,9 @@ import (
 	"github.com/yuandonghao/yarch-go/testx"
 	"github.com/yuandonghao/yarch-go/web"
 
-	"github.com/yuandonghao/yarch-go/template/api/router"
-	"github.com/yuandonghao/yarch-go/template/application"
-	"github.com/yuandonghao/yarch-go/template/domain/entity"
+	"{{.Module}}/api/router"
+	"{{.Module}}/application"
+	"{{.Module}}/domain/entity"
 )
 
 // stubUsers 内存仓储（依赖倒置演示：领域接口 ← 任意实现，测试不碰 DB）。

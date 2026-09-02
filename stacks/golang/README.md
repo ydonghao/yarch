@@ -23,7 +23,8 @@ stacks/golang/                        # module github.com/yuandonghao/yarch-go�
 ├── captcha/                          # 图形验证码：PNG + dataURL + Redis 一次性 token（GETDEL）+ GET /api/v1/captcha
 ├── testx/                            # 契约断言（信封/ndjson/PageData），零三方依赖
 ├── testcontainers/                   # 子 module：PG/Redis 容器基座（testcontainers-go，测试态专用）
-├── template/                         # 脚手架模板：coze-studio 同构七包 + users 示例（在主 module 内，可直接生成）
+├── _template/                        # 脚手架模板（cookiecutter 模式：{{.Var}} 占位资产，Go 工具链忽略 _ 目录）
+│   └── archetype.json                #   变量声明（对偶 archetype-metadata.xml）
 └── cmd/yarch-init/                   # 工程生成器（安装入口）
 ```
 
@@ -35,6 +36,7 @@ stacks/golang/                        # module github.com/yuandonghao/yarch-go�
 # 1. 生成业务工程（安装入口；服务名=module 末段，自动过 registry.md 一-1 校验）
 cd yarch/stacks/golang
 go run ./cmd/yarch-init -module github.com/you/your-svc -out ~/code/your-svc
+# 生成器 = 通用渲染引擎（text/template），模板是带 {{.Module}}/{{.Service}} 占位的声明式资产
 
 # 2. 生成工程一键跑通（迁移自动执行）
 cd ~/code/your-svc && docker compose up -d && go mod tidy && go run .

@@ -10,9 +10,9 @@ import (
 	"github.com/yuandonghao/yarch-go/response"
 	"github.com/yuandonghao/yarch-go/web"
 
-	"github.com/yuandonghao/yarch-go/template/api/model"
-	"github.com/yuandonghao/yarch-go/template/domain/entity"
-	"github.com/yuandonghao/yarch-go/template/domain/repository"
+	"{{.Module}}/api/model"
+	"{{.Module}}/domain/entity"
+	"{{.Module}}/domain/repository"
 )
 
 // UserHandler 用户资源处理器。

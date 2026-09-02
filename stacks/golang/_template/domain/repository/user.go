@@ -7,7 +7,7 @@ import (
 
 	"github.com/yuandonghao/yarch-go/response"
 
-	"github.com/yuandonghao/yarch-go/template/domain/entity"
+	"{{.Module}}/domain/entity"
 )
 
 // UserRepo 用户仓储接口。

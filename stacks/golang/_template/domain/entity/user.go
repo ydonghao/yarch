@@ -8,7 +8,7 @@ import (
 
 	"github.com/yuandonghao/yarch-go/xerror"
 
-	"github.com/yuandonghao/yarch-go/template/types/errno"
+	"{{.Module}}/types/errno"
 )
 
 // User 用户实体（充血但克制：业务行为进领域，api 层零业务逻辑）。
