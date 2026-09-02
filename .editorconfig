@@ -1,0 +1,22 @@
+# https://editorconfig.org —— 编辑器层样式兜底；构建期强制由 spotless 承担（yarch-parent）
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# 阿里《Java 开发手册》强制：缩进 4 空格，禁 Tab
+[*.java]
+indent_style = space
+indent_size = 4
+
+[*.{xml,pom}]
+indent_size = 4
+
+[*.{yaml,yml,json,md}]
+indent_size = 2
+
+[Makefile]
+indent_style = tab

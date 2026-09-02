@@ -1,0 +1,27 @@
+# build artifacts
+target/
+node_modules/
+dist/
+*.tsbuildinfo
+
+# java
+*.class
+*.jar
+!.mvn/wrapper/maven-wrapper.jar
+
+# ide / os
+.idea/
+*.iml
+.vscode/
+.DS_Store
+
+# env
+.env
+.env.local
+
+# java build extras
+.flattened-pom.xml
+*.versionsBackup
+dependency-reduced-pom.xml
+logs/
+*.log
