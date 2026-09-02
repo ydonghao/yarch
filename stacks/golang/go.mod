@@ -4,9 +4,11 @@ go 1.24
 
 require (
 	github.com/cloudwego/hertz v0.10.2
+	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/golang-migrate/migrate/v4 v4.18.1
 	github.com/hertz-contrib/cors v0.1.0
 	github.com/redis/go-redis/v9 v9.7.0
+	golang.org/x/image v0.18.0
 	golang.org/x/time v0.11.0
 	gorm.io/driver/postgres v1.5.7
 	gorm.io/gorm v1.25.12

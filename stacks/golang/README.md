@@ -17,8 +17,10 @@ stacks/golang/                        # module github.com/yuandonghao/yarch-go�
 ├── middleware/                       # Trace(traceparent 优先) / Recovery→1000 / AccessLog / Idempotency→1007 / RateLimit→1006
 ├── web/                              # Setup(h) 一行装配 + Bind(1001/1002) + BindPageQuery(D6) + 信封回包
 ├── persist/                          # GORM(pgx) + 逻辑删除 is_deleted + 审计 + PageOf 分页下推 + golang-migrate
-├── redix/                            # Keys(首段=服务名) + JSON Cache + Lock + Idempotency(SET NX PX)
+├── redix/                            # Keys(首段=服务名) + JSON Cache + Lock + Idempotency(SET NX PX) + RateLimiter(Lua 窗口)
 ├── httpx/                            # 下游客户端：超时强制(≤30s) + traceparent 注入 + 信封解包 + 1008/1009
+├── auth/                             # JWT 机制件：HS256 签发/解析 + RequireAuth/RequireRoles + 2xxx 映射（账号模型归业务）
+├── captcha/                          # 图形验证码：PNG + dataURL + Redis 一次性 token（GETDEL）+ GET /api/v1/captcha
 ├── testx/                            # 契约断言（信封/ndjson/PageData），零三方依赖
 ├── testcontainers/                   # 子 module：PG/Redis 容器基座（testcontainers-go，测试态专用）
 └── template/                         # yarch-go-template：DDD 七包 + users 示例（gonew 生成）

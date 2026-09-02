@@ -84,9 +84,15 @@ stacks/golang/                      # module github.com/yuandonghao/yarch-go（g
 
 ## 六、分批施工清单
 
-**第一批（本次）**：module 骨架 + 契约内核三包 + logx + middleware + web + persist + redix + httpx + testx + template（DDD 七包 users 示例）+ README + CI。
+**第一批（2026-09-02 完成，commit d92dd72）**：module 骨架 + 契约内核三包 + logx + middleware + web + persist + redix + httpx + testx + template（DDD 七包 users 示例）+ README + CI。
 
-**触发式增长（一规约一 package，不做配置档）**：mysql 档（`persist/mysql`）、kafka、rocketmq、xxl-job、nacos、minio、es、qdrant、captcha、auth（JWT+2xxx）、限流 Redis 分布式档、wire 组装校验、`yarch init`。
+**第二批 = 精细打磨批（2026-09-02 完成，对偶 java 路线图 2.0）**：
+- `auth`：JWT 机制件（HS256 默认，密钥 ≥32B；RS/ES 扩展位）+ RequireAuth/RequireRoles 中间件 + 2xxx 全矩阵（无凭证/坏签名→2001、过期→2002、权限不足→2003；2004 账号禁用归业务钩子）；
+- `captcha`：图形验证码（basicfont 渲染 PNG + 去混淆字符集 + dataURL）+ Redis 一次性 token（GETDEL 原子消费，失败同样消费防重放）+ `GET /api/v1/captcha` 端点件；
+- 分布式限流档：`redix.RateLimiter`（固定窗口 Lua 原子计数）+ `middleware.RateLimitRedis`（跨实例口径，进程内档保留）；
+- `middleware.OperationLog`：操作日志（ndjson 行 + 存储 SPI 异步投递，失败不阻断）。
+
+**触发式增长（一规约一 package，不做配置档）**：mysql 档（`persist/mysql`）、kafka、rocketmq、xxl-job、nacos、minio、es、qdrant、wire 组装校验、`yarch init`。
 
 ## 七、开放问题与风险
 
