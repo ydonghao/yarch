@@ -13,7 +13,7 @@ import (
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/cloudwego/hertz/pkg/common/ut"
 
-	"github.com/yuandonghao/yarch-go/captcha"
+	"github.com/yuandonghao/yarch/stacks/golang/captcha"
 )
 
 // memStore 内存实现（Redis 行为级集成在 testcontainers 子 module）。

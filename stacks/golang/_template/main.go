@@ -9,8 +9,8 @@ import (
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/joho/godotenv"
 
-	"github.com/yuandonghao/yarch-go/logx"
-	"github.com/yuandonghao/yarch-go/web"
+	"github.com/yuandonghao/yarch/stacks/golang/logx"
+	"github.com/yuandonghao/yarch/stacks/golang/web"
 
 	"{{.Module}}/api/router"
 	"{{.Module}}/application"

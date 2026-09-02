@@ -7,8 +7,8 @@ import (
 
 	"github.com/redis/go-redis/v9"
 
-	"github.com/yuandonghao/yarch-go/captcha"
-	"github.com/yuandonghao/yarch-go/redix"
+	"github.com/yuandonghao/yarch/stacks/golang/captcha"
+	"github.com/yuandonghao/yarch/stacks/golang/redix"
 )
 
 // 行为级：Redis 分布式限流（固定窗口 Lua：窗口内超限拒绝、窗口滚动放行）。

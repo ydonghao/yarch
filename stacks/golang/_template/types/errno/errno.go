@@ -1,7 +1,7 @@
 // Package errno 业务码注册处（3xxx-8xxx：在本仓 docs 登记后方可使用，error-codes.md 段位表）。
 package errno
 
-import "github.com/yuandonghao/yarch-go/errcode"
+import "github.com/yuandonghao/yarch/stacks/golang/errcode"
 
 // 业务码登记（init 注册模式：进程启动即校验段位/白名单/冲突）。
 func init() {

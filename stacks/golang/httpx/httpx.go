@@ -16,10 +16,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/yuandonghao/yarch-go/errcode"
-	"github.com/yuandonghao/yarch-go/logx"
-	"github.com/yuandonghao/yarch-go/response"
-	"github.com/yuandonghao/yarch-go/xerror"
+	"github.com/yuandonghao/yarch/stacks/golang/errcode"
+	"github.com/yuandonghao/yarch/stacks/golang/logx"
+	"github.com/yuandonghao/yarch/stacks/golang/response"
+	"github.com/yuandonghao/yarch/stacks/golang/xerror"
 )
 
 const (

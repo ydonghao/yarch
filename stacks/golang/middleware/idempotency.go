@@ -11,8 +11,8 @@ import (
 
 	"github.com/cloudwego/hertz/pkg/app"
 
-	"github.com/yuandonghao/yarch-go/errcode"
-	"github.com/yuandonghao/yarch-go/logx"
+	"github.com/yuandonghao/yarch/stacks/golang/errcode"
+	"github.com/yuandonghao/yarch/stacks/golang/logx"
 )
 
 // 幂等存储错误哨兵。

@@ -3,7 +3,7 @@ package errcode_test
 import (
 	"testing"
 
-	"github.com/yuandonghao/yarch-go/errcode"
+	"github.com/yuandonghao/yarch/stacks/golang/errcode"
 )
 
 // 契约断言：错误码 13 码全表（code / 标识符 / 默认文案 / HTTP 映射），

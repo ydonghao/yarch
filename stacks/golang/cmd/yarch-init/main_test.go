@@ -15,7 +15,7 @@ func TestRender(t *testing.T) {
 		Service:      "order-svc",
 		ServiceSnake: "order_svc",
 		YarchVersion: "v0.0.0",
-		ReplaceLine:  "\nreplace github.com/yuandonghao/yarch-go => /abs/yarch/stacks/golang",
+		ReplaceLine:  "\nreplace github.com/yuandonghao/yarch/stacks/golang => /abs/yarch/stacks/golang",
 	}
 	n, err := render("../../_template", out, v)
 	if err != nil {
@@ -54,7 +54,7 @@ func TestRender(t *testing.T) {
 	g, _ := os.ReadFile(filepath.Join(out, "go.mod"))
 	gs := string(g)
 	if !strings.Contains(gs, "module github.com/alice/order-svc") ||
-		!strings.Contains(gs, "replace github.com/yuandonghao/yarch-go => /abs/yarch/stacks/golang") {
+		!strings.Contains(gs, "replace github.com/yuandonghao/yarch/stacks/golang => /abs/yarch/stacks/golang") {
 		t.Fatalf("go.mod 渲染错误:\n%s", gs)
 	}
 	d, _ := os.ReadFile(filepath.Join(out, "docker-compose.yml"))

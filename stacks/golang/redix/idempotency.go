@@ -7,7 +7,7 @@ import (
 
 	"github.com/redis/go-redis/v9"
 
-	"github.com/yuandonghao/yarch-go/middleware"
+	"github.com/yuandonghao/yarch/stacks/golang/middleware"
 )
 
 // Idempotency 幂等存储的 Redis 实现（rest-conventions.md 幂等总则-1：

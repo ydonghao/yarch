@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/yuandonghao/yarch-go/xerror"
+	"github.com/yuandonghao/yarch/stacks/golang/xerror"
 
 	"{{.Module}}/types/errno"
 )

@@ -9,10 +9,10 @@ import (
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 
-	"github.com/yuandonghao/yarch-go/middleware"
-	"github.com/yuandonghao/yarch-go/persist"
-	"github.com/yuandonghao/yarch-go/redix"
-	"github.com/yuandonghao/yarch-go/response"
+	"github.com/yuandonghao/yarch/stacks/golang/middleware"
+	"github.com/yuandonghao/yarch/stacks/golang/persist"
+	"github.com/yuandonghao/yarch/stacks/golang/redix"
+	"github.com/yuandonghao/yarch/stacks/golang/response"
 )
 
 //go:embed testdata/db/migration/*.sql

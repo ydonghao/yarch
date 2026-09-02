@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/yuandonghao/yarch-go/errcode"
-	"github.com/yuandonghao/yarch-go/xerror"
+	"github.com/yuandonghao/yarch/stacks/golang/errcode"
+	"github.com/yuandonghao/yarch/stacks/golang/xerror"
 )
 
 // 契约断言：message「默认文案：细节」追加规则，默认文案部分不得改写。

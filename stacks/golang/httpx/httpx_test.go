@@ -7,9 +7,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/yuandonghao/yarch-go/errcode"
-	"github.com/yuandonghao/yarch-go/httpx"
-	"github.com/yuandonghao/yarch-go/logx"
+	"github.com/yuandonghao/yarch/stacks/golang/errcode"
+	"github.com/yuandonghao/yarch/stacks/golang/httpx"
+	"github.com/yuandonghao/yarch/stacks/golang/logx"
 )
 
 // 契约断言：出口传播——traceparent 优先注入（trace-id 继承当前 ctx），X-Trace-Id 兜底同置。

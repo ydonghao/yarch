@@ -1,4 +1,4 @@
-module github.com/yuandonghao/yarch-go/testcontainers
+module github.com/yuandonghao/yarch/stacks/golang/testcontainers
 
 go 1.24
 
@@ -86,7 +86,7 @@ require (
 	github.com/stretchr/testify v1.12.1 // indirect
 	github.com/tklauser/go-sysconf v0.3.12 // indirect
 	github.com/tklauser/numcpus v0.6.1 // indirect
-	github.com/yuandonghao/yarch-go v0.0.0
+	github.com/yuandonghao/yarch/stacks/golang v0.0.0
 	github.com/yusufpapurcu/wmi v1.2.3 // indirect
 	go.opentelemetry.io/auto/sdk v1.1.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.55.0 // indirect
@@ -101,4 +101,4 @@ require (
 	google.golang.org/protobuf v1.36.12 // indirect
 )
 
-replace github.com/yuandonghao/yarch-go => ../
+replace github.com/yuandonghao/yarch/stacks/golang => ../

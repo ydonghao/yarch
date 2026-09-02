@@ -10,7 +10,7 @@ import (
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/cloudwego/hertz/pkg/common/ut"
 
-	"github.com/yuandonghao/yarch-go/middleware"
+	"github.com/yuandonghao/yarch/stacks/golang/middleware"
 )
 
 // memRateStore 分布式限流内存桩（真实 Redis 行为级见 testcontainers 子 module）。

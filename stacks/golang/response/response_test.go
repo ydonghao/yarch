@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/yuandonghao/yarch-go/errcode"
-	"github.com/yuandonghao/yarch-go/response"
+	"github.com/yuandonghao/yarch/stacks/golang/errcode"
+	"github.com/yuandonghao/yarch/stacks/golang/response"
 )
 
 // 契约断言：信封四字段 camelCase、字段顺序、data 空值语义（rest-response.md v1.0）。

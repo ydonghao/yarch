@@ -7,7 +7,7 @@ import (
 
 	"github.com/cloudwego/hertz/pkg/app"
 
-	"github.com/yuandonghao/yarch-go/logx"
+	"github.com/yuandonghao/yarch/stacks/golang/logx"
 )
 
 // AccessLog 请求完成日志（logging-trace.md 日志行协议示例同构：method/path/status/costMs）。
