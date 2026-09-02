@@ -1,6 +1,6 @@
 # stacks/web · yarch-web 策划案
 
-> **状态：W0 已冻结（2026-09-02），W1-W3 待拍板后开工模板档。**
+> **状态：W0-W3、W5 已冻结（2026-09-02），W4 待拍板。全量验证通过：contract 4/4 · depcruise ✔ · type-check ✔ · vite build ×3 ✔**
 > 输入：contract/ 四件套（唯一权威）· java 栈 16 模块的同构经验 · 对标：Vite（构建底座标准）/ AntD Pro·Arco Pro·Semi（中后台成品标准）/ Next.js（全栈标准，非本栈场景）/ shadcn（组件标准）。
 
 ## W 决策清单
@@ -9,9 +9,9 @@
 |---|---|---|---|
 | W0 | 三层结构 + pnpm workspace 单仓（packages/contract 跨框架契约包 + react/vue 薄适配 + templates UI 档薄壳）；合并原 web-react/web-vue 两目录 | 采纳（对齐 java：common/starters/archetype 同构） | **已冻结** |
 | W1 | UI 档：**三档并行**——antd（蚂蚁，默认）/ Semi（抖音）/ Arco（字节），每档独立模板薄壳，共享底座不变 | **已拍板（2026-09-02）：三档都要** |
-| W2 | 组件分层流派：feature-first（features/ 按业务域）vs layer-first | feature-first（中后台会长大） | 待拍板 |
-| W3 | 机检：dependency-cruiser 依赖方向规则（pages→features→components/ui，禁反向、pages 禁直调 api.ts） | 采纳（= 前端版 ArchUnit） | 待拍板 |
-| W4 | 构建底座 Vite（默认）vs Rsbuild | Vite；Rsbuild 登记备选（构建速度成瓶颈时） | 待拍板 |
+| W2 | 组件分层流派：feature-first（features/ 按业务域） | **已拍板（2026-09-02）** |
+| W3 | 机检：dependency-cruiser 依赖方向规则 | **已拍板（2026-09-02）** |
+| W4 | 构建底座 Vite（默认）vs Rsbuild | Vite；Rsbuild 登记备选 | 待拍板 |
 | W5 | 文件扩展名纪律：有 JSX 用 .tsx，纯逻辑/类型 .ts；Vue 用 .vue SFC（lang="ts"） | 采纳 | 已冻结 |
 
 ## 结构基准（W0 冻结）

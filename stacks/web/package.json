@@ -2,10 +2,15 @@
   "name": "yarch-web",
   "private": true,
   "packageManager": "pnpm@9.15.0",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "test": "pnpm -r --if-present test",
     "lint": "pnpm -r --if-present lint",
     "check:deps": "depcruise packages templates"
+  },
+  "devDependencies": {
+    "dependency-cruiser": "^18.2.0"
   }
 }

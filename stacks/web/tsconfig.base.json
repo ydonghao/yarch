@@ -7,6 +7,11 @@
     "skipLibCheck": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "paths": {
+      "@yarch/contract": ["./packages/contract/src/index.ts"],
+      "@yarch/react": ["./packages/react/src/index.ts"],
+      "@yarch/vue": ["./packages/vue/src/index.ts"]
+    }
   }
 }

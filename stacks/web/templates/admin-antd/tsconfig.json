@@ -1,1 +1,17 @@
-{"extends": "../../tsconfig.base.json", "compilerOptions": {"baseUrl": ".", "paths": {"@/*": ["src/*"]}}, "include": ["src"]}
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@yarch/contract": [
+        "../../packages/contract/src/index.ts"
+      ],
+      "@yarch/react": [
+        "../../packages/react/src/index.ts"
+      ]
+    }
+  },
+  "include": [
+    "src"
+  ]
+}

@@ -1,4 +1,4 @@
-import { Layout, Nav, Table, Button } from "@douyinfe/semi-ui";
+import { Layout, Nav } from "@douyinfe/semi-ui";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
 export default function BasicLayout() {
@@ -9,12 +9,14 @@ export default function BasicLayout() {
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider>
-        <Menu selectedKeys={[location.pathname]}
+        <Nav
+          selectedKeys={[location.pathname]}
           items={[
-            { key: "/", label: "首页" },
-            { key: "/products", label: "商品" },
+            { itemKey: "/", text: "首页" },
+            { itemKey: "/products", text: "商品" },
           ]}
-          onClick={({ key }: { key: string }) => navigate(key)} />
+          onSelect={(data) => navigate(String(data.itemKey))}
+        />
       </Sider>
       <Layout>
         <Header style={{ background: "#fff", padding: "0 24px" }} />

@@ -21,6 +21,15 @@
 2. **biome**（规范单点，对应 spotless）。
 3. **vitest**（契约断言：错误码表与 error-codes.md 逐码核对——防漂移）。
 
+## 验证状态（2026-09-02）
+
+| 检查项 | 结果 |
+|---|---|
+| @yarch/contract vitest | 4/4 ✅ |
+| depcruise（三档模板 + contract） | 0 violations ✅（4858 modules） |
+| tsc --noEmit ×3 | 全部通过 ✅ |
+| vite build ×3 | antd 1.3s · semi 2.1s · arco 1.0s ✅ |
+
 ## 快速开始
 
 ```bash
