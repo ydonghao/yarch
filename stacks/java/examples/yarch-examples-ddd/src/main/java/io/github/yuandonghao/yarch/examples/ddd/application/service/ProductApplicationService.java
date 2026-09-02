@@ -56,4 +56,9 @@ public class ProductApplicationService {
         cache.evict(productId); // 先更新 DB 再删除缓存（redis.md 七-1）
         return deducted;
     }
+
+    @Transactional(readOnly = true)
+    public io.github.yuandonghao.yarch.common.web.PageData<Product> page(int page, int pageSize) {
+        return products.page(page, pageSize);
+    }
 }
