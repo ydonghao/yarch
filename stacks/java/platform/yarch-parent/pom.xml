@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- yarch-parent：插件链与编译基线。工具链 JDK 25、字节码 release 21（采用面最大化，J3b）。 -->
+  <groupId>io.github.yuandonghao</groupId>
+  <artifactId>yarch-parent</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>yarch-parent</name>
+  <description>yarch 构建基线：编码/编译 release 21/测试/覆盖率/发布（central-portal + GPG，release profile）</description>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>io.github.yuandonghao</groupId>
+        <artifactId>yarch-bom</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <maven.compiler.release>21</maven.compiler.release>
+    <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
+    <!-- 与 yarch-bom 的 spring-boot.version 保持同步（插件链用） -->
+    <spring-boot.version>4.1.1</spring-boot.version>
+    <!-- 与 yarch-bom 同步：annotationProcessorPaths 不走 dependencyManagement，经属性继承供业务工程引用 -->
+    <lombok.version>1.18.46</lombok.version>
+    <mapstruct.version>1.6.3</mapstruct.version>
+  </properties>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.13.0</version>
+          <configuration>
+            <release>21</release>
+            <parameters>true</parameters>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>3.2.5</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>3.2.5</version>
+          <executions><execution><goals><goal>integration-test</goal><goal>verify</goal></goals></execution></executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <version>3.4.1</version>
+          <executions>
+            <execution>
+              <id>enforce-baseline</id>
+              <goals><goal>enforce</goal></goals>
+              <configuration>
+                <rules>
+                  <requireJavaVersion><version>[21,)</version></requireJavaVersion>
+                  <requireMavenVersion><version>[3.9,)</version></requireMavenVersion>
+                </rules>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>3.3.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>3.10.1</version>
+          <configuration>
+            <doclint>none</doclint>
+            <charset>UTF-8</charset>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-gpg-plugin</artifactId>
+          <version>3.2.5</version>
+        </plugin>
+        <plugin>
+          <groupId>org.sonatype.central</groupId>
+          <artifactId>central-publishing-maven-plugin</artifactId>
+          <version>0.6.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-archetype-plugin</artifactId>
+          <version>3.2.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-maven-plugin</artifactId>
+          <version>${spring-boot.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>versions-maven-plugin</artifactId>
+          <version>2.21.0</version>
+          <configuration>
+            <generateBackupPoms>true</generateBackupPoms>
+            <processAllModules>true</processAllModules>
+          </configuration>
+        </plugin>
+        <!-- 代码风格门禁：AOSP = 4 空格缩进（阿里手册强制条）；verify 阶段 check，apply 一键修复 -->
+        <plugin>
+          <groupId>com.diffplug.spotless</groupId>
+          <artifactId>spotless-maven-plugin</artifactId>
+          <version>3.10.1</version>
+          <configuration>
+            <java>
+              <includes>
+                <include>src/main/java/**/*.java</include>
+                <include>src/test/java/**/*.java</include>
+              </includes>
+              <removeUnusedImports />
+              <importOrder />
+              <googleJavaFormat>
+                <style>AOSP</style>
+                <reflowLongStrings>true</reflowLongStrings>
+              </googleJavaFormat>
+              <trimTrailingWhitespace />
+              <endWithNewline />
+            </java>
+          </configuration>
+          <executions>
+            <execution>
+              <id>spotless-check</id>
+              <goals>
+                <goal>check</goal>
+              </goals>
+              <phase>verify</phase>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+
+  <!-- 发布件专用（本地开发不触发）：source/javadoc/GPG + central-portal 上传 -->
+  <profiles>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-source-plugin</artifactId><executions><execution><id>attach-sources</id><goals><goal>jar-no-fork</goal></goals></execution></executions></plugin>
+          <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-javadoc-plugin</artifactId><executions><execution><id>attach-javadocs</id><goals><goal>jar</goal></goals></execution></executions></plugin>
+          <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-gpg-plugin</artifactId><executions><execution><id>sign-artifacts</id><phase>verify</phase><goals><goal>sign</goal></goals></execution></executions></plugin>
+          <plugin>
+            <groupId>org.sonatype.central</groupId>
+            <artifactId>central-publishing-maven-plugin</artifactId>
+            <extensions>true</extensions>
+            <configuration>
+              <publishingServerId>central</publishingServerId>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+</project>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.github.yuandonghao</groupId>
+    <artifactId>yarch-parent</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <relativePath>../../platform/yarch-parent</relativePath>
+  </parent>
+
+  <artifactId>yarch-redis-spring-boot-starter</artifactId>
+  <name>yarch-redis-spring-boot-starter</name>
+  <description>Redis 规约落地件：key 首段=服务名（租户边界）+ RedisKeys 构建器、JSON value 序列化（禁 JDK 序列化）、分布式锁（SET NX PX + Lua 释放）、跨实例幂等存储</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>io.github.yuandonghao</groupId>
+      <artifactId>yarch-common</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-redis</artifactId>
+    </dependency>
+    <!-- GenericJackson2JsonRedisSerializer 基于 Jackson 2；Boot 4 默认 HTTP 栈是 Jackson 3，需显式引入 -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+    </dependency>
+    <!-- 缓存值携带 java.time（契约 D4：ISO-8601）需 jsr310 模块 -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jsr310</artifactId>
+    </dependency>
+    <!-- 仅为实现 web 幂等 SPI（跨实例存储）；optional 不传染 -->
+    <dependency>
+      <groupId>io.github.yuandonghao</groupId>
+      <artifactId>yarch-web-spring-boot-starter</artifactId>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>io.github.yuandonghao</groupId>
+      <artifactId>yarch-test-spring-boot-starter</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+</project>

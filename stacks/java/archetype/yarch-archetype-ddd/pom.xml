@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.github.yuandonghao</groupId>
+    <artifactId>yarch-parent</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <relativePath>../../platform/yarch-parent</relativePath>
+  </parent>
+
+  <artifactId>yarch-archetype-ddd</artifactId>
+  <packaging>maven-archetype</packaging>
+  <name>yarch-archetype-ddd</name>
+  <description>yarch DDD 七包工程模板（默认档）：api/application/domain/crossdomain/infrastructure/types/common，生成即合规（信封/traceId/分页/逻辑删除/幂等/ArchUnit 依赖倒置机检）</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.archetype</groupId>
+        <artifactId>archetype-packaging</artifactId>
+        <version>3.2.1</version>
+      </extension>
+    </extensions>
+  </build>
+</project>

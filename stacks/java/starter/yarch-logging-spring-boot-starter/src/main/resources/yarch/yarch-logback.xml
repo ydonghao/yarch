@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  yarch 默认 ndjson 日志配置（契约 logging-trace.md v1.0 行协议）：
+  标准输出、UTF-8、JSON Lines；字段 ts/level/service/env/traceId/logger/msg + 自由键值对。
+  应用自带 logback-spring.xml 时本配置不生效（见 YarchLoggingEnvironmentPostProcessor）；
+  也可自有配置中 <include resource="yarch/yarch-logback-appenders.xml"/> 复用编码器定义。
+-->
+<configuration>
+
+  <springProperty scope="context" name="service" source="spring.application.name" defaultValue="unknown-service"/>
+  <springProperty scope="context" name="env" source="yarch.env" defaultValue="local"/>
+
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+      <timeZone>UTC</timeZone>
+      <timestampPattern>yyyy-MM-dd'T'HH:mm:ss.SSS'Z'</timestampPattern>
+      <fieldNames>
+        <timestamp>ts</timestamp>
+        <message>msg</message>
+        <logger>logger</logger>
+        <stackTrace>stack</stackTrace>
+      </fieldNames>
+      <customFields>{"service":"${service}","env":"${env}"}</customFields>
+      <!-- 契约：多行堆栈折叠为 stack 单字段（logstash 编码器默认行为），此处显式声明 -->
+      <throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
+        <maxDepthPerThrowable>60</maxDepthPerThrowable>
+        <maxLength>8192</maxLength>
+      </throwableConverter>
+    </encoder>
+  </appender>
+
+  <root level="${YARCH_LOG_LEVEL:-INFO}">
+    <appender-ref ref="CONSOLE"/>
+  </root>
+</configuration>

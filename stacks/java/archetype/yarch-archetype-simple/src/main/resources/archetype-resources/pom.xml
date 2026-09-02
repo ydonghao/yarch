@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+#set( $dollar = '$' )
+
+  <parent>
+    <groupId>io.github.yuandonghao</groupId>
+    <artifactId>yarch-parent</artifactId>
+    <version>${yarchVersion}</version>
+  </parent>
+
+  <groupId>${groupId}</groupId>
+  <artifactId>${artifactId}</artifactId>
+  <version>${version}</version>
+  <packaging>jar</packaging>
+  <name>${artifactId}</name>
+  <description>yarch 阿里五层工程（archetype 生成）：CRUD/管理面/短生命周期服务的简单贫血档，契约唯一权威来源见 yarch 仓 contract/</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>io.github.yuandonghao</groupId>
+      <artifactId>yarch-web-spring-boot-starter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.github.yuandonghao</groupId>
+      <artifactId>yarch-logging-spring-boot-starter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.github.yuandonghao</groupId>
+      <artifactId>yarch-persistence-spring-boot-starter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.github.yuandonghao</groupId>
+      <artifactId>yarch-redis-spring-boot-starter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>io.github.yuandonghao</groupId>
+      <artifactId>yarch-test-spring-boot-starter</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-resttestclient</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-http-client</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-restclient</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+              <version>${dollar}{lombok.version}</version>
+            </path>
+          </annotationProcessorPaths>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals><goal>repackage</goal></goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

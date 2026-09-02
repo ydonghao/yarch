@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.github.yuandonghao</groupId>
+    <artifactId>yarch-parent</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <relativePath>../../platform/yarch-parent</relativePath>
+  </parent>
+
+  <artifactId>yarch-archetype-simple</artifactId>
+  <packaging>maven-archetype</packaging>
+  <name>yarch-archetype-simple</name>
+  <description>yarch 阿里五层工程模板（简单贫血档）：controller/service/manager(按需)/dao/model——CRUD/管理面/短生命周期服务；契约与 ddd 档完全同源</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.archetype</groupId>
+        <artifactId>archetype-packaging</artifactId>
+        <version>3.2.1</version>
+      </extension>
+    </extensions>
+  </build>
+</project>

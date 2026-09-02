@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.github.yuandonghao</groupId>
+    <artifactId>yarch-parent</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <relativePath>../../platform/yarch-parent</relativePath>
+  </parent>
+
+  <artifactId>yarch-common</artifactId>
+  <name>yarch-common</name>
+  <description>yarch 无技术内核（对齐 Spring Boot core/ 原则）：RestResponse 信封、GlobalErrorCode 错误码表、PageData 分页负载、BusinessException、TraceIds——不绑 Spring Web</description>
+
+  <dependencies>
+    <!-- 注解仅编译期需要；Jackson 3 运行时继续认 com.fasterxml.jackson.annotation（JStep 设计决策） -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <!-- 单测需要真实 MDC（slf4j-api 无绑定时 MDC 为 NOP）；真实应用的绑定由 logging starter 提供 -->
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+</project>

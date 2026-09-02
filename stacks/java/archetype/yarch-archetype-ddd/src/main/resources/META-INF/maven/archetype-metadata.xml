@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<archetype-descriptor xmlns="https://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.1.0"
+                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                      xsi:schemaLocation="https://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.1.0 https://maven.apache.org/xsd/archetype-descriptor-1.1.0.xsd"
+                      name="yarch-archetype-ddd">
+
+  <requiredProperties>
+    <requiredProperty key="groupId"/>
+    <requiredProperty key="artifactId"/>
+    <requiredProperty key="version">
+      <defaultValue>0.1.0-SNAPSHOT</defaultValue>
+    </requiredProperty>
+    <requiredProperty key="package"/>
+    <!-- 服务名=artifactId：yarch web/redis 组件按 registry.md 一-1 校验 -->
+    <requiredProperty key="yarchVersion">
+      <defaultValue>0.1.0-SNAPSHOT</defaultValue>
+    </requiredProperty>
+  </requiredProperties>
+
+  <fileSets>
+    <fileSet filtered="true" packaged="true" encoding="UTF-8">
+      <directory>src/main/java</directory>
+      <includes>
+        <include>**/*.java</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>src/main/resources</directory>
+      <includes>
+        <include>**/*</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="true" packaged="true" encoding="UTF-8">
+      <directory>src/test/java</directory>
+      <includes>
+        <include>**/*.java</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory></directory>
+      <includes>
+        <include>README.md</include>
+        <include>.gitignore</include>
+        <include>docker-compose.yml</include>
+        <include>Dockerfile</include>
+      </includes>
+    </fileSet>
+  </fileSets>
+</archetype-descriptor>

@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: ${artifactId}
+  datasource:
+    # 本地默认与 docker-compose.yml 一致；部署用标准环境变量覆盖（SPRING_DATASOURCE_URL 等）
+    url: jdbc:postgresql://localhost:5432/${artifactId}
+    username: ${artifactId}
+    password: ${artifactId}
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 200ms
+      connect-timeout: 1s
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+
+mybatis-plus:
+  global-config:
+    banner: false
+
+yarch:
+  env: local

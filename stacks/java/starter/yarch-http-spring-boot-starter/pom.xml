@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.github.yuandonghao</groupId>
+        <artifactId>yarch-parent</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
+        <relativePath>../../platform/yarch-parent</relativePath>
+    </parent>
+
+    <artifactId>yarch-http-spring-boot-starter</artifactId>
+    <name>yarch-http-spring-boot-starter</name>
+    <description>下游调用契约件（传播矩阵出口行的实现空白）：超时强制（A7）、traceparent/X-Trace-Id 注入、RestResponse 解包、下游错误 1008/1009 转译</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.github.yuandonghao</groupId>
+            <artifactId>yarch-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

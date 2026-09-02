@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- yarch-java reactor 聚合根：非发布件，仅负责一键构建全部模块 -->
+  <groupId>io.github.yuandonghao</groupId>
+  <artifactId>yarch-java</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>yarch-java (reactor)</name>
+  <description>yarch Java 栈：目录分组与 Spring Boot 4 同构（platform/core/starter/archetype），契约唯一权威来源见 yarch 仓 contract/</description>
+
+  <modules>
+    <module>platform/yarch-parent</module>
+    <module>platform/yarch-bom</module>
+    <module>core/yarch-common</module>
+    <module>starter/yarch-web-spring-boot-starter</module>
+    <module>starter/yarch-logging-spring-boot-starter</module>
+    <module>starter/yarch-persistence-spring-boot-starter</module>
+    <module>starter/yarch-redis-spring-boot-starter</module>
+    <module>starter/yarch-test-spring-boot-starter</module>
+    <module>starter/yarch-http-spring-boot-starter</module>
+    <module>starter/yarch-captcha-spring-boot-starter</module>
+    <module>starter/yarch-auth-spring-boot-starter</module>
+    <module>archetype/yarch-archetype-ddd</module>
+    <module>archetype/yarch-archetype-simple</module>
+    <module>examples/yarch-examples-ddd</module>
+    <module>examples/yarch-examples-simple</module>
+  </modules>
+</project>

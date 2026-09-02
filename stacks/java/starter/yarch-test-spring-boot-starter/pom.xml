@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.github.yuandonghao</groupId>
+    <artifactId>yarch-parent</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <relativePath>../../platform/yarch-parent</relativePath>
+  </parent>
+
+  <artifactId>yarch-test-spring-boot-starter</artifactId>
+  <name>yarch-test-spring-boot-starter</name>
+  <description>业务侧测试基座：契约断言（AIR/BCDE 基线的 assert 化）、ArchUnit 双规则集（ddd/simple）、PG/Redis 容器基座（封装 Testcontainers 2.x 模块变动）</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>io.github.yuandonghao</groupId>
+      <artifactId>yarch-common</artifactId>
+    </dependency>
+    <!-- 仅用核心 GenericContainer（数据库模块在 TC 2.x 已独立版本线，基座内封装掉该变动） -->
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.tngtech.archunit</groupId>
+      <artifactId>archunit-junit5</artifactId>
+    </dependency>
+    <!-- DynamicPropertyRegistry 等 spring-test API；optional：由业务工程自带 spring-boot-starter-test -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <optional>true</optional>
+    </dependency>
+  </dependencies>
+</project>

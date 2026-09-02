@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 860" font-family="PingFang SC, Microsoft YaHei, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"/>
+    </marker>
+  </defs>
+
+  <rect width="1180" height="860" fill="#f8fafc"/>
+  <text x="590" y="46" text-anchor="middle" font-size="26" font-weight="700" fill="#0f172a">yarch-java · 五层架构（coli-architecture 风格）</text>
+  <text x="590" y="72" text-anchor="middle" font-size="13" fill="#64748b">契约可执行化 · AI 施工模具 · 发版式升级 —— 契约唯一权威来源：yarch 仓 contract/</text>
+
+  <!-- L1 业务工程层 -->
+  <rect x="60" y="100" width="1060" height="130" rx="10" fill="#eef2ff" stroke="#6366f1" stroke-width="1.5"/>
+  <text x="80" y="128" font-size="15" font-weight="700" fill="#3730a3">① 业务工程（archetype 生成，双模板 J1-D）</text>
+  <rect x="80"  y="142" width="470" height="70" rx="8" fill="#ffffff" stroke="#a5b4fc"/>
+  <text x="315" y="168" text-anchor="middle" font-size="14" font-weight="600" fill="#1e1b4b">yarch-archetype-ddd（默认档）</text>
+  <text x="315" y="192" text-anchor="middle" font-size="11.5" fill="#475569">api · application · domain · crossdomain · infrastructure · types · common</text>
+  <rect x="590" y="142" width="510" height="70" rx="8" fill="#ffffff" stroke="#a5b4fc"/>
+  <text x="845" y="168" text-anchor="middle" font-size="14" font-weight="600" fill="#1e1b4b">yarch-archetype-simple（简单贫血档）</text>
+  <text x="845" y="192" text-anchor="middle" font-size="11.5" fill="#475569">controller · service · manager(按需) · dao · model（DO/DTO/Query）</text>
+
+  <line x1="590" y1="230" x2="590" y2="268" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="604" y="256" font-size="11.5" fill="#475569">继承 yarch-parent · import yarch-bom · 按需引 starter</text>
+
+  <!-- L2 Web 装配层 -->
+  <rect x="60" y="270" width="1060" height="120" rx="10" fill="#ecfeff" stroke="#06b6d4" stroke-width="1.5"/>
+  <text x="80" y="298" font-size="15" font-weight="700" fill="#155e75">② Web 装配（Spring Boot 4.1 自动配置）</text>
+  <g font-size="12.5" fill="#0f172a">
+    <rect x="80"  y="312" width="245" height="56" rx="8" fill="#fff" stroke="#67e8f9"/><text x="202" y="336" text-anchor="middle">AutoConfiguration.imports</text><text x="202" y="355" text-anchor="middle" fill="#64748b" font-size="11">条件装配 · 零样板接入</text>
+    <rect x="345" y="312" width="245" height="56" rx="8" fill="#fff" stroke="#67e8f9"/><text x="467" y="336" text-anchor="middle">springdoc / OpenAPI</text><text x="467" y="355" text-anchor="middle" fill="#64748b" font-size="11">随 web starter 默认</text>
+    <rect x="610" y="312" width="245" height="56" rx="8" fill="#fff" stroke="#67e8f9"/><text x="732" y="336" text-anchor="middle">Flyway 迁移</text><text x="732" y="355" text-anchor="middle" fill="#64748b" font-size="11">版本化 DDL 进仓</text>
+    <rect x="875" y="312" width="225" height="56" rx="8" fill="#fff" stroke="#67e8f9"/><text x="987" y="336" text-anchor="middle">Actuator</text><text x="987" y="355" text-anchor="middle" fill="#64748b" font-size="11">health · metrics</text>
+  </g>
+
+  <line x1="590" y1="390" x2="590" y2="428" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- L3 平台构件层 -->
+  <rect x="60" y="430" width="1060" height="190" rx="10" fill="#f0fdf4" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="80" y="458" font-size="15" font-weight="700" fill="#14532d">③ 平台构件（platform + core + starter，一规约一 starter）</text>
+  <g font-size="12.5" fill="#0f172a">
+    <rect x="80"  y="472" width="200" height="62" rx="8" fill="#fff" stroke="#86efac"/><text x="180" y="496" text-anchor="middle" font-weight="600">yarch-bom</text><text x="180" y="516" text-anchor="middle" fill="#64748b" font-size="11">三方版本唯一仲裁</text>
+    <rect x="295" y="472" width="200" height="62" rx="8" fill="#fff" stroke="#86efac"/><text x="395" y="496" text-anchor="middle" font-weight="600">yarch-parent</text><text x="395" y="516" text-anchor="middle" fill="#64748b" font-size="11">release 21 · 插件链 · 发布</text>
+    <rect x="510" y="472" width="200" height="62" rx="8" fill="#fff" stroke="#86efac"/><text x="610" y="496" text-anchor="middle" font-weight="600">yarch-common</text><text x="610" y="516" text-anchor="middle" fill="#64748b" font-size="11">信封 · 码表 · PageData · 无技术内核</text>
+    <rect x="725" y="472" width="185" height="62" rx="8" fill="#fff" stroke="#86efac"/><text x="817" y="496" text-anchor="middle" font-weight="600">web / logging</text><text x="817" y="516" text-anchor="middle" fill="#64748b" font-size="11">信封 · ndjson+traceId</text>
+    <rect x="925" y="472" width="185" height="62" rx="8" fill="#fff" stroke="#86efac"/><text x="1017" y="496" text-anchor="middle" font-weight="600">persistence / redis</text><text x="1017" y="516" text-anchor="middle" fill="#64748b" font-size="11">PG · 逻辑删除 · 锁 · 幂等</text>
+  </g>
+  <rect x="80" y="546" width="1030" height="56" rx="8" fill="#dcfce7" stroke="#86efac"/>
+  <text x="595" y="568" text-anchor="middle" font-size="12.5" fill="#166534">test 基座：契约断言（错误码全表 / 信封 / ndjson）+ ArchUnit 双规则集（ddd 依赖倒置 / simple 单向）+ PG·Redis 容器基座</text>
+  <text x="595" y="588" text-anchor="middle" font-size="11.5" fill="#15803d">触发式增长（终态目录见 PLAN §六）：persistence-mysql · kafka · rocketmq · xxl-job · nacos · minio · mongodb · es · qdrant · milvus · ch · sr · auth</text>
+
+  <line x1="590" y1="620" x2="590" y2="658" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- L4 统一契约层 -->
+  <rect x="60" y="660" width="1060" height="90" rx="10" fill="#fefce8" stroke="#eab308" stroke-width="1.5"/>
+  <text x="80" y="688" font-size="15" font-weight="700" fill="#713f12">④ 统一契约（contract/，唯一权威 —— 实现不一致即 bug）</text>
+  <text x="80" y="716" font-size="12.5" fill="#422006">api 四件套：RestResponse 形状 · 错误码段位（0/1xxx/2xxx 归 yarch，3xxx+ 业务仓登记）· logging-trace（ndjson + W3C traceparent）· REST 约定（kebab-case · /api/v1 · D6 越界空页 · Idempotency-Key）</text>
+  <text x="80" y="738" font-size="12.5" fill="#422006">infra 20 份：postgresql（默认库）· mysql · redis · kafka · rocketmq · nacos · minio · es · 向量三档 · OLAP 双擎 …（组合模型：按需组合，无全家桶）</text>
+
+  <line x1="590" y1="750" x2="590" y2="788" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- L5 运行底座 -->
+  <rect x="60" y="790" width="1060" height="52" rx="10" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="80" y="822" font-size="14" font-weight="700" fill="#334155">⑤ 运行底座</text>
+  <text x="180" y="822" font-size="12.5" fill="#475569">JDK 25 工具链 / 字节码 21 · Tomcat 11 · PG 17 · Redis 7 · Docker（A7：OOM dump · 等比内存上限） · CI 双运行时（GitHub Actions）</text>
+
+  <!-- 发版链路侧注 -->
+  <path d="M 1130 165 C 1160 300 1160 480 1130 560" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <text x="1152" y="360" font-size="11.5" fill="#64748b" transform="rotate(90 1152 360)" text-anchor="middle">发版式升级：构件走 version 变更，业务工程自动跟进（0.1.0 → Maven Central）</text>
+</svg>

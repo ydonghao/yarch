@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- yarch-bom：三方版本唯一仲裁。业务工程 import 本 BOM 后不写任何三方版本号。
+       刻意无 parent（对标 spring-boot-dependencies 的独立形态），由 yarch-parent import。 -->
+  <groupId>io.github.yuandonghao</groupId>
+  <artifactId>yarch-bom</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>yarch-bom</name>
+  <description>yarch 版本仲裁：Spring Boot 4.1.x 底座 + yarch 自有构件 + 增补三方件</description>
+
+  <properties>
+    <spring-boot.version>4.1.1</spring-boot.version>
+    <mybatis-plus.version>3.5.17</mybatis-plus.version>
+    <springdoc.version>3.1.0</springdoc.version>
+    <mapstruct.version>1.6.3</mapstruct.version>
+    <logstash-logback-encoder.version>9.0</logstash-logback-encoder.version>
+    <archunit.version>1.5.0</archunit.version>
+    <nimbus-jose-jwt.version>10.9.1</nimbus-jose-jwt.version>
+    <fastexcel.version>1.3.0</fastexcel.version>
+    <!-- TC 2.x 在 macOS/OrbStack 下自动探测失效（DockerDesktop 策略 NPE、user 文件 docker.host 不被读取）；
+         钉 1.21.x 经典线：仅用核心 GenericContainer，API 与 2.x 同构，容器基座已封装隔离该决策 -->
+    <testcontainers.version>1.21.4</testcontainers.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring-boot.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <!-- yarch 自有构件（版本随本 BOM 走） -->
+      <dependency><groupId>io.github.yuandonghao</groupId><artifactId>yarch-common</artifactId><version>${project.version}</version></dependency>
+      <dependency><groupId>io.github.yuandonghao</groupId><artifactId>yarch-web-spring-boot-starter</artifactId><version>${project.version}</version></dependency>
+      <dependency><groupId>io.github.yuandonghao</groupId><artifactId>yarch-logging-spring-boot-starter</artifactId><version>${project.version}</version></dependency>
+      <dependency><groupId>io.github.yuandonghao</groupId><artifactId>yarch-persistence-spring-boot-starter</artifactId><version>${project.version}</version></dependency>
+      <dependency><groupId>io.github.yuandonghao</groupId><artifactId>yarch-redis-spring-boot-starter</artifactId><version>${project.version}</version></dependency>
+      <dependency><groupId>io.github.yuandonghao</groupId><artifactId>yarch-test-spring-boot-starter</artifactId><version>${project.version}</version></dependency>
+      <dependency><groupId>io.github.yuandonghao</groupId><artifactId>yarch-http-spring-boot-starter</artifactId><version>${project.version}</version></dependency>
+      <dependency><groupId>io.github.yuandonghao</groupId><artifactId>yarch-captcha-spring-boot-starter</artifactId><version>${project.version}</version></dependency>
+      <dependency><groupId>io.github.yuandonghao</groupId><artifactId>yarch-auth-spring-boot-starter</artifactId><version>${project.version}</version></dependency>
+
+      <!-- 增补三方件（Spring Boot BOM 未管理的） -->
+      <dependency><groupId>com.baomidou</groupId><artifactId>mybatis-plus-spring-boot4-starter</artifactId><version>${mybatis-plus.version}</version></dependency>
+      <!-- MP 3.5.9+ 插件可选化：Pagination/BlockAttack 拦截器在此构件（包名不变） -->
+      <dependency><groupId>com.baomidou</groupId><artifactId>mybatis-plus-jsqlparser</artifactId><version>${mybatis-plus.version}</version></dependency>
+      <dependency><groupId>org.springdoc</groupId><artifactId>springdoc-openapi-starter-webmvc-ui</artifactId><version>${springdoc.version}</version></dependency>
+      <dependency><groupId>org.mapstruct</groupId><artifactId>mapstruct</artifactId><version>${mapstruct.version}</version></dependency>
+      <dependency><groupId>org.mapstruct</groupId><artifactId>mapstruct-processor</artifactId><version>${mapstruct.version}</version></dependency>
+      <dependency><groupId>net.logstash.logback</groupId><artifactId>logstash-logback-encoder</artifactId><version>${logstash-logback-encoder.version}</version></dependency>
+      <dependency><groupId>com.tngtech.archunit</groupId><artifactId>archunit-junit5</artifactId><version>${archunit.version}</version></dependency>
+      <dependency><groupId>com.nimbusds</groupId><artifactId>nimbus-jose-jwt</artifactId><version>${nimbus-jose-jwt.version}</version></dependency>
+      <dependency><groupId>cn.idev.excel</groupId><artifactId>fastexcel</artifactId><version>${fastexcel.version}</version></dependency>
+      <!-- 同 pom 显式条目优先于 import 的 Boot BOM（其管 2.0.5），此处覆盖为 1.21.x -->
+      <dependency><groupId>org.testcontainers</groupId><artifactId>testcontainers</artifactId><version>${testcontainers.version}</version></dependency>
+    </dependencies>
+  </dependencyManagement>
+</project>

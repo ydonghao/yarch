@@ -1,0 +1,21 @@
+# 本地开发底座：PG 17 + Redis 7（生产用共享实例，见 yarch contract/infra）
+# 库名/账号默认与服务名一致（postgresql.md 一-8：库名与应用名一致）
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: ${artifactId}
+      POSTGRES_PASSWORD: ${artifactId}
+      POSTGRES_DB: ${artifactId}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+volumes:
+  pgdata:
