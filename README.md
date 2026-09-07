@@ -1,11 +1,13 @@
 # yarch
 
-> **Y**uan's **Arch**itecture —— 一种规范，多种方言。
+> **Y**uan's **Arch**itecture —— 一种规范，多种方言。 · [English](README.en.md)
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![Java](https://img.shields.io/badge/Java-16%20modules%20%E2%9C%85-brightgreen.svg)](stacks/java/)
-[![Web](https://img.shields.io/badge/Web-5%20packages%20%E2%9C%85-brightgreen.svg)](stacks/web/)
-[![Contract](https://img.shields.io/badge/Contract-24%20specs%20v1.0-gold.svg)](contract/)
+[![java-stack](https://github.com/ydonghao/yarch/actions/workflows/java-stack.yml/badge.svg)](https://github.com/ydonghao/yarch/actions/workflows/java-stack.yml)
+[![python-stack](https://github.com/ydonghao/yarch/actions/workflows/python-stack.yml/badge.svg)](https://github.com/ydonghao/yarch/actions/workflows/python-stack.yml)
+[![web-stack](https://github.com/ydonghao/yarch/actions/workflows/web-stack.yml/badge.svg)](https://github.com/ydonghao/yarch/actions/workflows/web-stack.yml)
+[![golang-stack](https://github.com/ydonghao/yarch/actions/workflows/golang-stack.yml/badge.svg)](https://github.com/ydonghao/yarch/actions/workflows/golang-stack.yml)
+[![Contract](https://img.shields.io/badge/Contract-25%20specs%20v1.0-gold.svg)](contract/)
 
 跨项目复用的**工程架构平台**——不是又一个 CRUD 框架，而是让多个技术栈说同一种接口语言的契约体系。
 
@@ -14,14 +16,14 @@
 | 痛点 | yarch 的答案 |
 |---|---|
 | 每个 API 长得不一样 | 统一信封 `RestResponse` + 错误码段位表，任何栈报出同一个 `code` 语义唯一 |
-| 排障跨栈拉不齐 | ndjson 日志 + traceId 贯穿（W3C traceparent），Java/Go/Rust/TS 一条链拉通 |
+| 排障跨栈拉不齐 | ndjson 日志 + traceId 贯穿（W3C traceparent），Java/Go/Python/TS 一条链拉通 |
 | 规约靠自觉、CR 靠人肉 | 契约断言测试 + ArchUnit / depcruise 机检——违反即测试失败 |
 | 脚手架 fork 改码后升级困难 | 平台构件发版式升级，业务工程只改一行 version |
 | AI 生成代码结构漂移 | 模板管结构、契约管行为，AI 施工不越界 |
 
 ## 从 0 到 1：一条命令生成工程
 
-三个栈同一套契约，全部**生成即合规**——统一信封 · 13 码错误码 · traceId 贯穿 · 分页（页码 D6 + keyset 游标）· 幂等 · 逻辑删除 · 机检三件预置，业务代码只写业务。
+四个栈同一套契约，全部**生成即合规**——统一信封 · 13 码错误码 · traceId 贯穿 · 分页（页码 D6 + keyset 游标）· 幂等 · 逻辑删除 · 机检预置，业务代码只写业务。
 
 ### Java · Maven archetype（零 clone，Central 已发版）
 
@@ -78,6 +80,25 @@ go mod tidy && go run .           # → http://localhost:8080
 
 > 生成工程 go.mod 的 `replace` 行指向你 clone 的本仓（联调期平台构件走本地源码）；正式发版后删除该行、版本改正式 tag。
 
+### Python · yarch-init 生成器（clone 本仓一次；发版后零 clone）
+
+前置：uv、Python 3.12+；PG/Redis 可达（共享实例，或本机 Docker）。
+
+```bash
+# ① 生成 FastAPI DDD 工程（服务名过 registry 校验：小写短横线、禁裸通用词）
+git clone https://github.com/ydonghao/yarch.git
+cd yarch/stacks/python
+uv sync --all-packages && uv run yarch-init --service order-svc --out ~/code/order-svc
+
+# ② 起跑
+cd ~/code/order-svc
+cp .env.example .env && vi .env   # 填 PG/Redis 地址（web 启动自动建库 + Alembic 自动迁移）
+uv sync && uv run uvicorn main:app --reload   # → http://localhost:8000/docs（users 示例 /api/v1/users）
+uv run celery -A celery_app worker -Q order-svc.default   # ③ 需要异步任务时另进程 worker/beat
+```
+
+发版后（tag `stacks/python/vX.Y.Z` → PyPI trusted publishing）零 clone 一条命令：`uvx yarch-init@latest --service order-svc --out order-svc`。
+
 <details>
 <summary><b>升级：平台发版式，业务工程只改版本号</b></summary>
 
@@ -85,6 +106,7 @@ go mod tidy && go run .           # → http://localhost:8080
 # Java：改 pom 继承的 yarch-parent 版本一行（BOM 仲裁全链版本）
 # Web：pnpm update @yarch/contract @yarch/react
 # Golang：go get github.com/ydonghao/yarch/stacks/golang@vX.Y.Z（发版后）
+# Python：uv add "yarch-python@X.Y.Z"
 ```
 </details>
 
@@ -123,16 +145,18 @@ go env -w GOPROXY=https://goproxy.cn,direct
 
 ```
 yarch/
-├── contract/          # 契约层（唯一权威来源，24 份 v1.0 定稿）
+├── contract/          # 契约层（唯一权威来源，25 份 v1.0 定稿）
 │   ├── api/           #   四件套：信封 · 错误码 · 日志/traceId · REST 约定
 │   ├── infra/         #   20 份：PG · MySQL · Redis · Kafka · MQ · 向量 · OLAP · 网关 · …
+│   ├── web/           #   微前端规约（micro-app 默认档）
 │   └── registry.md    #   服务名（租户边界）唯一登记处
 │
 ├── stacks/            # 栈实现层（发各自生态的包）
 │   ├── java/          #   ✅ 16 模块：parent/BOM + 8 starter + 双 archetype + 双 examples
+│   ├── python/        #   ✅ uv workspace 双发行版：yarch-python 构件 + yarch-init 生成器（DDD 模板）
 │   ├── web/           #   ✅ 5 包：contract + react/vue 适配 + create-admin 生成器（3 档模板资产）
 │   ├── golang/        #   ✅ 3 module：契约内核 + 六构件 + DDD 模板
-│   └── rust/          #   预留
+│   └── rust/          #   预留（触发式）
 │
 ├── clients/           # mobile · miniprogram · desktop(Tauri) 按需生长
 ├── tools/             # locate-scaffolds → 将来 yarch init CLI
@@ -171,13 +195,20 @@ yarch/
 | `create/templates/admin-arco` | Arco Design 档资产（字节系） |
 | `examples/admin-demo` | 全链路对接 Java 后端（验证码/分页/幂等/状态机） |
 
-### 机检三件（违反即测试失败）
+### Python（`stacks/python/`）
 
-| 层 | Java | Web |
-|---|---|---|
-| 契约断言 | 错误码 13 码逐码核对 + 信封形状 + ndjson 字段 | 错误码表逐码核对 + 解包语义 |
-| 架构守卫 | ArchUnit（DDD 依赖倒置 / 五层单向） | depcruise（pages 薄入口 / 禁反向 / contract 零框架） |
-| 代码风格 | Spotless AOSP 4 空格（check 挂 verify） | biome（规范单点） |
+| 构件 | 能力 |
+|---|---|
+| `yarch-python`（PyPI） | 契约内核三件（response/errcode/xerror）+ logx ndjson + trace/recovery/accesslog/幂等/限流中间件 + persist（逻辑删除/审计/分页 D6/Alembic）+ redix（key 规约/锁/幂等三态/固定窗口限流）+ httpx（traceparent 注入/1008·1009）+ celeryx（celery 规约强制默认）+ testx 契约断言 |
+| `yarch-init`（PyPI） | 工程生成器：Jinja2 渲染 + registry 服务名校验 + 残留占位扫描；DDD 七包模板（users/celery 示例 + alembic + web/worker 双入口） |
+
+### 机检（违反即测试失败）
+
+| 层 | Java | Web | Python |
+|---|---|---|---|
+| 契约断言 | 错误码 13 码逐码核对 + 信封形状 + ndjson 字段 | 错误码表逐码核对 + 解包语义 | testx：13 码全表 + 信封/ndjson/PageData（跨栈 conformance 同表） |
+| 架构守卫 | ArchUnit（DDD 依赖倒置 / 五层单向） | depcruise（pages 薄入口 / 禁反向 / contract 零框架） | import-linter（契约内核零框架 + 禁反向依赖） |
+| 代码风格 | Spotless AOSP 4 空格（check 挂 verify） | biome（规范单点） | ruff check + format + mypy |
 
 ## 契约与实现的关系
 
@@ -187,17 +218,19 @@ contract/（唯一权威，语言无关）
 stacks/java    → RestResponse<T> · GlobalErrorCode · TraceIdFilter
 stacks/web     → RestResponse<T> · errorCodes     · trace-id.ts
 stacks/golang  → response.Response · errcode.Code  · middleware.Trace()
+stacks/python  → response.Response · errcode.Code  · middleware.TraceMiddleware()
                    ↑
          实现与契约不一致 = bug（两侧均有防漂移断言）
 ```
 
 ## 状态
 
-- **契约层**：24 份 v1.0 定稿（api 四件套 + infra 20 份 + registry）
+- **契约层**：25 份 v1.0 定稿（api 四件套 + web 微前端 + infra 20 份 + registry）
 - **Java**：16 模块 reactor verify 全绿 · CI（JDK 21/25）
 - **Web**：contract 4/4 · depcruise 0 违规 · 生成后冒烟三档全绿（生成 → install → tsc → build）· CI（Node 20/22）
 - **Golang**：3 module 全绿
-- **发版**：Java 13 件 0.1.0 已上 Maven Central（2026-09-03，`archetype:generate` 零 clone 即用；后续推 tag `stacks/java/vX.Y.Z` 走 `java-publish.yml`）；Web 三包 0.1.0 已上 npm（`npm create @yarch/admin@latest` 即用；后续推 tag `stacks/web/vX.Y.Z` 走 CI 发版）；Golang tag 发版路径就绪（`stacks/golang/vX.Y.Z` → module proxy，无需注册任何平台），**tag 待推送**——当前生成器随本仓使用（见上方从 0 到 1）
+- **Python**：99 tests 全绿 · CI（Python 3.12/3.13，含生成工程冒烟）
+- **发版**：Java 13 件 0.1.0 已上 Maven Central（2026-09-03，`archetype:generate` 零 clone 即用；后续推 tag `stacks/java/vX.Y.Z` 走 `java-publish.yml`）；Web 三包 0.1.0 已上 npm（`npm create @yarch/admin@latest` 即用；后续推 tag `stacks/web/vX.Y.Z` 走 CI 发版）；Golang tag 发版路径就绪（`stacks/golang/vX.Y.Z` → module proxy，无需注册任何平台），**tag 待推送**——当前生成器随本仓使用（见上方从 0 到 1）；Python PyPI trusted publishing 就绪（`stacks/python/vX.Y.Z`），**tag 待推送**——当前从本仓跑生成器（见上方从 0 到 1）
 
 ## License
 
