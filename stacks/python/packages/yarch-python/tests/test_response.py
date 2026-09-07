@@ -1,19 +1,23 @@
 # stacks/python/packages/yarch-python/tests/test_response.py
 import json
 
-from yarch_python.response import PageData, Response, error, ok
+from yarch_python.response import PageData, error, ok
 
 
 def test_ok_envelope_shape_and_order():
     raw = ok({"any": "thing"}, trace_id="t1").model_dump_json(by_alias=True)
     assert list(json.loads(raw).keys()) == ["code", "message", "data", "traceId"]
-    assert raw.index('"code"') < raw.index('"message"') < raw.index('"data"') < raw.index('"traceId"')
+    assert (
+        raw.index('"code"') < raw.index('"message"') < raw.index('"data"') < raw.index('"traceId"')
+    )
     body = json.loads(raw)
     assert body == {"code": 0, "message": "成功", "data": {"any": "thing"}, "traceId": "t1"}
 
 
 def test_error_data_must_be_null():
-    body = json.loads(error(1001, message="参数校验失败", trace_id="t2").model_dump_json(by_alias=True))
+    body = json.loads(
+        error(1001, message="参数校验失败", trace_id="t2").model_dump_json(by_alias=True)
+    )
     assert body["code"] == 1001 and body["data"] is None and body["traceId"] == "t2"
 
 

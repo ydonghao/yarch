@@ -37,6 +37,7 @@ markers = ["integration: needs docker (testcontainers)"]
 files = ["packages"]
 ignore_missing_imports = true
 check_untyped_defs = true
+plugins = ["pydantic.mypy"]
 
 [tool.importlinter]
 root_packages = ["yarch_python"]

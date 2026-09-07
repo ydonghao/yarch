@@ -16,7 +16,9 @@ def setup_sink():
 
 def test_ndjson_field_set_and_order():
     sink = setup_sink()
-    logx.get_logger("mymod").info("request completed", method="GET", path="/api/v1/users", status=200, costMs=12)
+    logx.get_logger("mymod").info(
+        "request completed", method="GET", path="/api/v1/users", status=200, costMs=12
+    )
     line = sink.getvalue().strip()
     d = json.loads(line)
     assert list(d.keys())[:7] == ["ts", "level", "service", "env", "traceId", "logger", "msg"]

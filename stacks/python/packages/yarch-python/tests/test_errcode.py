@@ -1,6 +1,5 @@
 # stacks/python/packages/yarch-python/tests/test_errcode.py
 import pytest
-
 from yarch_python import errcode
 
 CONTRACT_TABLE = [  # error-codes.md v1.0 逐行誊写（含 0 成功）

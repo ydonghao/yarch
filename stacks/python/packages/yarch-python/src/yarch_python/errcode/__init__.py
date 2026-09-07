@@ -62,7 +62,9 @@ def identifier_of(code: int) -> str:
         return _IDENTIFIERS[code]
     if code in _BUSINESS:
         return _BUSINESS[code][0]
-    raise LookupError(f"未注册的错误码：{code}（业务码 3xxx-8xxx 须先 register 并在业务仓 docs 登记）")
+    raise LookupError(
+        f"未注册的错误码：{code}（业务码 3xxx-8xxx 须先 register 并在业务仓 docs 登记）"
+    )
 
 
 def message_of(code: int) -> str:

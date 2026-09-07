@@ -4,14 +4,12 @@ import contextvars
 import json
 import secrets
 import sys
-from datetime import datetime, timezone
-from typing import Any, Optional, TextIO
+from datetime import UTC, datetime
+from typing import Any, TextIO
 
 import structlog
 
 _trace_id: contextvars.ContextVar[str] = contextvars.ContextVar("trace_id", default="")
-
-_PROCESSOR_CHAIN_BUILT = False
 
 
 def bind_trace(trace_id: str):
@@ -36,7 +34,7 @@ def get_logger(name: str) -> Any:
 
 def _make_processors(service: str, env: str):
     def add_ts(_, __, ed):
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         ed["ts"] = now.strftime("%Y-%m-%dT%H:%M:%S.") + f"{now.microsecond // 1000:03d}Z"
         return ed
 
@@ -58,10 +56,17 @@ def _make_processors(service: str, env: str):
         ed["msg"] = ed.pop("event")
         return ed
 
-    return [structlog.contextvars.merge_contextvars, add_level, add_static, add_trace, add_ts, rename_event]
+    return [
+        structlog.contextvars.merge_contextvars,
+        add_level,
+        add_static,
+        add_trace,
+        add_ts,
+        rename_event,
+    ]
 
 
-def setup(service: str, env: str, *, level: str = "INFO", sink: Optional[TextIO] = None) -> None:
+def setup(service: str, env: str, *, level: str = "INFO", sink: TextIO | None = None) -> None:
     import logging as _logging
 
     out = sink if sink is not None else sys.stdout
