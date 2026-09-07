@@ -51,18 +51,18 @@
 3. 未注册的业务码（3xxx-8xxx 未登记即用）在 CI 阶段视为违规；
 4. 各栈标识符命名对照：
 
-| 标识 | java `GlobalErrorCode` | golang `errcode` | rust `ErrorCode` | ts `errorCodes` |
+| 标识 | java `GlobalErrorCode` | golang `errcode` | python `Code` | ts `errorCodes` |
 |---|---|---|---|---|
-| INTERNAL_ERROR | `INTERNAL_ERROR` | `InternalError` | `InternalError` | `INTERNAL_ERROR` |
-| INVALID_ARGUMENT | `INVALID_ARGUMENT` | `InvalidArgument` | `InvalidArgument` | `INVALID_ARGUMENT` |
-| MALFORMED_BODY | `MALFORMED_BODY` | `MalformedBody` | `MalformedBody` | `MALFORMED_BODY` |
-| NOT_FOUND | `NOT_FOUND` | `NotFound` | `NotFound` | `NOT_FOUND` |
-| CONFLICT | `CONFLICT` | `Conflict` | `Conflict` | `CONFLICT` |
-| RATE_LIMITED | `RATE_LIMITED` | `RateLimited` | `RateLimited` | `RATE_LIMITED` |
-| IDEMPOTENCY_CONFLICT | `IDEMPOTENCY_CONFLICT` | `IdempotencyConflict` | `IdempotencyConflict` | `IDEMPOTENCY_CONFLICT` |
-| UPSTREAM_TIMEOUT | `UPSTREAM_TIMEOUT` | `UpstreamTimeout` | `UpstreamTimeout` | `UPSTREAM_TIMEOUT` |
-| UNAVAILABLE | `UNAVAILABLE` | `Unavailable` | `Unavailable` | `UNAVAILABLE` |
-| UNAUTHORIZED | `UNAUTHORIZED` | `Unauthorized` | `Unauthorized` | `UNAUTHORIZED` |
-| CREDENTIALS_EXPIRED | `CREDENTIALS_EXPIRED` | `CredentialsExpired` | `CredentialsExpired` | `CREDENTIALS_EXPIRED` |
-| FORBIDDEN | `FORBIDDEN` | `Forbidden` | `Forbidden` | `FORBIDDEN` |
-| ACCOUNT_DISABLED | `ACCOUNT_DISABLED` | `AccountDisabled` | `AccountDisabled` | `ACCOUNT_DISABLED` |
+| INTERNAL_ERROR | `INTERNAL_ERROR` | `InternalError` | `INTERNAL_ERROR` | `INTERNAL_ERROR` |
+| INVALID_ARGUMENT | `INVALID_ARGUMENT` | `InvalidArgument` | `INVALID_ARGUMENT` | `INVALID_ARGUMENT` |
+| MALFORMED_BODY | `MALFORMED_BODY` | `MalformedBody` | `MALFORMED_BODY` | `MALFORMED_BODY` |
+| NOT_FOUND | `NOT_FOUND` | `NotFound` | `NOT_FOUND` | `NOT_FOUND` |
+| CONFLICT | `CONFLICT` | `Conflict` | `CONFLICT` | `CONFLICT` |
+| RATE_LIMITED | `RATE_LIMITED` | `RateLimited` | `RATE_LIMITED` | `RATE_LIMITED` |
+| IDEMPOTENCY_CONFLICT | `IDEMPOTENCY_CONFLICT` | `IdempotencyConflict` | `IDEMPOTENCY_CONFLICT` | `IDEMPOTENCY_CONFLICT` |
+| UPSTREAM_TIMEOUT | `UPSTREAM_TIMEOUT` | `UpstreamTimeout` | `UPSTREAM_TIMEOUT` | `UPSTREAM_TIMEOUT` |
+| UNAVAILABLE | `UNAVAILABLE` | `Unavailable` | `UNAVAILABLE` | `UNAVAILABLE` |
+| UNAUTHORIZED | `UNAUTHORIZED` | `Unauthorized` | `UNAUTHORIZED` | `UNAUTHORIZED` |
+| CREDENTIALS_EXPIRED | `CREDENTIALS_EXPIRED` | `CredentialsExpired` | `CREDENTIALS_EXPIRED` | `CREDENTIALS_EXPIRED` |
+| FORBIDDEN | `FORBIDDEN` | `Forbidden` | `FORBIDDEN` | `FORBIDDEN` |
+| ACCOUNT_DISABLED | `ACCOUNT_DISABLED` | `AccountDisabled` | `ACCOUNT_DISABLED` | `ACCOUNT_DISABLED` |

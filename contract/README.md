@@ -1,7 +1,7 @@
 # contract/ · 跨栈统一契约与规约
 
 > 多栈脚手架的灵魂：各栈长得不一样没关系，必须说同一种接口语言。
-> 本目录是全部栈实现（java / golang / rust / web / python / node / embedded 固件 / clients 移动端契约适配）的**唯一权威来源**，改契约必须先改这里。
+> 本目录是全部栈实现的**唯一权威来源**，改契约必须先改这里。已落地：java / golang / web / python；规划中：node / embedded 固件 / clients 移动端契约适配 / rust（触发式）。
 
 ## 规约治理（等级定义 / 豁免与变更 / 机检路线）
 
@@ -149,10 +149,12 @@
 
 ## 术语对照（各栈方言）
 
-| 概念 | java | golang | rust | web | python |
-|---|---|---|---|---|---|
-| 响应体 | `RestResponse<T>` | `response.Response` | `RestResponse<T>` | `RestResponse<T>` | `yarch_python.response.Response` |
-| 分页负载 | `PageData<T>` | `response.PageData` | `PageData<T>` | `PageData<T>` | `yarch_python.response.PageData` |
-| 错误码 | `GlobalErrorCode` | `errcode.Code` | `ErrorCode` | `errorCodes` 常量 | `errcode.Code` |
-| 业务异常 | `BusinessException` | `xerror.BizError` | `BizError` | `ApiError` | `xerror.BizError` |
-| 追踪 ID | `TraceIdFilter`(MDC) | `middleware.Trace()` | `trace_middleware` | `apiClient` 注入/透出 | `middleware.TraceMiddleware`(contextvars) |
+| 概念 | java | golang | web | python |
+|---|---|---|---|---|
+| 响应体 | `RestResponse<T>` | `response.Response` | `RestResponse<T>` | `yarch_python.response.Response` |
+| 分页负载 | `PageData<T>` | `response.PageData` | `PageData<T>` | `yarch_python.response.PageData` |
+| 错误码 | `GlobalErrorCode` | `errcode.Code` | `errorCodes` 常量 | `errcode.Code` |
+| 业务异常 | `BusinessException` | `xerror.BizError` | `ApiError` | `xerror.BizError` |
+| 追踪 ID | `TraceIdFilter`(MDC) | `middleware.Trace()` | `apiClient` 注入/透出 | `middleware.TraceMiddleware`(contextvars) |
+
+> rust 为触发式预留栈，落地后再入本表（届时以其实现为准登记方言名）。

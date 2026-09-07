@@ -19,7 +19,7 @@
 | `service` | string | 是 | 服务名（进程级，来自配置） |
 | `env` | string | 是 | `local` / `dev` / `staging` / `prod` |
 | `traceId` | string | 条件 | 请求上下文内必有；后台任务/启动日志可为空 |
-| `logger` | string | 是 | 记录点标识（Java 类名 / Go 包名 / Rust target / TS 模块名） |
+| `logger` | string | 是 | 记录点标识（Java 类名 / Go 包名 / Python logger 名 / TS 模块名） |
 | `msg` | string | 是 | 事件描述 |
 | 其余 | any | 否 | 自由键值对，camelCase |
 
@@ -28,7 +28,7 @@
 ## traceId 贯穿（OpenTelemetry 口径）
 
 1. **入口**：服务端优先解析请求头 `traceparent`（W3C，`00-{traceId}-{spanId}-{flag}`，取 trace-id 段）；无则看 `X-Trace-Id`；再无则自己生成 32 位小写 hex；
-2. **传播**：处理过程中该值进入各栈的上下文载体（Java MDC / Go ctx 或中间件键 / Rust tracing + extensions / TS 由服务端管理，客户端只透传）；
+2. **传播**：处理过程中该值进入各栈的上下文载体（Java MDC / Go ctx 或中间件键 / Python contextvars / TS 由服务端管理，客户端只透传）；
 3. **出口**：
    - 响应头 `X-Trace-Id` 恒回显；
    - 响应体 `RestResponse.traceId` 恒等于它；
@@ -58,5 +58,5 @@ traceId 跨越一切边界时的注入/继承规则（各 infra 规约引用本�
 |---|---|---|
 | java | MDC key `traceId`（`TraceIdFilter` 注入） | logstash-logback-encoder（`yarch-logging-spring-boot-starter`） |
 | golang | hertz 中间件键 + slog attr | `log/slog` JSONHandler（`logx`） |
-| rust | request extensions + tracing span | tracing-subscriber 自定义 JSON（`logging`） |
+| python | FastAPI middleware 写入 contextvars | structlog ndjson 行协议（`logx`） |
 | web | 不持有上下文，仅生成/透传 `X-Trace-Id` 并在错误对象暴露 `traceId` | 浏览器控制台结构化 `console` 由业务决定 |
