@@ -1,11 +1,12 @@
 """组装根（手写分阶段：basic 配置 → primary 数据/中间件 → complex 路由）。"""
-from api.router import api_router
-from application.settings import settings
 from fastapi import FastAPI
-from infrastructure.database import models  # noqa: F401  注册 ORM 映射
-from infrastructure.database.user_repo import SqlAlchemyUserRepository
 from yarch_python import logx, persist, redix
 from yarch_python.web import ok, setup
+
+from api.router import api_router
+from application.settings import settings
+from infrastructure.database import models  # noqa: F401  注册 ORM 映射
+from infrastructure.database.user_repo import SqlAlchemyUserRepository
 
 
 def create_app() -> FastAPI:

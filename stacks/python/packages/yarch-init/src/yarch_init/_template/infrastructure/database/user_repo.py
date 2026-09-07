@@ -1,9 +1,10 @@
 """repo adapter：实现 domain 的 UserRepository Protocol。"""
 from datetime import datetime
 
-from domain.entity.user import User
 from sqlalchemy import select
 from yarch_python.persist import not_deleted, page_of
+
+from domain.entity.user import User
 
 
 class SqlAlchemyUserRepository:

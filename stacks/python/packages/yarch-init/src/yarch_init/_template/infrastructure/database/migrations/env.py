@@ -1,6 +1,7 @@
 from alembic import context
-from infrastructure.database.models import Base
 from sqlalchemy import create_engine, pool
+
+from infrastructure.database.models import Base
 
 config = context.config
 target_metadata = Base.metadata

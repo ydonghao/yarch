@@ -18,8 +18,9 @@ def client(pg_url, redis_url):
     os.environ["YARCH_REDIS_URL"] = redis_url
     os.environ["YARCH_SKIP_MIGRATIONS"] = "false"
     # env 就绪后才 import application.app：settings 单例于构造时读 env
-    from application.app import create_app  # noqa: E402
     from yarch_python.persist import alembic_upgrade  # noqa: E402
+
+    from application.app import create_app  # noqa: E402
 
     logx.setup("{{ service }}", "local", sink=io.StringIO())
     alembic_upgrade("infrastructure/database/migrations", pg_url)

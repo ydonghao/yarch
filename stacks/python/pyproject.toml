@@ -29,6 +29,11 @@ target-version = "py312"
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
 
+[tool.ruff.lint.isort]
+# _template 源文件按「生成工程」口径排序（api/application/... 在生成物里是一方包，排第三方块后）；
+# 主仓显式声明同一 first-party 名单，使模板源与生成物两侧 ruff 口径一致
+known-first-party = ["api", "application", "domain", "infrastructure", "errors", "tasks"]
+
 [tool.pytest.ini_options]
 testpaths = ["packages"]
 # _template 下的 tests/ 是渲染源资产（依赖生成工程的包布局），不参与本仓收集

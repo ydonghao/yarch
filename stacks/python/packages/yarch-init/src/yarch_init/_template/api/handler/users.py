@@ -1,7 +1,8 @@
-from api.model.user import CreateUserRequest, UserResponse
 from fastapi import APIRouter, Request
 from yarch_python import web
 from yarch_python.xerror import BizError
+
+from api.model.user import CreateUserRequest, UserResponse
 
 router = APIRouter(prefix="/api/v1")
 

@@ -35,3 +35,8 @@ def test_template_renders_all_required_files(tmp_path):
     pyproject = (tmp_path / "pyproject.toml").read_text()
     assert 'path = "/tmp/yarch-python"' in pyproject
     assert "ysaas-scan" in (tmp_path / ".env.example").read_text()
+    env_example = (tmp_path / ".env.example").read_text()
+    assert "PGHOST/ysaas_scan" in env_example  # 库名下划线形（ensure_database 拒 hyphen）
+    settings_py = (tmp_path / "application/settings.py").read_text()
+    assert "localhost/ysaas_scan" in settings_py
+    assert 'env_file=".env"' in settings_py  # 探活依赖 settings 真读 .env（进程 env 仍优先）
