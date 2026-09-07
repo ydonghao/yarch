@@ -1,7 +1,7 @@
 # stacks/python · yarch-python 脚手架策划案
 
 > **状态：第一批施工完成（2026-09-07），P1-P14 已拍板**（P1-P4 交互拍板，P5-P14 随整案按推荐值通过）。
-> 验收记录（2026-09-07）：**82 tests 全绿**——13 码全表 / 信封逐字节 / ndjson 字段级 / traceId 三级入口回显 / 1001·1002 分型 / 分页 D6 真 PG / 幂等三态真 Redis / 限流 / 逻辑删除·审计 / 锁 token / celeryx 强制默认 / 生成后冒烟 e2e；实施偏差见第九节「实施偏差登记」。
+> 验收记录（2026-09-07）：**99 tests 全绿（终审修复后）**——13 码全表 / 信封逐字节 / ndjson 字段级 / traceId 三级入口回显 / 1001·1002 分型 / 分页 D6 真 PG / 幂等三态真 Redis / 限流 / 逻辑删除·审计 / 锁 token / celeryx 强制默认 / 生成后冒烟 e2e；实施偏差见第九节「实施偏差登记」。
 > 输入：[contract/](../../contract/README.md) 24 份定稿规约（唯一权威，celery.md 为本栈启动触发）· [docs/architecture.md](../../docs/architecture.md)（FastAPI+DDD 既定、全域治理护栏）· [golang PLAN](../golang/PLAN.md) 与 web `@yarch/create-admin` 脚手架范式（三栈同构基准）。
 > 注：本文件 P1-P14 指 python 栈决策编号，与 postgresql.md 的 G1-G10、golang 栈 G1-G9 无关。
 > PyPI 命名核实（2026-09-07）：`yarch` / `yarch-python` / `yarch-init` 均未占用。
