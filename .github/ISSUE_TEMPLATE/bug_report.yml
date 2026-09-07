@@ -1,0 +1,49 @@
+name: 缺陷报告
+description: 报告平台构件或契约的问题
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        安全漏洞请勿使用本模板——走 [SECURITY.md](../SECURITY.md) 的私有报告渠道。
+  - type: dropdown
+    id: stack
+    attributes:
+      label: 所属栈
+      options:
+        - java（stacks/java）
+        - python（stacks/python）
+        - web（stacks/web）
+        - golang（stacks/golang）
+        - contract（契约层）
+        - 文档 / 其他
+    validations:
+      required: true
+  - type: input
+    id: component
+    attributes:
+      label: 构件与版本
+      description: 如 yarch-web-spring-boot-starter 0.1.0 / yarch-python（未发版，commit hash）
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: 实际发生了什么
+      description: 现象描述 + 报错/日志（ndjson 行请整行贴出，含 traceId）
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: 复现步骤
+      description: 最小可复现：生成工程命令 + 触发请求（方法/路径/头/体）
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期望行为（对照契约条文更佳）
+      placeholder: 如 rest-response.md「code!=0 时 data 必为 null」
+    validations:
+      required: true

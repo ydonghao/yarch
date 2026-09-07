@@ -1,0 +1,33 @@
+name: 功能建议
+description: 提出新构件、契约扩展或体验改进
+labels: ["enhancement"]
+body:
+  - type: dropdown
+    id: stack
+    attributes:
+      label: 所属栈
+      options:
+        - java（stacks/java）
+        - python（stacks/python）
+        - web（stacks/web）
+        - golang（stacks/golang）
+        - contract（契约层）
+        - 全栈通用
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: 你遇到的问题/场景
+      description: 先说痛点，再谈方案——符合本仓「规约先行」的工作方式
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: 期望的方案
+      description: 若涉及契约变更，请说明它应该是哪份规约的哪一节；跨栈能力请说明四栈对偶形态
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 考虑过的替代方案
