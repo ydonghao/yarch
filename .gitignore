@@ -25,3 +25,6 @@ dist/
 dependency-reduced-pom.xml
 logs/
 *.log
+.superpowers/
+__pycache__/
+*.pyc
