@@ -31,6 +31,8 @@ select = ["E", "F", "I", "UP", "B"]
 
 [tool.pytest.ini_options]
 testpaths = ["packages"]
+# _template 下的 tests/ 是渲染源资产（依赖生成工程的包布局），不参与本仓收集
+norecursedirs = [".*", "_template"]
 markers = ["integration: needs docker (testcontainers)"]
 
 [tool.mypy]

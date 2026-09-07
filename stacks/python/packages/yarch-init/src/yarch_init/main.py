@@ -43,6 +43,11 @@ def render(src: str, dst: str, variables: dict) -> int:
         if path.is_dir() or path.name in SKIP_FILES:
             continue
         rel = path.relative_to(src)
+        if rel.name.endswith(".jinja"):
+            # 模板源后缀规约：含 jinja 语句块而自身须保持工具可解析的文件
+            # （如 pyproject.toml——TOML 容不得 {% if %}，仓库内 ruff 会解析每个 pyproject.toml）
+            # 源名加 .jinja，渲染产物剥后缀
+            rel = rel.with_name(rel.name[: -len(".jinja")])
         target = Path(dst) / rel
         target.parent.mkdir(parents=True, exist_ok=True)
         rendered = env.from_string(path.read_text(encoding="utf-8")).render(**variables)
@@ -60,7 +65,10 @@ def template_dir(cli_src: str | None) -> str:
 
     if yarch_init.__file__ is None:  # pragma: no cover - 打包后必然有 __file__
         raise RuntimeError("无法定位包目录（yarch_init.__file__ 缺失）")
-    return str(Path(yarch_init.__file__).parent / "_template")
+    p = Path(yarch_init.__file__).parent / "_template"
+    if not p.is_dir():  # T14 移交：默认模板缺失须显式报错，不得静默渲染 0 个文件
+        sys.exit(f"yarch-init: 内置模板目录缺失：{p}")
+    return str(p)
 
 
 def main() -> None:

@@ -1,0 +1,47 @@
+[project]
+name = "{{ service }}"
+version = "0.1.0"
+description = "{{ description }}"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    "yarch-python>=0.1.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "ruff>=0.6",
+    "mypy>=1.11",
+    "import-linter>=2.0",
+    "testcontainers[postgres,redis]>=4.8",
+]
+{% if yarch_path %}
+[tool.uv.sources]
+yarch-python = { path = "{{ yarch_path }}" }
+{% endif %}
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.pytest.ini_options]
+markers = ["integration: needs docker (testcontainers)"]
+
+[tool.importlinter]
+root_packages = ["api", "application", "domain", "infrastructure", "types", "tasks"]
+
+[[tool.importlinter.contracts]]
+name = "Domain purity (no framework, no outer layers)"
+type = "forbidden"
+source_modules = ["domain"]
+forbidden_modules = ["infrastructure", "api", "application", "tasks", "fastapi", "sqlalchemy", "celery", "redis"]
+
+[[tool.importlinter.contracts]]
+name = "API must not touch infrastructure directly"
+type = "forbidden"
+source_modules = ["api"]
+forbidden_modules = ["infrastructure"]

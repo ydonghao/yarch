@@ -1,0 +1,9 @@
+{
+  "description": "yarch-python DDD 模板：FastAPI + SQLAlchemy + celery，双入口（web/worker）",
+  "variables": [
+    { "name": "service", "desc": "服务名（registry 一-1）", "required": true, "default": "" },
+    { "name": "package", "desc": "import 包名（service 派生 snake）", "required": true, "default": "" },
+    { "name": "description", "desc": "工程描述", "required": false, "default": "" },
+    { "name": "yarch_path", "desc": "开发期本机平台源码路径（发版后为空走版本依赖）", "required": false, "default": "" }
+  ]
+}
