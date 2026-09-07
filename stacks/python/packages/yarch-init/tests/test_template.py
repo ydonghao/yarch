@@ -40,3 +40,4 @@ def test_template_renders_all_required_files(tmp_path):
     settings_py = (tmp_path / "application/settings.py").read_text()
     assert "localhost/ysaas_scan" in settings_py
     assert 'env_file=".env"' in settings_py  # 探活依赖 settings 真读 .env（进程 env 仍优先）
+    assert 'extra="ignore"' in settings_py  # .env 混放第三方变量不炸启动（forbid 会炸）

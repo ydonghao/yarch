@@ -1,0 +1,40 @@
+name: python-publish
+
+# PyPI 发版流水线：推 tag stacks/python/vX.Y.Z 即发布 yarch-python + yarch-init 两包。
+# trusted publishing（OIDC）：无任何 token secret，仅凭 workflow 身份换上传凭证；
+# 一个 OIDC 凭证只能发一个 PyPI 项目 → 两包各自一步 build + publish。
+# 注意 uv build --all-packages 把所有 dist 倒进 workspace 根 dist/（实测），
+# 须 --package + --out-dir 分桶，两步 publish 才不会互串/重复上传。
+# 发版日人工前置（一次性，不在 CI 内）：pypi.org 两项目各自添加 trusted publisher 声明
+#   （owner=ydonghao, repo=yarch, workflow=python-publish.yml, environment 留空）：
+#   pypi.org/manage/project/yarch-python/settings/publishing/ 与 …/yarch-init/…。
+
+on:
+  push:
+    tags: ['stacks/python/v*']
+
+jobs:
+  publish:
+    name: PyPI trusted publishing（两包）
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write   # PyPI trusted publishing（OIDC，无 token secret）
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: '3.12'
+      - name: 分桶构建（wheel + sdist 各自 out-dir）
+        run: |
+          cd stacks/python
+          uv build --package yarch-python --out-dir dist/yarch-python
+          uv build --package yarch-init --out-dir dist/yarch-init
+      - name: 发布 yarch-python
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: stacks/python/dist/yarch-python
+      - name: 发布 yarch-init
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: stacks/python/dist/yarch-init

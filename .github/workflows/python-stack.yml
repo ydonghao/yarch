@@ -1,0 +1,87 @@
+name: python-stack
+
+# python 栈 CI：主仓双矩阵全量机检 + yarch-init 生成工程冒烟（= java-stack build/archetype-smoke 的 python 对偶）。
+# 机检口径与主仓 lint 门一致（ruff check / lint-imports / mypy / pytest 全量含 integration）。
+# 不含 ruff format --check：主仓现役代码未做 format 归一（实测 38 files would be reformatted），
+# format 门待全栈统一补做后再开，避免 CI 首日即红。
+
+on:
+  push:
+    branches: [main]
+    paths: ['stacks/python/**', '.github/workflows/python-stack.yml']
+  pull_request:
+    paths: ['stacks/python/**', '.github/workflows/python-stack.yml']
+
+jobs:
+  check:
+    name: Python ${{ matrix.python-version }} · 全量机检
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # requires-python >=3.12：双版本验证兼容面
+        python-version: ['3.12', '3.13']
+    defaults:
+      run:
+        working-directory: stacks/python
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      # uv 0.11.8 语义：裸 uv sync 只装 workspace 根（package=false 即空集），成员包须 --all-packages
+      - run: uv sync --all-packages
+      - run: uv run ruff check .
+      - run: uv run lint-imports
+      - run: uv run mypy
+      - run: uv run pytest -v   # 含 integration（ubuntu-latest 自带 docker，testcontainers 起 PG/Redis）
+
+  generate-smoke:
+    name: yarch-init 生成工程冒烟
+    runs-on: ubuntu-latest
+    needs: check
+    services:
+      # 探活必需：RateLimitMiddleware 对每个请求（含 /healthz）都打 redis 固定窗口键，
+      # runner 无预装 redis——不起则 /healthz 恒 500（已实测）。TC 行为级容器不在此重复起，
+      # 由 check job 的 integration 测试覆盖
+      redis:
+        image: redis:7-alpine
+        ports: ['6379:6379']
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: '3.12'
+      - name: 生成（CWD 须在 stacks/python）
+        run: |
+          cd stacks/python
+          uv sync --all-packages
+          # detect_yarch_path 从 CWD 向上找 packages/yarch-python：CWD 在仓库内 → 命中，
+          # /tmp 生成物拿到绝对 path 依赖（版本依赖 yarch-python>=0.1.0 尚不在 PyPI，detect 不中则 uv sync 必炸）
+          uv run yarch-init --service smoke-svc --out /tmp/smoke-svc --description smoke
+      - name: sync + static + test + probe
+        run: |
+          cd /tmp/smoke-svc
+          cp .env.example .env
+          uv sync
+          uv run ruff check .
+          # lint-imports 须在 uv sync 之后：外部包装进环境，forbidden 契约引 fastapi/redis 等才有牙
+          uv run lint-imports
+          # 生成工程现役测试全为 integration 标记（TC 容器路径由 check job 覆盖）；
+          # deselect 至 0 选中时 pytest 退出码 5，容忍之——收集期 import 断裂等真实失败（1/2/3/4）仍挡
+          uv run pytest -m "not integration" -v || [ $? -eq 5 ]
+          # 探活：runner 无 PG，YARCH_SKIP_MIGRATIONS=true 跳过建库迁移（engine 惰性连接）；
+          # redis 指 job service 容器（.env 占位地址被进程 env 覆盖——进程 env 优先于 .env）
+          export YARCH_SKIP_MIGRATIONS=true
+          export YARCH_REDIS_URL=redis://127.0.0.1:6379/0
+          uv run uvicorn main:app --port 8123 &
+          UVPID=$!
+          sleep 3
+          curl -sf --retry 5 --retry-connrefused --retry-delay 1 \
+            http://127.0.0.1:8123/healthz | grep '"code":0'
+          kill "$UVPID"
