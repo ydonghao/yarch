@@ -11,21 +11,21 @@
 
   <!-- L1 UI 档模板 -->
   <rect x="60" y="90" width="1060" height="180" rx="10" fill="#eef2ff" stroke="#6366f1" stroke-width="1.5"/>
-  <text x="80" y="116" font-size="14" font-weight="700" fill="#3730a3">① UI 档模板（templates/，薄壳——差异只在 UI 库）</text>
+  <text x="80" y="116" font-size="14" font-weight="700" fill="#3730a3">① UI 档模板资产 + 工程生成器（packages/create/ · W6-W9：@yarch/create-admin 交互问答 → archetype 全量渲染）</text>
   <g font-size="12" fill="#0f172a">
     <rect x="80" y="130" width="500" height="60" rx="8" fill="#fff" stroke="#a5b4fc"/>
-    <text x="330" y="154" text-anchor="middle" font-weight="600">templates/admin-antd（默认档 W1）</text>
-    <text x="330" y="174" text-anchor="middle" fill="#64748b" font-size="11">Vite + React + antd · src: app/ layouts/ pages/ features/ components/ ui/ stores/ types/</text>
+    <text x="330" y="154" text-anchor="middle" font-weight="600">create/templates/admin-semi（默认档 W1·2026-09-03 修订）</text>
+    <text x="330" y="174" text-anchor="middle" fill="#64748b" font-size="11">Vite + React + Semi Design · src: app/ layouts/ pages/ features/ components/ ui/ stores/ types/</text>
     <rect x="600" y="130" width="240" height="60" rx="8" fill="#fff" stroke="#a5b4fc" stroke-dasharray="4 3"/>
-    <text x="720" y="154" text-anchor="middle" font-weight="600">templates/admin-semi（第二档）</text>
-    <text x="720" y="174" text-anchor="middle" fill="#64748b" font-size="11">W1 拍板：Semi vs shadcn</text>
+    <text x="720" y="154" text-anchor="middle" font-weight="600">admin-antd · admin-arco（备选档）</text>
+    <text x="720" y="174" text-anchor="middle" fill="#64748b" font-size="11">蚂蚁 antd · 字节 Arco——W1 三档并行</text>
     <rect x="860" y="130" width="240" height="60" rx="8" fill="#fff" stroke="#a5b4fc" stroke-dasharray="4 3"/>
     <text x="980" y="154" text-anchor="middle" font-weight="600">examples/admin-demo</text>
-    <text x="980" y="174" text-anchor="middle" fill="#64748b" font-size="11">模板生成工程 + 契约联调回归场</text>
+    <text x="980" y="174" text-anchor="middle" fill="#64748b" font-size="11">create-admin 生成 + 契约联调回归场（对接 java）</text>
   </g>
   <rect x="80" y="202" width="1020" height="52" rx="8" fill="#e0e7ff" stroke="#a5b4fc"/>
   <text x="590" y="224" text-anchor="middle" font-size="11.5" fill="#3730a3">机检三件（W3）：biome（规范=前端版 spotless）· dependency-cruiser（依赖方向=前端版 ArchUnit：pages→features→components/ui 禁反向）· vitest 契约断言</text>
-  <text x="590" y="242" text-anchor="middle" font-size="11" fill="#4f46e5">扩展名纪律（W5）：有 JSX 用 .tsx，纯逻辑/类型 .ts；Vue 用 .vue SFC（lang="ts"）</text>
+  <text x="590" y="242" text-anchor="middle" font-size="11" fill="#4f46e5">生成后冒烟（W9）：三档 生成 → install → tsc → build 全绿——模板是声明式资产（{{var}} + archetype.json），自身不要求可安装 · 扩展名纪律（W5）：有 JSX 用 .tsx，纯逻辑/类型 .ts</text>
 
   <line x1="590" y1="270" x2="590" y2="308" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
   <text x="604" y="296" font-size="11.5" fill="#475569">依赖（模板 = 底座 + UI 薄壳）</text>

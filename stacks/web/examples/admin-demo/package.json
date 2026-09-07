@@ -13,7 +13,7 @@
     "react-router-dom": "^7",
     "@yarch/contract": "workspace:*",
     "@yarch/react": "workspace:*",
-    "antd": "^5"
+    "@douyinfe/semi-ui": "^2"
   },
   "devDependencies": {
     "@types/react": "^19",
@@ -22,5 +22,5 @@
     "typescript": "^5.6",
     "vite": "^6"
   },
-  "description": "yarch admin-demo：从 admin-antd 模板生成，对接 java examples-ddd 全链路"
+  "description": "yarch admin-demo：从 admin-semi 模板生成，对接 java examples-ddd 全链路"
 }

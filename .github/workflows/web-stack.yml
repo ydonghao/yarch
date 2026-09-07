@@ -33,10 +33,13 @@ jobs:
       - name: 契约断言测试
         run: pnpm --filter @yarch/contract test
       - name: 依赖方向机检
-        run: pnpm exec depcruise packages/contract/src templates/admin-antd/src templates/admin-semi/src templates/admin-arco/src --config depcruise.config.js
-      - name: 三档模板构建
+        run: pnpm exec depcruise packages/contract/src packages/react/src packages/vue/src packages/create/templates/admin-semi/src packages/create/templates/admin-antd/src packages/create/templates/admin-arco/src examples/admin-demo/src --config depcruise.config.js
+      - name: 生成后冒烟（W9：三档 生成 → install → tsc → build）
         run: |
-          for t in admin-antd admin-semi admin-arco; do
-            echo "=== $t ==="
-            cd templates/$t && npx tsc --noEmit && npx vite build && cd ../..
+          SMOKE="$(mktemp -d)"
+          for t in semi antd arco; do
+            echo "=== admin-$t ==="
+            # --deps file：CI 用仓内底座源码，不依赖 registry（发版前/测试未发布变更均成立）
+            node packages/create/bin/create-admin.mjs "smoke-$t" --ui "$t" --yes --deps file --out "$SMOKE/admin-$t"
+            ( cd "$SMOKE/admin-$t" && pnpm install --no-frozen-lockfile && pnpm exec tsc --noEmit && pnpm exec vite build )
           done

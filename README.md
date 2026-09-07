@@ -4,7 +4,7 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![Java](https://img.shields.io/badge/Java-16%20modules%20%E2%9C%85-brightgreen.svg)](stacks/java/)
-[![Web](https://img.shields.io/badge/Web-4%20packages%20%E2%9C%85-brightgreen.svg)](stacks/web/)
+[![Web](https://img.shields.io/badge/Web-5%20packages%20%E2%9C%85-brightgreen.svg)](stacks/web/)
 [![Contract](https://img.shields.io/badge/Contract-24%20specs%20v1.0-gold.svg)](contract/)
 
 跨项目复用的**工程架构平台**——不是又一个 CRUD 框架，而是让多个技术栈说同一种接口语言的契约体系。
@@ -19,48 +19,73 @@
 | 脚手架 fork 改码后升级困难 | 平台构件发版式升级，业务工程只改一行 version |
 | AI 生成代码结构漂移 | 模板管结构、契约管行为，AI 施工不越界 |
 
-## 快速体验
+## 从 0 到 1：一条命令生成工程
+
+三个栈同一套契约，全部**生成即合规**——统一信封 · 13 码错误码 · traceId 贯穿 · 分页（页码 D6 + keyset 游标）· 幂等 · 逻辑删除 · 机检三件预置，业务代码只写业务。
+
+### Java · Maven archetype（零 clone，Central 已发版）
+
+前置：JDK 21+、Docker。
 
 ```bash
-git clone https://github.com/ydonghao/yarch.git
-cd yarch
-```
-
-<details>
-<summary><b>Java —— 生成一个 DDD 工程</b></summary>
-
-```bash
-# 安装平台构件到本地 Maven 仓库
-cd stacks/java && mvn install
-
-# 生成工程（DDD 七包 / 五层贫血 双档可选）
+# ① 生成 DDD 七包工程（换 -DarchetypeArtifactId=yarch-archetype-simple 即阿里五层档）
 mvn archetype:generate -B \
-  -DarchetypeGroupId=io.github.yuandonghao \
+  -DarchetypeGroupId=io.github.ydonghao \
   -DarchetypeArtifactId=yarch-archetype-ddd \
-  -DarchetypeVersion=0.1.0-SNAPSHOT \
+  -DarchetypeVersion=0.1.0 \
   -DgroupId=com.example -DartifactId=my-svc \
   -Dpackage=com.example.mysvc
 
-# 一键跑通
+# ② 起跑
 cd my-svc
-docker compose up -d     # PG17 + Redis7
-mvn spring-boot:run      # Flyway 迁移 + 示例 CRUD
+docker compose up -d      # PG17 + Redis7（生成工程自带）
+mvn spring-boot:run       # Flyway 自动迁移 + 示例 CRUD → http://localhost:8080
 ```
 
-生成即合规：信封 / traceId 贯穿 / 分页 / 逻辑删除 / 幂等 / ArchUnit 分层机检，全部预置。
-</details>
+可选验收：`mvn verify` 跑 ArchUnit 分层机检 + 契约断言 + Testcontainers 全链路。
 
-<details>
-<summary><b>Web —— 三档 UI 模板</b></summary>
+### Web · npm create（零 clone，npm 已发版）
+
+前置：Node 20+、pnpm。
 
 ```bash
-cd stacks/web && pnpm install
+# ① 生成中后台工程（三档 UI 任选：Semi 默认 · 抖音系 / antd · 蚂蚁系 / arco · 字节系）
+npm create @yarch/admin@latest ysaas-console               # Semi 档（默认）
+npm create @yarch/admin@latest ysaas-console -- --ui antd  # 换 antd（arco 同理）
 
-# antd / Semi / Arco 三档，任选一个
-cd templates/admin-antd && npx vite
+# ② 起跑
+cd ysaas-console && pnpm install && pnpm dev   # → http://localhost:5173
 ```
 
-三档共享 `@yarch/contract` 契约包（信封解包 / 错误码 / traceId），只换 UI 薄壳。
+比裸脚手架多给：契约底座预接线（信封解包 / traceId / 401 跳登录）· 工程名强制 registry 标准 · 底座 npm 版本化升级 · feature-first 分层机检。完整说明书：[stacks/web/packages/create/README.md](stacks/web/packages/create/README.md)
+
+### Golang · yarch-init 生成器（clone 本仓一次；发版后零 clone）
+
+前置：Go 1.24+；PG/Redis 可达（共享实例，或本机 Docker）。
+
+```bash
+# ① 生成 Hertz DDD 工程（服务名过 registry 校验：小写短横线、禁裸通用词）
+git clone https://github.com/ydonghao/yarch.git
+cd yarch/stacks/golang
+go run ./cmd/yarch-init -module github.com/you/order-svc -out ~/code/order-svc
+
+# ② 起跑
+cd ~/code/order-svc
+cp .env.example .env && vi .env   # 填 PG/Redis 地址（主路径连共享实例：独立 database 自动建库+迁移，无需本地 compose）
+docker compose up -d              # 没有共享实例时：本机起 PG17 + Redis7，.env 主机改 localhost
+go mod tidy && go run .           # → http://localhost:8080
+```
+
+> 生成工程 go.mod 的 `replace` 行指向你 clone 的本仓（联调期平台构件走本地源码）；正式发版后删除该行、版本改正式 tag。
+
+<details>
+<summary><b>升级：平台发版式，业务工程只改版本号</b></summary>
+
+```bash
+# Java：改 pom 继承的 yarch-parent 版本一行（BOM 仲裁全链版本）
+# Web：pnpm update @yarch/contract @yarch/react
+# Golang：go get github.com/ydonghao/yarch/stacks/golang@vX.Y.Z（发版后）
+```
 </details>
 
 <details>
@@ -76,6 +101,24 @@ cd templates/admin-antd && npx vite
 - 幂等：`Idempotency-Key` 头 + Redis `SET NX PX`
 </details>
 
+<details>
+<summary><b>国内访问加速（换源，三栈三行）</b></summary>
+
+镜像均为官方源的代理缓存（发布只发官方源，镜像自动同步；刚发版的版本可能延迟几分钟）：
+
+```bash
+# npm（web 栈）
+npm config set registry https://registry.npmmirror.com
+
+# Maven（java 栈）——写入 ~/.m2/settings.xml 的 <mirrors>
+# <mirror><id>aliyun</id><mirrorOf>central</mirrorOf>
+#   <url>https://maven.aliyun.com/repository/public</url></mirror>
+
+# Go（golang 栈）
+go env -w GOPROXY=https://goproxy.cn,direct
+```
+</details>
+
 ## 仓库结构
 
 ```
@@ -87,7 +130,7 @@ yarch/
 │
 ├── stacks/            # 栈实现层（发各自生态的包）
 │   ├── java/          #   ✅ 16 模块：parent/BOM + 8 starter + 双 archetype + 双 examples
-│   ├── web/           #   ✅ 4 包 + 3 档模板：contract + react/vue 适配 + antd/Semi/Arco
+│   ├── web/           #   ✅ 5 包：contract + react/vue 适配 + create-admin 生成器（3 档模板资产）
 │   ├── golang/        #   ✅ 3 module：契约内核 + 六构件 + DDD 模板
 │   └── rust/          #   预留
 │
@@ -122,9 +165,10 @@ yarch/
 |---|---|
 | `@yarch/contract` | 信封类型/解包 / 错误码常量表 / ApiError / traceId / fetch 封装 / 导航端口 |
 | `@yarch/react` / `@yarch/vue` | 框架薄适配（注入各 router 导航） |
-| `templates/admin-antd` | 默认档（Vite + React + antd） |
-| `templates/admin-semi` | Semi Design 档（抖音系） |
-| `templates/admin-arco` | Arco Design 档（字节系） |
+| `@yarch/create-admin` | **工程生成器**：交互问答 + archetype 全量渲染 + registry 命名校验（golang `yarch-init` 对偶） |
+| `create/templates/admin-semi` | 默认档资产（Vite + React + Semi Design，抖音系） |
+| `create/templates/admin-antd` | antd 档资产（蚂蚁系） |
+| `create/templates/admin-arco` | Arco Design 档资产（字节系） |
 | `examples/admin-demo` | 全链路对接 Java 后端（验证码/分页/幂等/状态机） |
 
 ### 机检三件（违反即测试失败）
@@ -151,9 +195,9 @@ stacks/golang  → response.Response · errcode.Code  · middleware.Trace()
 
 - **契约层**：24 份 v1.0 定稿（api 四件套 + infra 20 份 + registry）
 - **Java**：16 模块 reactor verify 全绿 · CI（JDK 21/25）
-- **Web**：contract 4/4 · depcruise 0 违规 · tsc+vite build ×3 绿 · CI（Node 20/22）
+- **Web**：contract 4/4 · depcruise 0 违规 · 生成后冒烟三档全绿（生成 → install → tsc → build）· CI（Node 20/22）
 - **Golang**：3 module 全绿
-- **发版**：暂走 git clone + `mvn install`；JitPack / Maven Central / npm 随 0.1.0 稳定后
+- **发版**：Java 13 件 0.1.0 已上 Maven Central（2026-09-03，`archetype:generate` 零 clone 即用；后续推 tag `stacks/java/vX.Y.Z` 走 `java-publish.yml`）；Web 三包 0.1.0 已上 npm（`npm create @yarch/admin@latest` 即用；后续推 tag `stacks/web/vX.Y.Z` 走 CI 发版）；Golang tag 发版路径就绪（`stacks/golang/vX.Y.Z` → module proxy，无需注册任何平台），**tag 待推送**——当前生成器随本仓使用（见上方从 0 到 1）
 
 ## License
 

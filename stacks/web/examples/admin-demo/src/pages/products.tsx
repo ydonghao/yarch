@@ -1,4 +1,4 @@
-import { Table, Button, message, Space, Tag } from "antd";
+import { Button, Space, Table, Tag, Toast } from "@douyinfe/semi-ui";
 import { useCallback, useEffect, useState } from "react";
 import { useProducts } from "../features/products/hooks/use-products";
 import { placeOrder, payOrder, cancelOrder } from "../features/products/api";
@@ -22,6 +22,7 @@ export default function Products() {
         <Space>
           <Button
             size="small"
+            theme="solid"
             loading={ordering}
             disabled={record.stock <= 0}
             onClick={async () => {
@@ -33,14 +34,14 @@ export default function Products() {
                   { productId: record.id, buyerEmail: "demo@yarch.dev", quantity: 1 },
                   idemKey
                 );
-                message.success(`下单成功 #${order.id}（库存 ${record.stock - 1}）`);
+                Toast.success(`下单成功 #${order.id}（库存 ${record.stock - 1}）`);
                 reload();
               } catch (e) {
                 const err = e as ApiError;
                 if (err.code === 3002) {
-                  message.warning(`库存不足 (code=${err.code}, traceId=${err.traceId?.slice(0, 8)}…)`);
+                  Toast.warning(`库存不足 (code=${err.code}, traceId=${err.traceId?.slice(0, 8)}…)`);
                 } else {
-                  message.error(`下单失败: ${err.message} (code=${err.code})`);
+                  Toast.error(`下单失败: ${err.message} (code=${err.code})`);
                 }
               } finally {
                 setOrdering(false);
@@ -68,11 +69,10 @@ export default function Products() {
         rowKey="id"
         loading={loading}
         pagination={{
-          current: page,
+          currentPage: page,
           total: data?.total ?? 0,
           pageSize: data?.pageSize ?? 20,
-          onChange: setPage,
-          showTotal: (t) => `共 ${t} 条`,
+          onPageChange: setPage,
         }}
       />
     </div>
@@ -100,8 +100,8 @@ export function Orders() {
   useEffect(() => { load(); }, [load]);
 
   const statusTag = (status: string) => {
-    const colors: Record<string, string> = { pending: "orange", paid: "green", cancelled: "red" };
-    return <Tag color={colors[status] ?? "default"}>{status}</Tag>;
+    const colors = { pending: "orange", paid: "green", cancelled: "red" } as const;
+    return <Tag color={colors[status as keyof typeof colors] ?? "grey"}>{status}</Tag>;
   };
 
   const columns = [
@@ -117,8 +117,8 @@ export function Orders() {
         <Space>
           {record.status === "pending" && (
             <>
-              <Button size="small" type="primary" onClick={() => doTransition(record.id, "pay")}>支付</Button>
-              <Button size="small" danger onClick={() => doTransition(record.id, "cancel")}>取消</Button>
+              <Button size="small" theme="solid" type="primary" onClick={() => doTransition(record.id, "pay")}>支付</Button>
+              <Button size="small" type="danger" onClick={() => doTransition(record.id, "cancel")}>取消</Button>
             </>
           )}
         </Space>
@@ -130,12 +130,12 @@ export function Orders() {
     try {
       if (action === "pay") await payOrder(id);
       else await cancelOrder(id);
-      message.success(`${action} 成功`);
+      Toast.success(`${action} 成功`);
       load();
     } catch (e) {
       const err = e as ApiError;
-      if (err.code === 3004) message.warning(`非法状态迁移 (code=3004)`);
-      else message.error(`${action} 失败: ${err.message}`);
+      if (err.code === 3004) Toast.warning(`非法状态迁移 (code=3004)`);
+      else Toast.error(`${action} 失败: ${err.message}`);
     }
   }
 
@@ -146,4 +146,3 @@ export function Orders() {
     </div>
   );
 }
-

@@ -1,5 +1,5 @@
-import { Button, Card, Form, Input, message } from "antd";
-import { useState } from "react";
+import { Button, Card, Form, Toast } from "@douyinfe/semi-ui";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authStore } from "../stores/auth";
 import { fetchCaptcha } from "../features/products/api";
@@ -22,14 +22,14 @@ export default function Login() {
   }
 
   // 页面加载时获取验证码
-  useState(() => { refreshCaptcha(); });
+  useEffect(() => { refreshCaptcha(); }, []);
 
-  async function handleSubmit(values: { username: string; captcha: string }) {
+  async function handleSubmit(values: { username?: string; captcha?: string }) {
     setLoading(true);
     try {
       // 演示：真实场景 POST /api/v1/auth/login → 后端验码 → 签发 JWT
       authStore.token = "demo-jwt-" + Date.now();
-      message.success(`欢迎 ${values.username}（验证码 key=${captchaKey.slice(0, 8)}…）`);
+      Toast.success(`欢迎 ${values.username}（验证码 key=${captchaKey.slice(0, 8)}…）`);
       navigate("/");
     } finally {
       setLoading(false);
@@ -39,30 +39,26 @@ export default function Login() {
   return (
     <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", background: "#f0f2f5" }}>
       <Card title="yarch admin-demo 登录" style={{ width: 380 }}>
-        <Form onFinish={handleSubmit} layout="vertical">
-          <Form.Item name="username" label="用户名" rules={[{ required: true, message: "请输入用户名" }]}>
-            <Input placeholder="admin" />
-          </Form.Item>
-          <Form.Item label="密码（演示）">
-            <Input.Password placeholder="任意" />
-          </Form.Item>
-          <Form.Item label="验证码">
-            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-              <Input placeholder="输入图中字符" style={{ flex: 1 }} />
-              {captchaImg ? (
-                <img
-                  src={captchaImg}
-                  alt="captcha"
-                  onClick={refreshCaptcha}
-                  style={{ cursor: "pointer", borderRadius: 4, height: 36 }}
-                  title="点击刷新"
-                />
-              ) : (
-                <Button size="small" onClick={refreshCaptcha}>获取验证码</Button>
-              )}
+        <Form onSubmit={handleSubmit}>
+          <Form.Input field="username" label="用户名" placeholder="admin" rules={[{ required: true, message: "请输入用户名" }]} />
+          <Form.Input field="password" label="密码（演示）" mode="password" placeholder="任意" />
+          <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 12 }}>
+            <div style={{ flex: 1 }}>
+              <Form.Input field="captcha" label="验证码" placeholder="输入图中字符" noLabel />
             </div>
-          </Form.Item>
-          <Button type="primary" htmlType="submit" block loading={loading}>
+            {captchaImg ? (
+              <img
+                src={captchaImg}
+                alt="captcha"
+                onClick={refreshCaptcha}
+                style={{ cursor: "pointer", borderRadius: 4, height: 32, marginTop: 4 }}
+                title="点击刷新"
+              />
+            ) : (
+              <Button size="small" onClick={refreshCaptcha}>获取验证码</Button>
+            )}
+          </div>
+          <Button theme="solid" type="primary" htmlType="submit" block loading={loading}>
             登录
           </Button>
         </Form>

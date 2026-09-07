@@ -1,8 +1,9 @@
 {
-  "name": "yarch-admin-semi",
+  "name": "{{packageName}}",
   "private": true,
   "version": "0.1.0",
   "type": "module",
+  "description": "{{description}}",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build"
@@ -11,8 +12,8 @@
     "react": "^19",
     "react-dom": "^19",
     "react-router-dom": "^7",
-    "@yarch/contract": "workspace:*",
-    "@yarch/react": "workspace:*",
+    "@yarch/contract": "{{yarchContractDep}}",
+    "@yarch/react": "{{yarchReactDep}}",
     "@douyinfe/semi-ui": "^2"
   },
   "devDependencies": {

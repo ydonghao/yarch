@@ -1,4 +1,4 @@
-import { Card, Col, Row, Statistic } from "antd";
+import { Card, Col, Row } from "@douyinfe/semi-ui";
 import { useEffect, useState } from "react";
 import type { PageData } from "@yarch/contract";
 import type { Product } from "../types";
@@ -22,35 +22,22 @@ export default function Dashboard() {
       .catch(() => setBackendUp(false));
   }, []);
 
+  const cell = (title: string, value: string, note: string, fontSize = 20) => (
+    <Card>
+      <p style={{ fontSize: 12, color: "#999", margin: "0 0 4px" }}>{title}</p>
+      <p style={{ fontSize, margin: 0, fontWeight: 600 }}>{value}</p>
+      <p style={{ fontSize: 12, color: "#999", margin: "4px 0 0" }}>{note}</p>
+    </Card>
+  );
+
   return (
     <div>
       <h2>Dashboard</h2>
-      <Row gutter={16}>
-        <Col span={6}>
-          <Card>
-            <Statistic title="后端连通" value={backendUp === null ? "检测中…" : backendUp ? "✅ 正常" : "❌ 不可达"}
-              valueStyle={{ fontSize: 20 }} />
-            <p style={{ fontSize: 12, color: "#999" }}>java examples-ddd :8081</p>
-          </Card>
-        </Col>
-        <Col span={6}>
-          <Card>
-            <Statistic title="商品总数" value={productTotal ?? "—"} valueStyle={{ fontSize: 20 }} />
-            <p style={{ fontSize: 12, color: "#999" }}>契约分页 PageData.total</p>
-          </Card>
-        </Col>
-        <Col span={6}>
-          <Card>
-            <Statistic title="Token 状态" value={authStore.token ? "已登录" : "未登录"} valueStyle={{ fontSize: 20 }} />
-            <p style={{ fontSize: 12, color: "#999" }}>authStore（演示 JWT）</p>
-          </Card>
-        </Col>
-        <Col span={6}>
-          <Card>
-            <Statistic title="契约 SDK" value="@yarch/contract" valueStyle={{ fontSize: 16 }} />
-            <p style={{ fontSize: 12, color: "#999" }}>信封解包 · 错误码 · traceId</p>
-          </Card>
-        </Col>
+      <Row gutter={[16, 16]}>
+        <Col span={6}>{cell("后端连通", backendUp === null ? "检测中…" : backendUp ? "✅ 正常" : "❌ 不可达", "java examples-ddd :8081")}</Col>
+        <Col span={6}>{cell("商品总数", productTotal === null ? "—" : String(productTotal), "契约分页 PageData.total")}</Col>
+        <Col span={6}>{cell("Token 状态", authStore.token ? "已登录" : "未登录", "authStore（演示 JWT）")}</Col>
+        <Col span={6}>{cell("契约 SDK", "@yarch/contract", "信封解包 · 错误码 · traceId", 16)}</Col>
       </Row>
     </div>
   );

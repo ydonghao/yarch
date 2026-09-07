@@ -1,0 +1,12 @@
+{
+  "description": "yarch 中后台工程模板 · 默认档 Semi Design（抖音系）：Vite + React 19 + react-router 7 + @yarch 契约底座",
+  "variables": [
+    { "name": "packageName", "desc": "工程名（= npm 包名 = registry.md 服务名，一-1 校验）", "required": true, "default": "" },
+    { "name": "appName", "desc": "展示名（index.html 标题）", "required": false, "default": "= packageName" },
+    { "name": "description", "desc": "工程描述（package.json）", "required": false, "default": "" },
+    { "name": "port", "desc": "vite dev 端口", "required": false, "default": "5173" },
+    { "name": "proxyTarget", "desc": "/api/v1 反向代理目标", "required": false, "default": "http://localhost:8080" },
+    { "name": "yarchContractDep", "desc": "@yarch/contract 依赖（发版前 file: 本地路径，发版后 ^x.y.z）", "required": false, "default": "" },
+    { "name": "yarchReactDep", "desc": "@yarch/react 依赖（同上）", "required": false, "default": "" }
+  ]
+}

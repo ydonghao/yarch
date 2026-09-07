@@ -1,0 +1,56 @@
+name: web-publish
+
+# npm 发版流水线（W6）：推 tag stacks/web/vX.Y.Z 即发布三包
+# （@yarch/contract → @yarch/react → @yarch/create-admin，底座先于生成器）。
+# = golang 栈「tag stacks/golang/vX.Y.Z → Go module proxy 自动收录」的 npm 对偶。
+# 前置：仓库 Secrets 配置 NPM_TOKEN（npmjs.com 的 Automation token）。
+
+on:
+  push:
+    tags: ['stacks/web/v*']
+
+jobs:
+  publish:
+    name: npm 发版（三包）
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: stacks/web
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org/
+          cache: pnpm
+          cache-dependency-path: stacks/web/pnpm-lock.yaml
+      - name: 安装依赖
+        run: pnpm install --no-frozen-lockfile
+      - name: 发版前验证（契约断言 + 依赖方向机检）
+        run: |
+          pnpm --filter @yarch/contract test
+          pnpm check:deps
+      - name: 发布（已发布同版本则跳过，幂等）
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          set -e
+          publish() {
+            dir="$1"; name="$2"
+            ver="$(DIR="$dir" node -p "require('./packages/' + process.env.DIR + '/package.json').version")"
+            published="$(npm view "$name" version 2>/dev/null || true)"
+            if [ "$published" = "$ver" ]; then
+              echo "跳过 $name@$ver（registry 已有同版本）"
+            else
+              echo "发布 $name@$ver"
+              ( cd "packages/$dir" && npm publish --access public )
+            fi
+          }
+          publish contract @yarch/contract
+          publish react @yarch/react
+          publish create @yarch/create-admin

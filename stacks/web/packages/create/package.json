@@ -1,0 +1,20 @@
+{
+  "name": "@yarch/create-admin",
+  "version": "0.1.0",
+  "description": "yarch web 工程生成器：交互问答 + archetype 全量渲染（maven-archetype/cookiecutter 模式，golang cmd/yarch-init 的 web 对偶）",
+  "type": "module",
+  "bin": {
+    "create-admin": "./bin/create-admin.mjs"
+  },
+  "files": [
+    "bin",
+    "templates",
+    "README.md"
+  ],
+  "publishConfig": { "access": "public" },
+  "repository": { "type": "git", "url": "git+https://github.com/ydonghao/yarch.git", "directory": "stacks/web/packages/create" },
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=20"
+  }
+}

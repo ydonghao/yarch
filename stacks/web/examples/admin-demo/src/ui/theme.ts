@@ -1,3 +1,3 @@
 export const themeConfig = {
-  // antd theme tokens
+  // semi theme tokens
 };
