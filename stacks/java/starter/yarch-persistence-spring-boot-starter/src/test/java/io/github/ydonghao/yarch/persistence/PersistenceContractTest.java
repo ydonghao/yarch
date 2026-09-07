@@ -13,8 +13,8 @@ import io.github.ydonghao.yarch.test.ContractAsserts;
 import io.github.ydonghao.yarch.test.containers.PgTestDb;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.time.Duration;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -70,11 +70,10 @@ class PersistenceContractTest {
         assertEquals(1, changed);
         PersistenceTestApp.TestUserPO reloaded = mapper.selectById(user.getId());
         assertEquals("bobby", reloaded.getName());
-        // PG timestamptz 只存微秒：插入时内存 Instant 的纳秒尾巴在回读后被截断，比较前须对齐精度
-        assertEquals(
-                created.truncatedTo(ChronoUnit.MICROS),
-                reloaded.getCreatedAt(),
-                "未涉及列不得被覆盖");
+        // PG timestamptz 只存微秒且对纳秒尾巴四舍五入：内存 Instant 与回读值最多漂 1µs，
+        // "未涉及列不得被覆盖"以 ±1µs 容差判定（纳秒尾巴 <500 截齐、≥500 进位两种舍入均覆盖）
+        long driftNanos = Math.abs(Duration.between(created, reloaded.getCreatedAt()).toNanos());
+        assertTrue(driftNanos <= 1_000, "未涉及列不得被覆盖，实际漂移 " + driftNanos + "ns");
         assertTrue(reloaded.getUpdatedAt().isAfter(created), "updated_at 应自动推进");
     }
 
