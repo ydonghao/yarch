@@ -1,7 +1,7 @@
 # contract/ · 跨栈统一契约与规约
 
 > 多栈脚手架的灵魂：各栈长得不一样没关系，必须说同一种接口语言。
-> 本目录是四栈（java / golang / rust / web-react）实现的**唯一权威来源**，改契约必须先改这里。
+> 本目录是全部栈实现（java / golang / rust / web / python / node / embedded 固件 / clients 移动端契约适配）的**唯一权威来源**，改契约必须先改这里。
 
 ## 规约治理（等级定义 / 豁免与变更 / 机检路线）
 
@@ -52,6 +52,7 @@
 | milvus | — | minio-s3、kafka（向量生成管道）、pgvector/qdrant（降级路径） |
 | qdrant | — | minio-s3、kafka（向量生成管道）、pgvector（降级路径） |
 | celery | redis/rabbitmq（broker，共享 Redis 必配 global_keyprefix） | api（幂等/traceId）、kafka/rocketmq、xxl-job（分工边界） |
+| web/micro-frontend | — | api 四件套（信封/错误码/traceId 口径）、registry（前端应用名登记）、nginx（静态托管） |
 
 ## 关键架构决策登记表（唯一权威）
 
@@ -66,6 +67,7 @@
 | 网关分工 | Nginx（入口/静态/简单代理）+ Higress（API 网关与治理） | 已生效 |
 | 文档库 | MongoDB 仅文档型刚需经评审引入，默认 PG | 已生效 |
 | API 契约 D1-D6（2026-09-01 拍板：**业界标准优先于阿里手册**） | D1 int32 数字段位+标识符（非阿里 A/B/C 字符串）；D2 单 message 不引入 userTip；D3 kebab-case；D4 ISO-8601 UTC；D5 路径版本 `/v1/`；D6 越界返回空页（200+空 list+真实 total，参数非法仍 1001） | 已生效 |
+| 微前端载器分档 | 应用级集成默认 **micro-app**（Vite 零改造/低侵入）；存量与复杂沙箱档 **qiankun**；**Module Federation** 限同仓模块共享场景；wujie 不入册（维护活跃度不足）。规约条文载器无关（[web/micro-frontend.md](web/micro-frontend.md)）；观察哨：micro-app 持续停更则默认档切 qiankun | 已生效（2026-09-07） |
 
 **租户边界标识**（服务名）登记处：[registry.md](registry.md)。
 
@@ -103,10 +105,29 @@
 | 任务队列 | [Celery](infra/celery.md) | v1.0 已定稿 | Python 分布式任务队列；broker 前缀租户纪律；幂等/超时/重试显式 |
 | 调度 | [XXL-Job](infra/xxl-job.md) | v1.0 已定稿 | Java 系时间驱动调度；幂等三级手段；调度只做时间驱动 |
 
+## 前端规约（web/）
+
+| 规约 | 状态 | 一句话 |
+|---|---|---|
+| [微前端](web/micro-frontend.md) | v1.0 已定稿 | 基座↔子应用彼此之间的契约：应用名一名三用（路由前缀/storage 前缀/事件前缀）/ 职责分界 / 通信三通道 / 登录态与 401 跳转唯一归基座 / 独立·集成双模式 / 独立发版；**条文载器无关**，载器分档见关键架构决策登记表 |
+
+## 领域契约（domains/ · 规划层）
+
+新领域（机器人、AI 等）的唯一进门通道：先立领域契约评审定稿，再于至少两个语言侧实现（单一实现不成领域）。首发规划（2026-09-03 拍板，均未成文，启动前按工作流先出决策清单）：
+
+| 契约 | 状态 | 一句话 |
+|---|---|---|
+| device.md（设备接入） | 规划 · 未成文 | MQTT topic 约定 / 遥测 schema（复用 [api/logging-trace.md](api/logging-trace.md) JSON 口径）/ OTA 包格式；云端栈与 embedded/esp32 固件同表实现 |
+| ai.md（LLM 接入） | 规划 · 未成文 | 流式响应 / token 计费 / prompt 与 RAG 管道约定 |
+
+> 首个合体验证候选项目：microduck（桌面机器人——云端 Go 接入侧 + esp32 固件侧，正好凑齐 device 契约的双方言验证）。
+
 ## 契约版本
 
 - API 契约：**v1.0 已定稿**（2026-09-01 评审通过，D1-D6 按"业界标准优先于阿里手册"拍板）
 - infra 规约：**全部 20 份 v1.0 已定稿**（mysql/postgresql/redis/higress 2026-09-01 先行定稿并完成 higress 官方校准；其余 16 份同日评审通过）
+- 前端规约（web/）：**2026-09-07 新设层**，微前端 v1.0 已定稿（经 MF0-MF7 决策清单拍板）
+- 领域契约（domains/）：**2026-09-03 拍板设立**，device / ai 首发规划中，均未成文
 - 各栈实现的 code/message/字段名与本目录不一致时，**以本目录为准，实现视为 bug**。
 
 ## 评审与变更记录
@@ -122,11 +143,13 @@
 | 2026-09-01 | 新增「规约组合与依赖模型」：项目按需组合无全家桶假设；规约引用分三级（前置依赖硬 / 协作参考软 / 互斥分工），附依赖矩阵 | 已生效 |
 | 2026-09-01 | 新增 qdrant.md（向量升三档，Qdrant 为专用档默认）与 celery.md（Python 任务队列，与 XXL-Job/MQ 分工落定）；infra 共 20 份 | 已评审 |
 | 2026-09-01 | **infra 16 份草案评审通过，全部升 v1.0 定稿**——规约层 24 份全部定稿（api 四件套 + infra 20 份 + registry） | 已定稿 |
+| 2026-09-03 | **全域扩展拍板**：设立 contract/domains/ 领域契约层（device / ai 首发规划）；yarch 定位升"云-边-端全域"；dotnet / php 裁撤不纳入 | 已生效 |
+| 2026-09-07 | **新设 contract/web/ 前端规约层**：微前端规约 v1.0 定稿（条文载器无关；载器分档拍板 micro-app 默认 / qiankun 存量档 / Module Federation 同仓共享档 / wujie 不入册）；registry.md 新增前端应用名登记（首段 = 服务名、一名三用） | 已定稿 |
 | — | 遗留项：低频组件强制级占比复审；机检条文标注启动（下一步：随 stacks 重做启动 `yarch lint`/AI 审查清单） | 待办 |
 
 ## 术语对照（各栈方言）
 
-| 概念 | java | golang | rust | web-react |
+| 概念 | java | golang | rust | web |
 |---|---|---|---|---|
 | 响应体 | `RestResponse<T>` | `response.Response` | `RestResponse<T>` | `RestResponse<T>` |
 | 分页负载 | `PageData<T>` | `response.PageData` | `PageData<T>` | `PageData<T>` |
