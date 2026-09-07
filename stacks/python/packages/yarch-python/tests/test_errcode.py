@@ -31,6 +31,13 @@ def test_1003_reserved_absent():
     assert not hasattr(errcode.Code, "_1003") and 1003 not in [c.value for c in errcode.Code]
 
 
+def test_1003_unregistered_raises_lookup_error():
+    with pytest.raises(LookupError):
+        errcode.message_of(1003)
+    with pytest.raises(LookupError):
+        errcode.http_of(1003)
+
+
 def test_register_business_code():
     errcode.register(3001, "USER_EXISTS", "用户已存在", 409)
     assert errcode.message_of(3001) == "用户已存在"

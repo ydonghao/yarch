@@ -43,6 +43,7 @@ def test_users_crud_and_page(client):
     assert client.get(f"/api/v1/users/{uid}").json()["data"]["username"] == "alice"
     d = client.get("/api/v1/users").json()["data"]
     assert_page_data(d, total=1, page=1, page_size=20)
+    assert "createdAt" in d["list"][0]  # 列表项与 create/get 同款 UserResponse DTO
 
 
 def test_1001_1002_1004(client):

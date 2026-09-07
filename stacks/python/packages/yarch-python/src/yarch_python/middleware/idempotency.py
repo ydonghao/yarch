@@ -100,6 +100,10 @@ class IdempotencyMiddleware:
 
         try:
             await self.app(scope, _replay_receive(body), send_capture)
+        except BaseException:
+            # 执行失败释放 pending：同键重试可再执行（rest-conventions 幂等总则-1）
+            self.store.release(key)
+            raise
         finally:
             chunks = captured.get("chunks")
             if captured.get("status") is not None and chunks is not None:

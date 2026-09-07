@@ -8,6 +8,21 @@ def test_naming():
     assert celeryx.queue_name("ysaas-scan", "embed-scan") == "ysaas-scan.embed-scan"
 
 
+def test_retry_options_and_trace_headers():
+    assert celeryx.retry_options() == {
+        "max_retries": 5,
+        "retry_backoff": True,
+        "retry_backoff_jitter": True,
+    }
+    from yarch_python import logx
+
+    token = logx.bind_trace("0af7651916cd43dd8448eb211c80319c")
+    try:
+        assert celeryx.trace_headers() == {"traceId": "0af7651916cd43dd8448eb211c80319c"}
+    finally:
+        logx.reset_trace(token)
+
+
 def test_make_app_locks_contract_defaults():
     app = celeryx.make_app("ysaas-scan", "redis://localhost:6379/0", hard_time_limit=90)
     assert app.conf.broker_transport_options["global_keyprefix"] == "ysaas-scan:"

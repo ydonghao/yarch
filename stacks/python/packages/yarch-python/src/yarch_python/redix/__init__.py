@@ -69,6 +69,10 @@ class IdempotencyStore:
             ex=IDEMPOTENCY_TTL_S,
         )
 
+    def release(self, key: str) -> None:
+        """执行失败时释放 pending 锁：同键重试可再执行（rest-conventions 幂等总则-1）。"""
+        self.redis.delete(key)
+
     def load(self, key: str) -> tuple[int, str] | None:
         cur = json.loads(self.redis.get(key) or "{}")
         if cur.get("status") != self._DONE:

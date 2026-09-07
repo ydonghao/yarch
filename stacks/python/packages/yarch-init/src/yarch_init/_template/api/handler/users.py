@@ -27,7 +27,17 @@ def list_users(request: Request, page: int = 1, pageSize: int = 20):
     items, total = repo.list_page(page, pageSize)
     # 注意：查询参数名 page 不可与 from web import page 同名混用（会遮蔽函数→运行期 TypeError），
     # 故本文件统一走 web.ok / web.page 模块属性调用
-    return web.page([u.model_dump() for u in items], total, page, pageSize)
+    return web.page(
+        [
+            UserResponse(
+                id=u.id, username=u.username, email=u.email, createdAt=u.created_at
+            ).model_dump()
+            for u in items
+        ],
+        total,
+        page,
+        pageSize,
+    )
 
 
 @router.get("/users/{user_id}")

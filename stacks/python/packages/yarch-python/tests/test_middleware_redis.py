@@ -61,6 +61,24 @@ def test_same_key_diff_body_1007(redis):
     assert r.json()["message"].startswith("幂等冲突：重复提交")
 
 
+def test_handler_failure_releases_pending_then_retries(redis):
+    # 执行失败须释放 pending：同键同参重访是再执行（仍 500），而非 409/1007 回放等待
+    logx.setup("ysaas-scan", "local", sink=io.StringIO())
+    app = FastAPI()
+    setup(app, service="ysaas-scan", env="local", idempotency_store=IdempotencyStore(redis))
+
+    @app.post("/api/v1/orders")
+    def boom(body: Body):
+        raise RuntimeError("boom")
+
+    c = TestClient(app, raise_server_exceptions=False)
+    h = {"Idempotency-Key": "k-3"}
+    r1 = c.post("/api/v1/orders", json={"n": 1}, headers=h)
+    assert r1.status_code == 500 and r1.json()["code"] == 1000
+    r2 = c.post("/api/v1/orders", json={"n": 1}, headers=h)
+    assert r2.status_code == 500 and r2.json()["code"] == 1000
+
+
 def test_no_key_passthrough(redis):
     c = TestClient(make_app(redis))
     r1 = c.post("/api/v1/orders", json={"n": 1})

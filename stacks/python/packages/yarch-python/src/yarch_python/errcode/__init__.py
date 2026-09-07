@@ -1,6 +1,7 @@
 # stacks/python/packages/yarch-python/src/yarch_python/errcode/__init__.py
 """契约内核②：错误码全局段位表（error-codes.md v1.0，13 码全表 + HTTP 映射 + 业务码注册）。"""
 
+import re
 from enum import IntEnum
 
 
@@ -89,6 +90,6 @@ def register(code: int, identifier: str, message: str, http_status: int) -> None
         raise ValueError(f"yarch 只拥有 0/1xxx/2xxx；业务码须在 3000-8999，got {code}")
     if code in _BUSINESS or code in _IDENTIFIERS:
         raise ValueError(f"错误码 {code} 已注册：{identifier_of(code)}")
-    if not identifier.isupper() or not identifier.replace("_", "").isalpha():
+    if not re.fullmatch(r"[A-Z][A-Z0-9_]*", identifier):
         raise ValueError(f"标识符须为 SCREAMING_SNAKE：{identifier}")
     _BUSINESS[code] = (identifier, message, http_status)

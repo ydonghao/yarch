@@ -1,5 +1,6 @@
 # stacks/python/packages/yarch-python/tests/test_testx.py
 import pytest
+from yarch_python import errcode
 from yarch_python.testx import CODE_TABLE, assert_envelope, assert_ndjson, assert_page_data
 
 # 自证 fixtures 的文档化消费口径（业务工程 conftest 同款声明方式）
@@ -8,6 +9,14 @@ pytest_plugins = ("yarch_python.testx.fixtures",)
 
 def test_code_table_has_14_rows():
     assert len(CODE_TABLE) == 14 and CODE_TABLE[0] == (0, "OK", "成功", 200)
+
+
+@pytest.mark.parametrize("code,identifier,message,http", CODE_TABLE)
+def test_code_table_lockstep_with_errcode(code, identifier, message, http):
+    # 互锁：testx 码表与 errcode 段位表任何一侧漂移，本组即红（跨栈 conformance 同表）
+    assert errcode.identifier_of(code) == identifier
+    assert errcode.message_of(code) == message
+    assert errcode.http_of(code) == http
 
 
 def test_assert_envelope_ok():
