@@ -141,7 +141,7 @@ API 四件套 + PG/Redis 逐行对偶 golang PLAN 第四节：
 | P4 | celery 批次 | **进第一批**（交互拍板）：装配件封死 celery.md 强制默认，启动触发一次兑现 |
 | P5 | 工程形态 | **uv workspace 双发行版**（yarch-python + yarch-init，模板随生成器 wheel 携带）——golang 单 module 与 web workspace 的合体对偶 |
 | P6 | 构件切分 | **一规约一 module**：response/errcode/xerror（契约内核组）/ logx / middleware / web / persist / redix / httpx / celeryx / testx |
-| P7 | Web 底座 | **FastAPI + pydantic v2 + pydantic-settings**（.env 三环境 local/debug/release，对齐 golang G4）；OpenAPI 文档由 FastAPI 原生免费获得 |
+| P7 | Web 底座 | **FastAPI + pydantic v2 + pydantic-settings**（.env 单文件 + YARCH_ENV，env 值域 local/dev/staging/prod——logging-trace.md 契约口径；配置位置对齐 golang G4）；OpenAPI 文档由 FastAPI 原生免费获得 |
 | P8 | ORM 与迁移 | **SQLAlchemy 2.x + psycopg3 + Alembic 纯 SQL 版本化**；禁 `Base.metadata.create_all`（对齐 PG 规约六-1、golang G3） |
 | P9 | 日志 | **structlog（stdlib 互操作）ndjson 行协议**，contextvars 承 traceId（对偶 golang slog logx）；uvicorn/access log 经 structlog formatter 合流 |
 | P10 | 依赖形态 | 运行时依赖全量必选（不搞 extras 细分，slim 安装触发式再议）；testcontainers 走 `[test]` extra |
