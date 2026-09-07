@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log/slog"
 	"time"
 
@@ -37,18 +38,26 @@ type IdempotencyStore interface {
 
 // Idempotency 幂等中间件：unsafe 方法可带 Idempotency-Key（客户端 UUID，作用域=单服务单资源类型）。
 // 同键同参回放原响应；同键异参 1007；存储故障 fail-open 放行（幂等是增强，不阻断业务）。
-func Idempotency(store IdempotencyStore, ttl time.Duration, log *slog.Logger) app.HandlerFunc {
+//
+// key 构建遵循 redis.md 二-1 租户边界：{service}:idem:{sha256(rawKey)}——首段服务名隔离共享实例，
+// 客户端可控的原始 key 摘要化后仅余 hex（防注入任意字符/超长 key）。
+func Idempotency(store IdempotencyStore, ttl time.Duration, log *slog.Logger, service string) app.HandlerFunc {
 	l := logx.Sub(log, "middleware.Idempotency")
+	if err := validateService(service); err != nil {
+		// 装配期错误：服务名不合法即拒绝启动，fail-fast
+		panic(err)
+	}
 	return func(ctx context.Context, c *app.RequestContext) {
 		if !isUnsafeMethod(string(c.Method())) {
 			c.Next(ctx)
 			return
 		}
-		key := string(c.GetHeader("Idempotency-Key"))
-		if key == "" {
+		raw := string(c.GetHeader("Idempotency-Key"))
+		if raw == "" {
 			c.Next(ctx)
 			return
 		}
+		key := service + ":idem:" + sha256Hex([]byte(raw))
 		digest := requestDigest(c)
 
 		first, err := store.Reserve(ctx, key, digest, ttl)
@@ -103,6 +112,30 @@ func isUnsafeMethod(m string) bool {
 		return true
 	}
 	return false
+}
+
+// validateService registry.md 一-1 同口径的最小校验（redix.NewKeys 权威实现因 import 方向
+// 禁止 middleware→redix 而不可复用，此处仅守装配期 fail-fast）。
+func validateService(service string) error {
+	if len(service) < 2 || len(service) > 32 {
+		return fmt.Errorf("idempotency: service %q invalid (len 2-32)", service)
+	}
+	if c := service[0]; c < 'a' || c > 'z' {
+		return fmt.Errorf("idempotency: service %q must start with lowercase letter", service)
+	}
+	for i := 0; i < len(service); i++ {
+		b := service[i]
+		if (b >= 'a' && b <= 'z') || (b >= '0' && b <= '9') || b == '-' {
+			continue
+		}
+		return fmt.Errorf("idempotency: service %q contains invalid byte %q", service, b)
+	}
+	return nil
+}
+
+func sha256Hex(b []byte) string {
+	sum := sha256.Sum256(b)
+	return hex.EncodeToString(sum[:])
 }
 
 // requestDigest 请求摘要：方法 + 路径 + 请求体（同键异参判定依据）。

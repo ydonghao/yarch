@@ -12,6 +12,9 @@ import (
 
 // Options Setup 装配选项（零值即默认：CORS 宽松、无限流、无幂等）。
 type Options struct {
+	// Service 服务名（registry.md 一-1：^[a-z][a-z0-9-]{1,31}$）。挂幂等时必填——
+	// 幂等 key 以其为首段做租户隔离（redis.md 二-1）。
+	Service string
 	// CORS 配置；nil = 开发档宽松（AllowAllOrigins）。生产必须显式收紧（nginx/higress 入口终结）。
 	CORS *cors.Config
 	// IdemStore 非 nil 时挂幂等中间件（建议注入 redix.NewIdempotency）。
@@ -44,7 +47,7 @@ func Setup(h *server.Hertz, log *slog.Logger, opts Options) {
 		if ttl <= 0 {
 			ttl = 24 * time.Hour
 		}
-		h.Use(middleware.Idempotency(opts.IdemStore, ttl, log))
+		h.Use(middleware.Idempotency(opts.IdemStore, ttl, log, opts.Service))
 	}
 	if opts.RatePerSecond > 0 {
 		h.Use(middleware.RateLimit(opts.RatePerSecond, opts.RateBurst))

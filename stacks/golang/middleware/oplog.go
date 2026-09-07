@@ -28,7 +28,8 @@ type OperationLogStore interface {
 
 // OperationLog 操作日志中间件：unsafe 方法完成后产出记录——
 // ndjson 打一行（审计轨迹），并异步投递存储 SPI（存储失败不阻断响应，ERROR 记日志）。
-// userId 取自 auth.ClaimsKey（若挂了认证中间件），无则留空。
+// userId 取 c.GetString(userIDKey)（字符串键）：建议传 auth.SubjectKey——RequireAuth 认证
+// 通过后会把 sub 以 string 写入该键；注意 auth.ClaimsKey 存的是 *Claims 结构体，GetString 取不到。
 func OperationLog(store OperationLogStore, log *slog.Logger, userIDKey string) app.HandlerFunc {
 	l := logx.Sub(log, "middleware.OperationLog")
 	return func(ctx context.Context, c *app.RequestContext) {

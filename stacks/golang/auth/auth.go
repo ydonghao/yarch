@@ -82,8 +82,12 @@ func (s *Signer) verifykey() any {
 }
 
 const (
-	// ClaimsKey RequestContext 存储键：认证通过后 c.GetString(auth.ClaimsKey) 取载荷。
+	// ClaimsKey RequestContext 存储键：认证通过后 c.Get(auth.ClaimsKey) 断言为 *Claims 取完整载荷。
 	ClaimsKey = "yarch.claims"
+	// SubjectKey RequestContext 存储键：认证通过后以 string 写入 claims.UserID（sub）。
+	// 供操作日志等只需 userId 的消费方 c.GetString(auth.SubjectKey) 直接读取——
+	// ClaimsKey 存的是 *Claims 结构体，GetString 取不到。
+	SubjectKey = "yarch.subject"
 	// BearerPrefix Authorization 头前缀（契约认证协议：Bearer JWT）。
 	BearerPrefix = "Bearer "
 )
@@ -105,6 +109,7 @@ func RequireAuth(s *Signer) app.HandlerFunc {
 			return
 		}
 		c.Set(ClaimsKey, claims)
+		c.Set(SubjectKey, claims.UserID)
 		c.Next(ctx)
 	}
 }

@@ -36,7 +36,7 @@ func main() {
 
 	// Hertz + 中间件链 + 路由
 	h := server.Default(server.WithHostPorts(getenv("LISTEN_ADDR", ":8080")))
-	web.Setup(h, log, web.Options{IdemStore: app.IdemStore})
+	web.Setup(h, log, web.Options{Service: service, IdemStore: app.IdemStore})
 	router.Register(h, app)
 
 	h.Spin()

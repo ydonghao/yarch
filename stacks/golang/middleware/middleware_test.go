@@ -169,10 +169,10 @@ func (m *memStore) Complete(ctx context.Context, key, digest string, status int,
 	return nil
 }
 
-// 契约断言：同键同参回放原响应；同键异参 1007；GET 不参与。
+// 契约断言：同键同参回放原响应；同键异参 1007；GET 不参与；key 命名空间化（服务名首段+摘要化）。
 func TestIdempotency(t *testing.T) {
 	store := newMemStore()
-	h := newEngine(middleware.Trace(), middleware.Idempotency(store, 24*time.Hour, testLogger()))
+	h := newEngine(middleware.Trace(), middleware.Idempotency(store, 24*time.Hour, testLogger(), "demo-svc"))
 	h.POST("/api/v1/orders", func(ctx context.Context, c *app.RequestContext) {
 		var req struct {
 			Sku string `json:"sku"`
@@ -185,6 +185,15 @@ func TestIdempotency(t *testing.T) {
 	w1 := ut.PerformRequest(h.Engine, "POST", "/api/v1/orders", &ut.Body{Body: strings.NewReader(`{"sku":"a"}`), Len: 12}, hdr)
 	if w1.Code != 201 {
 		t.Fatalf("first = %d", w1.Code)
+	}
+	// key 租户边界：存储键须为 {service}:idem:{摘要}——客户端原始 key 不得直入存储
+	if n := len(store.data); n != 1 {
+		t.Fatalf("store entries = %d", n)
+	}
+	for k := range store.data {
+		if !strings.HasPrefix(k, "demo-svc:idem:") || k == "idem-1" {
+			t.Fatalf("幂等 key 未命名空间化/未摘要化: %q", k)
+		}
 	}
 	w2 := ut.PerformRequest(h.Engine, "POST", "/api/v1/orders", &ut.Body{Body: strings.NewReader(`{"sku":"a"}`), Len: 12}, hdr)
 	if w2.Code != 201 || w2.Body.String() != w1.Body.String() {

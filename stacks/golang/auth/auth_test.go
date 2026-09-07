@@ -82,6 +82,10 @@ func TestMiddleware(t *testing.T) {
 		cl := v.(*auth.Claims)
 		c.String(200, cl.UserID)
 	})
+	// SubjectKey：字符串形态的 sub，供操作日志等 GetString 消费方直接读取
+	admin.GET("/subject", func(ctx context.Context, c *app.RequestContext) {
+		c.String(200, c.GetString(auth.SubjectKey))
+	})
 
 	code := func(t *testing.T, w *ut.ResponseRecorder) int {
 		t.Helper()
@@ -117,5 +121,11 @@ func TestMiddleware(t *testing.T) {
 	w = ut.PerformRequest(h.Engine, "GET", "/api/v1/admin/ping", nil, ut.Header{Key: "Authorization", Value: "Bearer " + tok2})
 	if w.Code != 200 || w.Body.String() != "u-9" {
 		t.Fatalf("ok = %d %s", w.Code, w.Body)
+	}
+
+	// SubjectKey：字符串形态的 sub，操作日志等 GetString 消费方直接可读
+	w = ut.PerformRequest(h.Engine, "GET", "/api/v1/admin/subject", nil, ut.Header{Key: "Authorization", Value: "Bearer " + tok2})
+	if w.Code != 200 || w.Body.String() != "u-9" {
+		t.Fatalf("subject = %d %s", w.Code, w.Body)
 	}
 }
