@@ -48,7 +48,7 @@ mvn spring-boot:run       # Flyway 自动迁移 + 示例 CRUD → http://localho
 
 ### Web · npm create（零 clone，npm 已发版）
 
-前置：Node 20+、pnpm。
+前置：Node 22+、pnpm。
 
 ```bash
 # ① 生成中后台工程（三档 UI 任选：Semi 默认 · 抖音系 / antd · 蚂蚁系 / arco · 字节系）
@@ -227,7 +227,7 @@ stacks/python  → response.Response · errcode.Code  · middleware.TraceMiddlew
 
 - **契约层**：25 份 v1.0 定稿（api 四件套 + web 微前端 + infra 20 份 + registry）
 - **Java**：16 模块 reactor verify 全绿 · CI（JDK 21/25）
-- **Web**：contract 4/4 · depcruise 0 违规 · 生成后冒烟三档全绿（生成 → install → tsc → build）· CI（Node 20/22）
+- **Web**：contract 4/4 · depcruise 0 违规 · 生成后冒烟三档全绿（生成 → install → tsc → build）· CI（Node 22/24）
 - **Golang**：3 module 全绿
 - **Python**：99 tests 全绿 · CI（Python 3.12/3.13，含生成工程冒烟）
 - **发版**：Java 13 件 0.1.0 已上 Maven Central（2026-09-03，`archetype:generate` 零 clone 即用；后续推 tag `stacks/java/vX.Y.Z` 走 `java-publish.yml`）；Web 三包 0.1.0 已上 npm（`npm create @yarch/admin@latest` 即用；后续推 tag `stacks/web/vX.Y.Z` 走 CI 发版）；Golang tag 发版路径就绪（`stacks/golang/vX.Y.Z` → module proxy，无需注册任何平台），**tag 待推送**——当前生成器随本仓使用（见上方从 0 到 1）；Python PyPI trusted publishing 就绪（`stacks/python/vX.Y.Z`），**tag 待推送**——当前从本仓跑生成器（见上方从 0 到 1）

@@ -14,7 +14,7 @@
 |---|---|---|---|
 | Java | `stacks/java/` | JDK 21+（CI 双验 21/25）、Docker | `mvn -f stacks/java/pom.xml verify` |
 | Python | `stacks/python/` | uv、Python 3.12+、Docker | `cd stacks/python && uv sync --all-packages && uv run pytest` |
-| Web | `stacks/web/` | Node 20+、pnpm | `cd stacks/web && pnpm install && pnpm check` |
+| Web | `stacks/web/` | Node 22+、pnpm | `cd stacks/web && pnpm install && pnpm check` |
 | Golang | `stacks/golang/` | Go 1.24+、Docker | `cd stacks/golang && go test ./...` |
 
 > 集成测试（Testcontainers）需要本机 Docker 可用。

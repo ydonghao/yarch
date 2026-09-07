@@ -14,6 +14,7 @@ import io.github.ydonghao.yarch.test.containers.PgTestDb;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -69,7 +70,11 @@ class PersistenceContractTest {
         assertEquals(1, changed);
         PersistenceTestApp.TestUserPO reloaded = mapper.selectById(user.getId());
         assertEquals("bobby", reloaded.getName());
-        assertEquals(created, reloaded.getCreatedAt(), "未涉及列不得被覆盖");
+        // PG timestamptz 只存微秒：插入时内存 Instant 的纳秒尾巴在回读后被截断，比较前须对齐精度
+        assertEquals(
+                created.truncatedTo(ChronoUnit.MICROS),
+                reloaded.getCreatedAt(),
+                "未涉及列不得被覆盖");
         assertTrue(reloaded.getUpdatedAt().isAfter(created), "updated_at 应自动推进");
     }
 
