@@ -3,6 +3,7 @@
 
 broker 前缀/命名/json-only/超时重试显式/beat 单实例/traceId 任务头/失败终点 SPI。
 """
+
 from collections.abc import Callable
 from typing import Any
 
@@ -54,8 +55,14 @@ class TraceTask(Task):
         finally:
             logx.reset_trace(token)
 
-    def on_failure(self, exc: BaseException, task_id: str | None, args: tuple,  # noqa: UP006
-                   kwargs: dict[str, Any], einfo: Any) -> None:
+    def on_failure(
+        self,
+        exc: BaseException,
+        task_id: str | None,
+        args: tuple,  # noqa: UP006
+        kwargs: dict[str, Any],
+        einfo: Any,
+    ) -> None:
         record: dict[str, Any] = {
             "task": self.name,
             "taskId": task_id,
@@ -67,13 +74,21 @@ class TraceTask(Task):
                 sink(record)
             except Exception:  # 投递失败不阻断（对齐 oplog SPI 模式）
                 logx.get_logger("yarch_python.celeryx").warning(
-                    "failure sink error", task=self.name)
+                    "failure sink error", task=self.name
+                )
         super().on_failure(exc, task_id, args, kwargs, einfo)
 
 
-def make_app(service: str, broker_url: str, *, soft_time_limit: float = 60,
-             hard_time_limit: float | None = None, result_backend: str | None = None,
-             result_expires: int = 86400, extra_queues: tuple[str, ...] = ()) -> Celery:
+def make_app(
+    service: str,
+    broker_url: str,
+    *,
+    soft_time_limit: float = 60,
+    hard_time_limit: float | None = None,
+    result_backend: str | None = None,
+    result_expires: int = 86400,
+    extra_queues: tuple[str, ...] = (),
+) -> Celery:
     if soft_time_limit is None or hard_time_limit is None:
         raise ValueError("soft_time_limit / hard_time_limit 必配（celery.md 三-2，禁无限执行）")
     if hard_time_limit <= soft_time_limit:

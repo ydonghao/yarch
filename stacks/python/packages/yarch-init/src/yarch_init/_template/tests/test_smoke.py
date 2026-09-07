@@ -1,4 +1,5 @@
 """冒烟：信封/分页/1001/1002/1004 全链路（TestClient + TC PG/Redis）。"""
+
 import io
 import os
 
@@ -46,8 +47,7 @@ def test_users_crud_and_page(client):
 
 def test_1001_1002_1004(client):
     assert client.post("/api/v1/users", json={"username": "x"}).json()["code"] == 1001
-    r = client.post("/api/v1/users", content=b"{bad",
-                    headers={"content-type": "application/json"})
+    r = client.post("/api/v1/users", content=b"{bad", headers={"content-type": "application/json"})
     assert r.json()["code"] == 1002
     assert client.get("/api/v1/users/00000000-0000-0000-0000-000000000000").json()["code"] == 1004
 

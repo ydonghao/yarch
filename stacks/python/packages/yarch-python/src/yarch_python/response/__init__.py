@@ -1,5 +1,6 @@
 # stacks/python/packages/yarch-python/src/yarch_python/response/__init__.py
 """契约内核①：RestResponse 四字段信封 + PageData/PageQuery（rest-response.md v1.0）。"""
+
 from typing import Any, List  # noqa: UP035 —— List 为下方注释 1) 的刻意保留，勿改内建 list
 
 from pydantic import BaseModel, ConfigDict, Field

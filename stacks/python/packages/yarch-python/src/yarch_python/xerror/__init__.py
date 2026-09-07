@@ -1,5 +1,6 @@
 # stacks/python/packages/yarch-python/src/yarch_python/xerror/__init__.py
 """契约内核③：BizError——message「默认文案：细节」追加规则（error-codes.md 实现规则-1）。"""
+
 from yarch_python import errcode
 
 

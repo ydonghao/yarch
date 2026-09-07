@@ -1,4 +1,5 @@
 """组装根（手写分阶段：basic 配置 → primary 数据/中间件 → complex 路由）。"""
+
 from fastapi import FastAPI
 from yarch_python import logx, persist, redix
 from yarch_python.web import ok, setup

@@ -11,8 +11,12 @@ router = APIRouter(prefix="/api/v1")
 def create_user(body: CreateUserRequest, request: Request):
     repo = request.app.state.user_repo
     user = repo.create(body.username, body.email)
-    return web.ok(UserResponse(id=user.id, username=user.username, email=user.email,
-                               createdAt=user.created_at).model_dump(), status_code=201)
+    return web.ok(
+        UserResponse(
+            id=user.id, username=user.username, email=user.email, createdAt=user.created_at
+        ).model_dump(),
+        status_code=201,
+    )
 
 
 @router.get("/users")
@@ -31,5 +35,8 @@ def get_user(user_id: str, request: Request):
     user = request.app.state.user_repo.get(user_id)
     if user is None:
         raise BizError(1004, detail=f"user {user_id}")
-    return web.ok(UserResponse(id=user.id, username=user.username, email=user.email,
-                               createdAt=user.created_at).model_dump())
+    return web.ok(
+        UserResponse(
+            id=user.id, username=user.username, email=user.email, createdAt=user.created_at
+        ).model_dump()
+    )

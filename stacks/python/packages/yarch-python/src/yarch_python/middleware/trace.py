@@ -1,5 +1,6 @@
 # stacks/python/packages/yarch-python/src/yarch_python/middleware/trace.py
 """traceId 三级入口（traceparent→X-Trace-Id→生成）+ 响应头回显（logging-trace.md 三）。"""
+
 import re
 
 from starlette.types import ASGIApp, Receive, Scope, Send

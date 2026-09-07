@@ -1,5 +1,6 @@
 # stacks/python/packages/yarch-python/src/yarch_python/errcode/__init__.py
 """契约内核②：错误码全局段位表（error-codes.md v1.0，13 码全表 + HTTP 映射 + 业务码注册）。"""
+
 from enum import IntEnum
 
 

@@ -1,4 +1,5 @@
 """repo port（typing.Protocol）：adapter 在 infrastructure。"""
+
 from typing import Protocol
 
 from domain.entity.user import User

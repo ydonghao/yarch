@@ -10,5 +10,6 @@ def test_keys_first_segment_is_service():
 
 def test_keys_rejects_empty_parts():
     import pytest
+
     with pytest.raises(ValueError):
         Keys("ysaas-scan").of("a", "")

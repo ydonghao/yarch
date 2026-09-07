@@ -1,5 +1,6 @@
 # stacks/python/packages/yarch-python/src/yarch_python/web/__init__.py
 """web：FastAPI 一行装配 + 信封回包 + 1001/1002 分型 + 分页绑定（rest-conventions.md v1.0）。"""
+
 from typing import Any
 
 from fastapi import FastAPI, Request
@@ -33,7 +34,12 @@ def ok(data: Any = None, *, status_code: int = 200, message: str = "成功") -> 
 
 
 def page(
-    items: list, total: int, page: int, page_size: int, next_cursor: str | None = None, *,
+    items: list,
+    total: int,
+    page: int,
+    page_size: int,
+    next_cursor: str | None = None,
+    *,
     status_code: int = 200,
 ) -> RawResponse:
     pd = PageData[list](

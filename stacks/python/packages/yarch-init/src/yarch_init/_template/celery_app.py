@@ -2,6 +2,7 @@
 uv run celery -A celery_app worker -Q {{ service }}.default
 uv run celery -A celery_app beat   # 单实例！celeryx.beat_guard 守卫
 """
+
 import redis as redis_lib
 from yarch_python import celeryx
 

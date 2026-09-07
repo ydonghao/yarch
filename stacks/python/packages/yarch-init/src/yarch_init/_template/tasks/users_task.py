@@ -1,4 +1,5 @@
 """celery 示例任务：{{ service }}.users.sync——traceId 继承 + run_once 幂等演示。"""
+
 from celery import current_app
 from yarch_python import celeryx, logx
 

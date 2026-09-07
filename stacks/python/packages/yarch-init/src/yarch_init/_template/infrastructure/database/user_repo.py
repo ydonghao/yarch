@@ -1,4 +1,5 @@
 """repo adapter：实现 domain 的 UserRepository Protocol。"""
+
 from datetime import datetime
 
 from sqlalchemy import select
@@ -33,11 +34,21 @@ class SqlAlchemyUserRepository:
         from infrastructure.database.models import UserRow
 
         with self.session_factory() as s:
-            items, total = page_of(s, select(UserRow).where(not_deleted(UserRow)).order_by(
-                UserRow.created_at.desc(), UserRow.id), page, page_size)
+            items, total = page_of(
+                s,
+                select(UserRow)
+                .where(not_deleted(UserRow))
+                .order_by(UserRow.created_at.desc(), UserRow.id),
+                page,
+                page_size,
+            )
             return [self._to_entity(r) for r in items], total
 
     @staticmethod
     def _to_entity(row) -> User:
-        return User(id=str(row.id), username=row.username, email=row.email,
-                    created_at=row.created_at if isinstance(row.created_at, datetime) else None)
+        return User(
+            id=str(row.id),
+            username=row.username,
+            email=row.email,
+            created_at=row.created_at if isinstance(row.created_at, datetime) else None,
+        )

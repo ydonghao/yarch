@@ -19,9 +19,13 @@ class Body(BaseModel):
 def make_app(redis) -> FastAPI:
     logx.setup("ysaas-scan", "local", sink=io.StringIO())
     app = FastAPI()
-    setup(app, service="ysaas-scan", env="local",
-          idempotency_store=IdempotencyStore(redis),
-          rate_limit=(FixedWindowLimiter(redis), 100, 60))
+    setup(
+        app,
+        service="ysaas-scan",
+        env="local",
+        idempotency_store=IdempotencyStore(redis),
+        rate_limit=(FixedWindowLimiter(redis), 100, 60),
+    )
 
     @app.post("/api/v1/orders")
     def create(body: Body):
@@ -34,6 +38,7 @@ def make_app(redis) -> FastAPI:
 def redis():
     # testcontainers 4.15 community 口径（Task 8 已验证）：get_client() 直取客户端
     from testcontainers.community.redis import RedisContainer
+
     with RedisContainer() as c:
         yield c.get_client()
 
@@ -68,8 +73,7 @@ def test_rate_limit_1006(redis):
     # 重复装配段删去；行为断言不变——两次 200 后第三次 429 且信封 code=1006
     logx.setup("ysaas-scan", "local", sink=io.StringIO())
     app = FastAPI()
-    setup(app, service="ysaas-scan", env="local",
-          rate_limit=(FixedWindowLimiter(redis), 2, 60))
+    setup(app, service="ysaas-scan", env="local", rate_limit=(FixedWindowLimiter(redis), 2, 60))
 
     @app.get("/api/v1/ping")
     def ping():

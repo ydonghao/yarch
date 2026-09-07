@@ -28,6 +28,7 @@ def test_explicit_message_passthrough():
 
 def test_raisable():
     import pytest
+
     with pytest.raises(BizError) as ei:
         raise BizError(1002, detail="bad json")
     assert ei.value.code == 1002

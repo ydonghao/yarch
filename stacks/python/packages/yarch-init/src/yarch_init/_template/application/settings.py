@@ -1,4 +1,5 @@
 """配置：.env 单文件（pydantic-settings）；env 值域 local/dev/staging/prod（logging-trace.md）。"""
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 

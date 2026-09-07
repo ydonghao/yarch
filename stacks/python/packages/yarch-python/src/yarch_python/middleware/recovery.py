@@ -1,5 +1,6 @@
 # stacks/python/packages/yarch-python/src/yarch_python/middleware/recovery.py
 """未捕获异常 → 500 信封 code=1000（message 固定「内部错误」，细节只进日志）。"""
+
 import traceback
 
 from starlette.types import ASGIApp, Receive, Scope, Send
@@ -22,12 +23,16 @@ class RecoveryMiddleware:
             logx.get_logger("yarch_python.middleware.recovery").error(
                 "internal error", stack=traceback.format_exc()
             )
-            body = Response(
-                code=1000,
-                message=errcode.message_of(1000),
-                data=None,
-                trace_id=logx.current_trace(),
-            ).model_dump_json(by_alias=True).encode()
+            body = (
+                Response(
+                    code=1000,
+                    message=errcode.message_of(1000),
+                    data=None,
+                    trace_id=logx.current_trace(),
+                )
+                .model_dump_json(by_alias=True)
+                .encode()
+            )
             await send(
                 {
                     "type": "http.response.start",

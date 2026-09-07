@@ -1,4 +1,5 @@
 """TC fixtures：业务工程 conftest 里 pytest_plugins = ("yarch_python.testx.fixtures",)。"""
+
 from collections.abc import Iterator
 
 import pytest

@@ -9,6 +9,7 @@ pytestmark = pytest.mark.integration
 def redis():
     # fixture 口径与 test_redix_tc 一致：community.redis 的 get_client()（module 级起一次容器）
     from testcontainers.community.redis import RedisContainer
+
     with RedisContainer() as c:
         yield c.get_client()
 

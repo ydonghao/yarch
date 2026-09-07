@@ -11,7 +11,8 @@ from yarch_python.persist import AuditMixin, Base, SoftDeleteMixin
 class UserRow(Base, AuditMixin, SoftDeleteMixin):
     __tablename__ = "users"
 
-    id: Mapped[Any] = mapped_column(UUID(as_uuid=True), primary_key=True,
-                                    server_default=text("gen_random_uuid()"))
+    id: Mapped[Any] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()")
+    )
     username: Mapped[str] = mapped_column(Text, nullable=False, unique=True)
     email: Mapped[str | None] = mapped_column(Text)

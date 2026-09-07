@@ -2,6 +2,7 @@
 模板（_template/，{{ var }} 占位声明式资产，不要求自身可运行）
 + 通用渲染引擎（本程序）+ archetype.json 变量声明。
 工程正确性由「生成后冒烟」保证（CI：生成 → uv sync → ruff → pytest → uvicorn 探活）。"""
+
 import argparse
 import os
 import re
@@ -11,8 +12,21 @@ from pathlib import Path
 from jinja2 import Environment, StrictUndefined
 
 SERVICE_RE = re.compile(r"^[a-z][a-z0-9-]{1,31}$")
-GENERIC_WORDS = {"api", "app", "service", "server", "backend", "web", "admin", "main",
-                 "common", "system", "demo", "user", "gateway"}  # registry.md 一-2 摘录
+GENERIC_WORDS = {
+    "api",
+    "app",
+    "service",
+    "server",
+    "backend",
+    "web",
+    "admin",
+    "main",
+    "common",
+    "system",
+    "demo",
+    "user",
+    "gateway",
+}  # registry.md 一-2 摘录
 SKIP_FILES = {"archetype.json"}
 
 

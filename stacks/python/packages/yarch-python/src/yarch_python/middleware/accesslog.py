@@ -1,5 +1,6 @@
 # stacks/python/packages/yarch-python/src/yarch_python/middleware/accesslog.py
 """访问日志：ndjson request completed（method/path/status/costMs）。"""
+
 import time
 
 from starlette.types import ASGIApp, Receive, Scope, Send

@@ -48,6 +48,7 @@ def test_stack_folded_single_field():
         raise ValueError("inner")
     except ValueError:
         import traceback
+
         logx.get_logger("e").error("internal error", stack=traceback.format_exc())
     d = json.loads(sink.getvalue().strip())
     assert "stack" in d and "\n" not in sink.getvalue().strip()

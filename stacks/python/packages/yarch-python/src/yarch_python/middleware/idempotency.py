@@ -1,5 +1,6 @@
 # stacks/python/packages/yarch-python/src/yarch_python/middleware/idempotency.py
 """幂等中间件（rest-conventions.md 幂等总则-1）：同键同参回放/异参 1007/并发短暂等待。"""
+
 import asyncio
 import hashlib
 from typing import Any
@@ -76,8 +77,13 @@ class IdempotencyMiddleware:
                 await self._send_biz(send, 1007)
                 return
             status_code, body_str = stored
-            await send({"type": "http.response.start", "status": status_code,
-                        "headers": [(b"content-type", b"application/json")]})
+            await send(
+                {
+                    "type": "http.response.start",
+                    "status": status_code,
+                    "headers": [(b"content-type", b"application/json")],
+                }
+            )
             await send({"type": "http.response.body", "body": body_str.encode()})
             return
 
@@ -103,10 +109,18 @@ class IdempotencyMiddleware:
 
     async def _send_biz(self, send: Send, code: int) -> None:
         resp: Response[Any] = Response(
-            code=code, message=f"{errcode.message_of(code)}：Idempotency-Key 冲突",
-            data=None, trace_id=logx.current_trace(),
+            code=code,
+            message=f"{errcode.message_of(code)}：Idempotency-Key 冲突",
+            data=None,
+            trace_id=logx.current_trace(),
         )
-        await send({"type": "http.response.start", "status": errcode.http_of(code),
-                    "headers": [(b"content-type", b"application/json")]})
-        await send({"type": "http.response.body",
-                    "body": resp.model_dump_json(by_alias=True).encode()})
+        await send(
+            {
+                "type": "http.response.start",
+                "status": errcode.http_of(code),
+                "headers": [(b"content-type", b"application/json")],
+            }
+        )
+        await send(
+            {"type": "http.response.body", "body": resp.model_dump_json(by_alias=True).encode()}
+        )

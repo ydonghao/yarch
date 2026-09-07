@@ -1,5 +1,6 @@
 # stacks/python/packages/yarch-python/src/yarch_python/httpx/__init__.py
 """httpx：下游客户端——超时≤30s + traceparent 注入 + 信封解包 + 1008/1009 转译。"""
+
 import secrets
 from typing import Any
 
@@ -12,8 +13,7 @@ MAX_TIMEOUT_S = 30.0
 
 
 class YarchHttpClient:
-    def __init__(self, base_url: str, *, timeout: float = 10.0,
-                 client: httpx.Client | None = None):
+    def __init__(self, base_url: str, *, timeout: float = 10.0, client: httpx.Client | None = None):
         if timeout > MAX_TIMEOUT_S:
             raise ValueError(f"超时强制 ≤ {MAX_TIMEOUT_S}s（logging-trace A7）")
         self._client = client if client is not None else httpx.Client(timeout=timeout)

@@ -1,4 +1,5 @@
 """testx：契约断言（码表/信封形状/ndjson 字段级）——跨栈 conformance 同表，防方言漂移。"""
+
 import json
 import re
 

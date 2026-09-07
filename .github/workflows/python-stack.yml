@@ -1,9 +1,7 @@
 name: python-stack
 
 # python 栈 CI：主仓双矩阵全量机检 + yarch-init 生成工程冒烟（= java-stack build/archetype-smoke 的 python 对偶）。
-# 机检口径与主仓 lint 门一致（ruff check / lint-imports / mypy / pytest 全量含 integration）。
-# 不含 ruff format --check：主仓现役代码未做 format 归一（实测 38 files would be reformatted），
-# format 门待全栈统一补做后再开，避免 CI 首日即红。
+# 机检口径与主仓 lint 门一致（ruff check / ruff format --check / lint-imports / mypy / pytest 全量含 integration）。
 
 on:
   push:
@@ -32,6 +30,7 @@ jobs:
       # uv 0.11.8 语义：裸 uv sync 只装 workspace 根（package=false 即空集），成员包须 --all-packages
       - run: uv sync --all-packages
       - run: uv run ruff check .
+      - run: uv run ruff format --check .
       - run: uv run lint-imports
       - run: uv run mypy
       - run: uv run pytest -v   # 含 integration（ubuntu-latest 自带 docker，testcontainers 起 PG/Redis）

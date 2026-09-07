@@ -1,5 +1,6 @@
 # stacks/python/packages/yarch-python/src/yarch_python/logx/__init__.py
 """logx：structlog ndjson 行协议（logging-trace.md v1.0）+ contextvars traceId 贯穿。"""
+
 import contextvars
 import json
 import secrets

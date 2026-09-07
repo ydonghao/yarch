@@ -18,8 +18,9 @@ def test_assert_envelope_rejects_extra_or_missing_keys():
     with pytest.raises(AssertionError):
         assert_envelope({"code": 0, "message": "x", "data": None}, code=0)
     with pytest.raises(AssertionError):
-        assert_envelope({"code": 0, "message": "x", "data": None, "traceId": "t", "extra": 1},
-                        code=0)
+        assert_envelope(
+            {"code": 0, "message": "x", "data": None, "traceId": "t", "extra": 1}, code=0
+        )
 
 
 def test_assert_envelope_error_data_must_be_null():
@@ -28,16 +29,20 @@ def test_assert_envelope_error_data_must_be_null():
 
 
 def test_assert_page_data():
-    assert_page_data({"list": [], "total": 5, "page": 3, "pageSize": 2}, total=5, page=3,
-                     page_size=2)
+    assert_page_data(
+        {"list": [], "total": 5, "page": 3, "pageSize": 2}, total=5, page=3, page_size=2
+    )
     with pytest.raises(AssertionError):
-        assert_page_data({"list": None, "total": 5, "page": 3, "pageSize": 2}, total=5, page=3,
-                         page_size=2)
+        assert_page_data(
+            {"list": None, "total": 5, "page": 3, "pageSize": 2}, total=5, page=3, page_size=2
+        )
 
 
 def test_assert_ndjson():
-    line = ('{"ts":"2026-09-07T02:45:07.123Z","level":"INFO","service":"s","env":"local",'
-            '"traceId":"t","logger":"l","msg":"request completed"}')
+    line = (
+        '{"ts":"2026-09-07T02:45:07.123Z","level":"INFO","service":"s","env":"local",'
+        '"traceId":"t","logger":"l","msg":"request completed"}'
+    )
     assert_ndjson(line, service="s", msg="request completed")
     with pytest.raises(AssertionError):
         assert_ndjson(line.replace('"INFO"', '"info"'))

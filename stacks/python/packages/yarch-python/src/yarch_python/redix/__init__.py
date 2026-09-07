@@ -1,4 +1,5 @@
 """redix：Redis 规约件（redis.md v1.0）——key 首段=服务名、JSON 值、锁、幂等存储、固定窗口限流。"""
+
 import json
 from typing import Any
 
@@ -62,8 +63,11 @@ class IdempotencyStore:
 
     def store_response(self, key: str, status_code: int, body: str) -> None:
         cur = json.loads(self.redis.get(key) or "{}")
-        self.redis.set(key, self._dump(cur.get("digest", ""), self._DONE, (status_code, body)),
-                       ex=IDEMPOTENCY_TTL_S)
+        self.redis.set(
+            key,
+            self._dump(cur.get("digest", ""), self._DONE, (status_code, body)),
+            ex=IDEMPOTENCY_TTL_S,
+        )
 
     def load(self, key: str) -> tuple[int, str] | None:
         cur = json.loads(self.redis.get(key) or "{}")

@@ -18,16 +18,19 @@ def test_timeout_over_30_rejected():
 
 def test_envelope_success_returns_data():
     def handler(request):
-        return httpx.Response(200, json={"code": 0, "message": "成功", "data": {"x": 1},
-                                         "traceId": "t"})
+        return httpx.Response(
+            200, json={"code": 0, "message": "成功", "data": {"x": 1}, "traceId": "t"}
+        )
 
     assert env(handler).get("/api/v1/things") == {"x": 1}
 
 
 def test_downstream_code_passthrough():
     def handler(request):
-        return httpx.Response(400, json={"code": 3004, "message": "订单状态不允许该操作",
-                                         "data": None, "traceId": "t"})
+        return httpx.Response(
+            400,
+            json={"code": 3004, "message": "订单状态不允许该操作", "data": None, "traceId": "t"},
+        )
 
     with pytest.raises(BizError) as ei:
         env(handler).post("/api/v1/orders", json={"a": 1})
@@ -64,8 +67,9 @@ def test_traceparent_injected_from_contextvar():
 
     def handler(request):
         captured.update(dict(request.headers))
-        return httpx.Response(200, json={"code": 0, "message": "成功", "data": None,
-                                         "traceId": "t"})
+        return httpx.Response(
+            200, json={"code": 0, "message": "成功", "data": None, "traceId": "t"}
+        )
 
     token = logx.bind_trace("0af7651916cd43dd8448eb211c80319c")
     try:
@@ -73,6 +77,8 @@ def test_traceparent_injected_from_contextvar():
     finally:
         logx.reset_trace(token)
     import re
-    assert re.fullmatch(r"00-0af7651916cd43dd8448eb211c80319c-[0-9a-f]{16}-01",
-                        captured["traceparent"])
+
+    assert re.fullmatch(
+        r"00-0af7651916cd43dd8448eb211c80319c-[0-9a-f]{16}-01", captured["traceparent"]
+    )
     assert captured["x-trace-id"] == "0af7651916cd43dd8448eb211c80319c"

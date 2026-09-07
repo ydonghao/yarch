@@ -10,6 +10,7 @@ def redis():
     # testcontainers 4.15：旧 testcontainers.redis 已弃用且无 get_connection_url，
     # 用 community.redis 的 get_client() 直取客户端（module 级起一次容器共享全部用例）
     from testcontainers.community.redis import RedisContainer
+
     with RedisContainer() as c:
         yield c.get_client()
 
@@ -23,6 +24,7 @@ def test_json_value_and_keys_shape(redis):
 
 def test_lock_mutual_exclusion_and_token_release(redis):
     import redis as redis_lib
+
     lk = lock(redis, "ysaas-scan:lock:job1", timeout_s=5)
     assert lk.acquire(blocking=False)
     lk2 = lock(redis, "ysaas-scan:lock:job1", timeout_s=5)
