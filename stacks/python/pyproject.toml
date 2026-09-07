@@ -37,3 +37,23 @@ markers = ["integration: needs docker (testcontainers)"]
 files = ["packages"]
 ignore_missing_imports = true
 check_untyped_defs = true
+
+[tool.importlinter]
+root_packages = ["yarch_python"]
+include_external_packages = true
+
+[[tool.importlinter.contracts]]
+name = "Kernel trio has zero framework dependencies"
+type = "forbidden"
+source_modules = [
+    "yarch_python.response",
+    "yarch_python.errcode",
+]
+forbidden_modules = [
+    "fastapi",
+    "sqlalchemy",
+    "redis",
+    "celery",
+    "httpx",
+    "structlog",
+]
