@@ -41,11 +41,13 @@ public class AuthInterceptor implements HandlerInterceptor {
         } catch (IllegalArgumentException e) {
             throw new BusinessException(GlobalErrorCode.UNAUTHORIZED);
         }
-        AuthContext.set(claims.getSubject());
+        // 角色校验通过才写 ThreadLocal：preHandle 抛出（403）时 Spring 不回调本拦截器
+        // afterCompletion，提前写入会在线程复用后串号到下一请求
         try {
             List<String> roles = claims.getStringListClaim(JwtCodec.CLAIM_ROLES);
             for (String required : requireRoles.value()) {
                 if (roles != null && roles.contains(required)) {
+                    AuthContext.set(claims.getSubject());
                     return true;
                 }
             }

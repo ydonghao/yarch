@@ -73,4 +73,25 @@ class SignatureTest {
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.code").value(2001));
     }
+
+    @Test
+    void replayedNonceIs2001() throws Exception {
+        long ts = System.currentTimeMillis();
+        String nonce = "replay-" + ts;
+        String sign =
+                SignatureInterceptor.hmacSha256(
+                        "secret123",
+                        "POST\n/api/v1/secure-data\n"
+                                + ts
+                                + "\n"
+                                + nonce
+                                + "\n"
+                                + "{\"name\":\"keyboard\"}");
+        // 首次：签名有效放行，nonce 被消费
+        mvc.perform(signed(sign, ts, nonce)).andExpect(status().isOk());
+        // 同一请求原样重放：签名仍有效、时间窗未过，但 nonce 已消费 → 2001
+        mvc.perform(signed(sign, ts, nonce))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.code").value(2001));
+    }
 }

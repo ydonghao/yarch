@@ -3,6 +3,7 @@ package io.github.ydonghao.yarch.redis;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
@@ -22,7 +23,9 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 
 /** Redis 规约行为级验收：JSON 序列化（三-1）、锁互斥与持有者校验（四-7）、幂等存储语义 */
-@SpringBootTest(classes = RedisContractTest.App.class)
+@SpringBootTest(
+        classes = RedisContractTest.App.class,
+        properties = "yarch.redis.json-trusted-packages=io.github.ydonghao")
 class RedisContractTest {
 
     @SpringBootConfiguration
@@ -66,6 +69,23 @@ class RedisContractTest {
                 "value 必须是可读 JSON（redis.md 三-1 禁 JDK 序列化）: " + raw);
         SamplePayload back = (SamplePayload) yarchRedisTemplate.opsForValue().get(key);
         assertEquals(new SamplePayload("alice", 199), back);
+    }
+
+    @Test
+    void poisonedValueTypeIdIsRejected() {
+        // 安全回归：Redis 值被注入白名单外 @class（经典反序列化 gadget 形态）时，
+        // 回读必须失败而非实例化任意类（白名单默认只信 JDK 基础类型 + 显式信任包）
+        String key = RedisKeys.of("yarch-test").parts("sample", "poison", 1);
+        stringRedis
+                .opsForValue()
+                .set(
+                        key,
+                        "{\"@class\":\"javax.naming.InitialContext\",\"prop\":\"x\"}",
+                        Duration.ofSeconds(60));
+        assertThrows(
+                Exception.class,
+                () -> yarchRedisTemplate.opsForValue().get(key),
+                "白名单外 @class 不得被实例化");
     }
 
     @Test

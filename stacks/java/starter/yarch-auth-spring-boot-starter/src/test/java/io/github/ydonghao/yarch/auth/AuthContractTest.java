@@ -32,6 +32,11 @@ class AuthContractTest {
         public RestResponse<String> adminOnly() {
             return RestResponse.ok("welcome:" + AuthContext.currentSubject());
         }
+
+        @GetMapping("/api/v1/whoami")
+        public RestResponse<String> whoami() {
+            return RestResponse.ok("subject:" + AuthContext.currentSubject());
+        }
     }
 
     @Autowired MockMvc mvc;
@@ -63,5 +68,19 @@ class AuthContractTest {
         mvc.perform(get("/api/v1/admin-only").header("Authorization", "Bearer " + admin))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").value("welcome:alice"));
+    }
+
+    @Test
+    void forbiddenMustNotLeakSubjectToNextRequest() throws Exception {
+        // 403 路径 preHandle 抛出，Spring 不回调该拦截器 afterCompletion——
+        // 若 ThreadLocal 在角色校验前写入，同线程下一请求会读到上一请求的 subject（串号）
+        String user = jwtCodec.issue("bob", List.of("user"), Duration.ofMinutes(5));
+        mvc.perform(get("/api/v1/admin-only").header("Authorization", "Bearer " + user))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.code").value(2003));
+        // MockMvc 与测试同线程：紧随其后的请求必须读到空 subject
+        mvc.perform(get("/api/v1/whoami"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").value("subject:null"));
     }
 }

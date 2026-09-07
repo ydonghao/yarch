@@ -26,3 +26,6 @@ mybatis-plus:
 
 yarch:
   env: local
+  redis:
+    # Redis JSON 值反序列化白名单：example 缓存做类型化回读，登记自身包前缀
+    json-trusted-packages: io.github.ydonghao.yarch.examples

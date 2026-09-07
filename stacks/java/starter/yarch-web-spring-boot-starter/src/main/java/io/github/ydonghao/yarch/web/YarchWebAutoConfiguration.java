@@ -9,6 +9,8 @@ import io.github.ydonghao.yarch.web.operlog.OperationLogStore;
 import io.github.ydonghao.yarch.web.ratelimit.InMemoryRateLimiter;
 import io.github.ydonghao.yarch.web.ratelimit.RateLimitInterceptor;
 import io.github.ydonghao.yarch.web.ratelimit.RateLimiter;
+import io.github.ydonghao.yarch.web.security.InMemoryNonceStore;
+import io.github.ydonghao.yarch.web.security.NonceStore;
 import io.github.ydonghao.yarch.web.security.SignatureInterceptor;
 import io.github.ydonghao.yarch.web.security.SignatureProperties;
 import org.springframework.beans.factory.ObjectProvider;
@@ -76,17 +78,27 @@ public class YarchWebAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean
+    public NonceStore nonceStore() {
+        // 进程内降级实现；引入 yarch-redis starter 后自动替换为 Redis 实现（跨实例防重放）
+        return new InMemoryNonceStore();
+    }
+
+    @Bean
     public WebMvcConfigurer yarchInterceptorsConfigurer(
             IdempotencyStore idempotencyStore,
             RateLimiter rateLimiter,
             SignatureProperties signatureProperties,
+            NonceStore nonceStore,
             @Value("${spring.application.name:unknown-service}") String serviceName) {
         return new WebMvcConfigurer() {
             @Override
             public void addInterceptors(InterceptorRegistry registry) {
                 registry.addInterceptor(new IdempotencyInterceptor(idempotencyStore, serviceName));
                 registry.addInterceptor(new RateLimitInterceptor(rateLimiter, serviceName));
-                registry.addInterceptor(new SignatureInterceptor(signatureProperties.apps()));
+                registry.addInterceptor(
+                        new SignatureInterceptor(
+                                signatureProperties.apps(), serviceName, nonceStore));
             }
         };
     }
