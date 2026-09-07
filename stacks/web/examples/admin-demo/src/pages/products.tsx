@@ -1,14 +1,13 @@
 import { Button, Space, Table, Tag, Toast } from "@douyinfe/semi-ui";
-import { useCallback, useEffect, useState } from "react";
 import { useProducts } from "../features/products/hooks/use-products";
-import { placeOrder, payOrder, cancelOrder } from "../features/products/api";
+import { useOrders, usePlaceOrder } from "../features/products/hooks/use-orders";
 import { ApiError } from "@yarch/contract";
 import type { Order } from "../types";
 
 /** 商品列表 + 下单/支付/取消（契约全链路演示：分页/幂等/状态机/错误码） */
 export default function Products() {
   const { data, loading, error, page, setPage, reload } = useProducts();
-  const [ordering, setOrdering] = useState(false);
+  const { ordering, place } = usePlaceOrder();
 
   const columns = [
     { title: "ID", dataIndex: "id", key: "id", width: 60 },
@@ -26,11 +25,10 @@ export default function Products() {
             loading={ordering}
             disabled={record.stock <= 0}
             onClick={async () => {
-              setOrdering(true);
               try {
                 // 幂等键 = UUID：同一次点击重试不会二次扣库存
                 const idemKey = `demo-${Date.now()}-${record.id}`;
-                const order = await placeOrder(
+                const order = await place(
                   { productId: record.id, buyerEmail: "demo@yarch.dev", quantity: 1 },
                   idemKey
                 );
@@ -43,8 +41,6 @@ export default function Products() {
                 } else {
                   Toast.error(`下单失败: ${err.message} (code=${err.code})`);
                 }
-              } finally {
-                setOrdering(false);
               }
             }}
           >
@@ -81,23 +77,7 @@ export default function Products() {
 
 /** 订单管理（状态机演示页） */
 export function Orders() {
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [loading, setLoading] = useState(false);
-
-  const load = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/v1/orders?pageSize=50");
-      const envelope = await res.json();
-      if (envelope.code === 0 && envelope.data?.list) {
-        setOrders(envelope.data.list);
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => { load(); }, [load]);
+  const { orders, loading, reload, pay, cancel } = useOrders();
 
   const statusTag = (status: string) => {
     const colors = { pending: "orange", paid: "green", cancelled: "red" } as const;
@@ -128,10 +108,10 @@ export function Orders() {
 
   async function doTransition(id: number, action: "pay" | "cancel") {
     try {
-      if (action === "pay") await payOrder(id);
-      else await cancelOrder(id);
+      if (action === "pay") await pay(id);
+      else await cancel(id);
       Toast.success(`${action} 成功`);
-      load();
+      reload();
     } catch (e) {
       const err = e as ApiError;
       if (err.code === 3004) Toast.warning(`非法状态迁移 (code=3004)`);

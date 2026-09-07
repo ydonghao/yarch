@@ -1,28 +1,14 @@
 import { Button, Card, Form, Toast } from "@douyinfe/semi-ui";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authStore } from "../stores/auth";
-import { fetchCaptcha } from "../features/products/api";
+import { useCaptcha } from "../features/products/hooks/use-captcha";
 
 /** 登录页：验证码 + JWT 演示（真实认证走 yarch-auth） */
 export default function Login() {
   const navigate = useNavigate();
-  const [captchaImg, setCaptchaImg] = useState<string>("");
-  const [captchaKey, setCaptchaKey] = useState<string>("");
+  const { image: captchaImg, key: captchaKey, refresh: refreshCaptcha } = useCaptcha();
   const [loading, setLoading] = useState(false);
-
-  async function refreshCaptcha() {
-    try {
-      const captcha = await fetchCaptcha();
-      setCaptchaKey(captcha.key);
-      setCaptchaImg(`data:image/png;base64,${captcha.imageBase64}`);
-    } catch {
-      // 验证码不可用时不阻断登录演示
-    }
-  }
-
-  // 页面加载时获取验证码
-  useEffect(() => { refreshCaptcha(); }, []);
 
   async function handleSubmit(values: { username?: string; captcha?: string }) {
     setLoading(true);

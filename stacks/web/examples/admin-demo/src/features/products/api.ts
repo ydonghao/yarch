@@ -46,6 +46,10 @@ export function payOrder(orderId: number): Promise<Order> {
   return api.post<Order>(`/orders/${orderId}/pay`, {});
 }
 
+export function fetchOrders(pageSize = 50): Promise<Order[]> {
+  return api.get<PageData<Order>>(`/orders?pageSize=${pageSize}`).then((pd) => pd.list);
+}
+
 export function cancelOrder(orderId: number): Promise<Order> {
   return api.post<Order>(`/orders/${orderId}/cancel`, {});
 }
