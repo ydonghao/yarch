@@ -13,7 +13,7 @@
     <requiredProperty key="package"/>
     <!-- 服务名=artifactId：yarch web/redis 组件按 registry.md 一-1 校验 -->
     <requiredProperty key="yarchVersion">
-      <defaultValue>0.1.0-SNAPSHOT</defaultValue>
+      <defaultValue>0.1.0</defaultValue>
     </requiredProperty>
   </requiredProperties>
 

@@ -5,12 +5,17 @@
   <modelVersion>4.0.0</modelVersion>
 
   <!-- yarch-java reactor 聚合根：非发布件，仅负责一键构建全部模块 -->
-  <groupId>io.github.yuandonghao</groupId>
+  <groupId>io.github.ydonghao</groupId>
   <artifactId>yarch-java</artifactId>
-  <version>0.1.0-SNAPSHOT</version>
+  <version>0.1.0</version>
   <packaging>pom</packaging>
   <name>yarch-java (reactor)</name>
   <description>yarch Java 栈：目录分组与 Spring Boot 4 同构（platform/core/starter/archetype），契约唯一权威来源见 yarch 仓 contract/</description>
+
+  <properties>
+    <!-- 聚合根非发布件：跳过 deploy，发布链路在各 yarch-parent 子模块 -->
+    <maven.deploy.skip>true</maven.deploy.skip>
+  </properties>
 
   <modules>
     <module>platform/yarch-parent</module>

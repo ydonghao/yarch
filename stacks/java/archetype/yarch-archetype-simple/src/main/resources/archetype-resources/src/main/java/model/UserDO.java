@@ -1,7 +1,7 @@
 package ${package}.model;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.github.yuandonghao.yarch.persistence.entity.BaseEntity;
+import io.github.ydonghao.yarch.persistence.entity.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -4,10 +4,10 @@ import ${package}.application.command.CreateUserCommand;
 import ${package}.domain.model.User;
 import ${package}.domain.repository.UserRepository;
 import ${package}.domain.service.UserDomainService;
-import io.github.yuandonghao.yarch.common.code.BusinessException;
-import io.github.yuandonghao.yarch.common.code.GlobalErrorCode;
-import io.github.yuandonghao.yarch.common.web.PageData;
-import io.github.yuandonghao.yarch.web.PageQuery;
+import io.github.ydonghao.yarch.common.code.BusinessException;
+import io.github.ydonghao.yarch.common.code.GlobalErrorCode;
+import io.github.ydonghao.yarch.common.web.PageData;
+import io.github.ydonghao.yarch.web.PageQuery;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

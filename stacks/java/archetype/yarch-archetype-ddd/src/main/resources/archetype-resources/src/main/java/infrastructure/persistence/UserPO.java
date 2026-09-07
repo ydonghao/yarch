@@ -2,7 +2,7 @@ package ${package}.infrastructure.persistence;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import ${package}.domain.model.User;
-import io.github.yuandonghao.yarch.persistence.entity.BaseEntity;
+import io.github.ydonghao.yarch.persistence.entity.BaseEntity;
 
 /** 持久化对象：MP 注解只出现在 infrastructure（domain 保持零框架依赖）；逻辑删除/审计列继承 BaseEntity */
 @TableName("users")

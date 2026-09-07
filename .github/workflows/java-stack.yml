@@ -42,18 +42,18 @@ jobs:
       - name: 生成 ddd 工程并全链路验收
         run: |
           mvn -B archetype:generate \
-            -DarchetypeGroupId=io.github.yuandonghao \
+            -DarchetypeGroupId=io.github.ydonghao \
             -DarchetypeArtifactId=yarch-archetype-ddd \
-            -DarchetypeVersion=0.1.0-SNAPSHOT \
-            -DgroupId=io.github.yuandonghao.ci -DartifactId=ci-ddd-svc \
-            -Dpackage=io.github.yuandonghao.ciddd -Dversion=0.1.0-SNAPSHOT
+            -DarchetypeVersion=0.1.0 \
+            -DgroupId=io.github.ydonghao.ci -DartifactId=ci-ddd-svc \
+            -Dpackage=io.github.ydonghao.ciddd -Dversion=0.1.0-SNAPSHOT
           mvn -B -f ci-ddd-svc/pom.xml verify
       - name: 生成 simple 工程并全链路验收
         run: |
           mvn -B archetype:generate \
-            -DarchetypeGroupId=io.github.yuandonghao \
+            -DarchetypeGroupId=io.github.ydonghao \
             -DarchetypeArtifactId=yarch-archetype-simple \
-            -DarchetypeVersion=0.1.0-SNAPSHOT \
-            -DgroupId=io.github.yuandonghao.ci -DartifactId=ci-simple-svc \
-            -Dpackage=io.github.yuandonghao.cisimple -Dversion=0.1.0-SNAPSHOT
+            -DarchetypeVersion=0.1.0 \
+            -DgroupId=io.github.ydonghao.ci -DartifactId=ci-simple-svc \
+            -Dpackage=io.github.ydonghao.cisimple -Dversion=0.1.0-SNAPSHOT
           mvn -B -f ci-simple-svc/pom.xml verify

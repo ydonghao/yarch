@@ -5,19 +5,42 @@
   <modelVersion>4.0.0</modelVersion>
 
   <!-- yarch-parent：插件链与编译基线。工具链 JDK 25、字节码 release 21（采用面最大化，J3b）。 -->
-  <groupId>io.github.yuandonghao</groupId>
+  <groupId>io.github.ydonghao</groupId>
   <artifactId>yarch-parent</artifactId>
-  <version>0.1.0-SNAPSHOT</version>
+  <version>0.1.0</version>
   <packaging>pom</packaging>
   <name>yarch-parent</name>
   <description>yarch 构建基线：编码/编译 release 21/测试/覆盖率/发布（central-portal + GPG，release profile）</description>
 
+  <!-- Central 校验必填元数据（子模块经继承获得） -->
+  <url>https://github.com/ydonghao/yarch</url>
+  <licenses>
+    <license>
+      <name>Apache-2.0</name>
+      <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <id>ydonghao</id>
+      <name>yuandonghao</name>
+      <url>https://github.com/ydonghao</url>
+    </developer>
+  </developers>
+  <scm>
+    <url>https://github.com/ydonghao/yarch</url>
+    <connection>scm:git:https://github.com/ydonghao/yarch.git</connection>
+    <developerConnection>scm:git:git@github.com:ydonghao/yarch.git</developerConnection>
+  </scm>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>io.github.yuandonghao</groupId>
+        <groupId>io.github.ydonghao</groupId>
         <artifactId>yarch-bom</artifactId>
-        <version>${project.version}</version>
+        <!-- 不能用 ${project.version}：本 pom 被业务工程继承时它会按业务工程自身版本插值（Spring 官方 parent 对 bom 同样锚定字面版本） -->
+        <version>${yarch.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -25,6 +48,8 @@
   </dependencyManagement>
 
   <properties>
+    <!-- 平台版本锚点：与 yarch-bom 同步发布，业务工程可覆盖此属性整体换平台版本 -->
+    <yarch.version>0.1.0</yarch.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <maven.compiler.release>21</maven.compiler.release>
@@ -98,7 +123,7 @@
         <plugin>
           <groupId>org.sonatype.central</groupId>
           <artifactId>central-publishing-maven-plugin</artifactId>
-          <version>0.6.0</version>
+          <version>0.11.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -172,13 +197,21 @@
         <plugins>
           <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-source-plugin</artifactId><executions><execution><id>attach-sources</id><goals><goal>jar-no-fork</goal></goals></execution></executions></plugin>
           <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-javadoc-plugin</artifactId><executions><execution><id>attach-javadocs</id><goals><goal>jar</goal></goals></execution></executions></plugin>
-          <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-gpg-plugin</artifactId><executions><execution><id>sign-artifacts</id><phase>verify</phase><goals><goal>sign</goal></goals></execution></executions></plugin>
+          <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-gpg-plugin</artifactId><configuration><gpgArguments><arg>--pinentry-mode</arg><arg>loopback</arg></gpgArguments></configuration><executions><execution><id>sign-artifacts</id><phase>verify</phase><goals><goal>sign</goal></goals></execution></executions></plugin>
           <plugin>
             <groupId>org.sonatype.central</groupId>
             <artifactId>central-publishing-maven-plugin</artifactId>
             <extensions>true</extensions>
             <configuration>
               <publishingServerId>central</publishingServerId>
+              <!-- tag 触发的 CI 发版语义：上传即自动发布，等待到 published 再退出 -->
+              <autoPublish>true</autoPublish>
+              <waitUntil>published</waitUntil>
+              <!-- 活案例与 reactor 聚合根不发布 -->
+              <excludeArtifacts>
+                <artifactId>yarch-examples-ddd</artifactId>
+                <artifactId>yarch-examples-simple</artifactId>
+              </excludeArtifacts>
             </configuration>
           </plugin>
         </plugins>

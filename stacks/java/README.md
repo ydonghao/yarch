@@ -1,6 +1,6 @@
 # stacks/java · yarch-java
 
-> yarch Java 栈平台构件（0.1.0-SNAPSHOT，开发期本地仓库；稳定后经 central-portal 发 Maven Central）。
+> yarch Java 栈平台构件（**0.1.0**，release 坐标 `io.github.ydonghao`）。发布通道 Maven Central：[`java-publish.yml`](../../.github/workflows/java-publish.yml)，推 tag `stacks/java/vX.Y.Z` 即发（见[发版节](#发版maven-central)）。
 > 契约唯一权威来源：[../contract/](../contract/README.md)——实现与契约不一致即 bug。
 > 策划与拍板记录：[PLAN.md](PLAN.md)（J1-J8 全部已拍板）。
 
@@ -44,13 +44,13 @@ stacks/java/
 ## 快速开始
 
 ```bash
-# 1. 构建安装平台构件（本仓 stacks/java）
+# 1. 构建安装平台构件（本仓 stacks/java；Central 发版生效后此步可省，直接从第 2 步开始）
 export JAVA_HOME=<jdk25>
 mvn -f stacks/java/pom.xml install
 
 # 2. 生成业务工程（二选一，服务名须过 registry.md 一-1 校验）
 mvn archetype:generate -B \
-  -DarchetypeGroupId=io.github.yuandonghao -DarchetypeVersion=0.1.0-SNAPSHOT \
+  -DarchetypeGroupId=io.github.ydonghao -DarchetypeVersion=0.1.0 \
   -DarchetypeArtifactId=yarch-archetype-ddd \
   -DgroupId=com.example -DartifactId=my-svc -Dpackage=com.example.mysvc
 
@@ -59,6 +59,20 @@ cd my-svc && docker compose up -d && mvn spring-boot:run
 ```
 
 生成工程 `mvn verify` 自带三层验收：ArchUnit 分层机检、契约断言、Testcontainers 全链路（信封 / traceId 贯穿 / 分页 D6 / 逻辑删除 / 幂等 / 业务码 3xxx）。
+
+## 发版（Maven Central）
+
+> **已发版**：`io.github.ydonghao` 13 件 0.1.0 已上 Maven Central（2026-09-03，[repo1 目录](https://repo1.maven.org/maven2/io/github/ydonghao/)）；`archetype:generate` 已可零 clone 直接使用，下方"快速开始"第 1 步可省。国内经阿里云 Maven 镜像拉取（新版本镜像同步有分钟级延迟，急用直连 repo1）。
+
+推 tag `stacks/java/vX.Y.Z` → [`java-publish.yml`](../../.github/workflows/java-publish.yml) 自动执行全量 verify + GPG 签名 + central-portal 上传发布（13 件：parent / bom / common / 8 starter / 双 archetype；examples 与 reactor 聚合根不发布）。国内拉取经阿里云 Maven 镜像自动同步，无需额外动作。
+
+首次发版前的一次性前置（约 10 分钟）：
+
+1. **注册**：[central.sonatype.com](https://central.sonatype.com) 注册（支持 GitHub 账号直接登录）。
+2. **验证命名空间**：在 GitHub 账号 `ydonghao` 下创建公开空仓库，名字精确为 `io.github.ydonghao`；回到 Portal → Namespaces → Add namespace `io.github.ydonghao`，验证通过后该仓库可删。
+3. **GPG 签名钥**：`gpg --gen-key` 生成；`gpg --keyserver keyserver.ubuntu.com --send-keys <KEYID>` 上传公钥；`gpg --armor --export-secret-keys <KEYID>` 导出私钥备用。
+4. **仓库 Secrets**：`CENTRAL_USERNAME` / `CENTRAL_TOKEN`（Portal → Account → Generate User Token）、`GPG_PRIVATE_KEY`（上一步导出内容）、`GPG_PASSPHRASE`。
+5. 发版：`git tag stacks/java/v0.1.0 && git push origin stacks/java/v0.1.0`。
 
 ## 模板选择决策表（J1-D）
 

@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import com.jayway.jsonpath.JsonPath;
-import io.github.yuandonghao.yarch.test.containers.PgTestDb;
-import io.github.yuandonghao.yarch.test.containers.RedisTestDb;
+import io.github.ydonghao.yarch.test.containers.PgTestDb;
+import io.github.ydonghao.yarch.test.containers.RedisTestDb;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;

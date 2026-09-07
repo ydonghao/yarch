@@ -12,7 +12,7 @@
     </requiredProperty>
     <requiredProperty key="package"/>
     <requiredProperty key="yarchVersion">
-      <defaultValue>0.1.0-SNAPSHOT</defaultValue>
+      <defaultValue>0.1.0</defaultValue>
     </requiredProperty>
   </requiredProperties>
 

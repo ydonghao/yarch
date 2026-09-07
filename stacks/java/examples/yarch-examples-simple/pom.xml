@@ -5,9 +5,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>io.github.yuandonghao</groupId>
+    <groupId>io.github.ydonghao</groupId>
     <artifactId>yarch-parent</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.1.0</version>
     <relativePath>../../platform/yarch-parent</relativePath>
   </parent>
 
@@ -15,21 +15,26 @@
   <name>yarch-examples-simple</name>
   <description>yarch 阿里五层活案例（商品+订单，简单贫血档）：manager 层承担库存锁+扣减的通用下沉——平台特性的端到端回归场</description>
 
+  <properties>
+    <!-- 活案例不发布（parent 的 central excludeArtifacts 同步排除） -->
+    <maven.deploy.skip>true</maven.deploy.skip>
+  </properties>
+
   <dependencies>
     <dependency>
-      <groupId>io.github.yuandonghao</groupId>
+      <groupId>io.github.ydonghao</groupId>
       <artifactId>yarch-web-spring-boot-starter</artifactId>
     </dependency>
     <dependency>
-      <groupId>io.github.yuandonghao</groupId>
+      <groupId>io.github.ydonghao</groupId>
       <artifactId>yarch-logging-spring-boot-starter</artifactId>
     </dependency>
     <dependency>
-      <groupId>io.github.yuandonghao</groupId>
+      <groupId>io.github.ydonghao</groupId>
       <artifactId>yarch-persistence-spring-boot-starter</artifactId>
     </dependency>
     <dependency>
-      <groupId>io.github.yuandonghao</groupId>
+      <groupId>io.github.ydonghao</groupId>
       <artifactId>yarch-redis-spring-boot-starter</artifactId>
     </dependency>
     <dependency>
@@ -43,7 +48,7 @@
     </dependency>
 
     <dependency>
-      <groupId>io.github.yuandonghao</groupId>
+      <groupId>io.github.ydonghao</groupId>
       <artifactId>yarch-test-spring-boot-starter</artifactId>
       <scope>test</scope>
     </dependency>

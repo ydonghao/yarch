@@ -1,6 +1,6 @@
 package ${package}.types.errno;
 
-import io.github.yuandonghao.yarch.common.code.ErrorCode;
+import io.github.ydonghao.yarch.common.code.ErrorCode;
 
 /** 业务错误码（3xxx-8xxx 段，业务仓自治）。登记：本仓 docs/errno.md（未登记即用 CI 视为违规）。 */
 public enum UserErrorCode implements ErrorCode {

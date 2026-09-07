@@ -1,7 +1,0 @@
-package io.github.yuandonghao.yarch.examples.ddd.infrastructure.persistence;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.Mapper;
-
-@Mapper
-public interface OrderMapper extends BaseMapper<OrderPO> {}

@@ -1,0 +1,54 @@
+name: java-publish
+
+# Maven Central 发版流水线：推 tag stacks/java/vX.Y.Z 即发布平台构件
+# （parent/bom/common/8 starter/双 archetype 共 13 件；examples 与 reactor 聚合根不发布）。
+# = web 栈「tag stacks/web/vX.Y.Z → npm」的 Maven 对偶；golang 对偶是 module proxy 自动收录。
+# 前置（一次性，见 stacks/java/README.md 发版节）：
+#   1. central.sonatype.com 注册，验证命名空间 io.github.ydonghao
+#      （GitHub 账号 ydonghao 下建同名公开仓库 io.github.ydonghao）
+#   2. GPG 签名钥公钥已上传 keyserver.ubuntu.com
+#   3. Secrets：CENTRAL_USERNAME / CENTRAL_TOKEN（Portal → Account → Generate User Token）
+#      GPG_PRIVATE_KEY（gpg --armor --export-secret-keys <KEYID> 输出）、GPG_PASSPHRASE
+
+on:
+  push:
+    tags: ['stacks/java/v*']
+
+jobs:
+  publish:
+    name: Maven Central 发版（13 件）
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+      - name: 导入 GPG 签名钥
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        run: echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+      - name: 生成 settings.xml（central server 凭证）
+        env:
+          CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
+          CENTRAL_TOKEN: ${{ secrets.CENTRAL_TOKEN }}
+        run: |
+          mkdir -p ~/.m2
+          cat > ~/.m2/settings.xml <<EOF
+          <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0">
+            <servers>
+              <server>
+                <id>central</id>
+                <username>${CENTRAL_USERNAME}</username>
+                <password>${CENTRAL_TOKEN}</password>
+              </server>
+            </servers>
+          </settings>
+          EOF
+      - name: 发版（verify 全绿 + 签名 + central-portal 上传并发布）
+        env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: mvn -B -f stacks/java/pom.xml deploy -P release -Dgpg.passphrase="$GPG_PASSPHRASE"

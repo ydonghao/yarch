@@ -8,7 +8,7 @@
 
   <!-- 继承 yarch 构建基线（编译 release 21 / 插件链 / 版本仲裁经 yarch-bom），业务工程零版本号 -->
   <parent>
-    <groupId>io.github.yuandonghao</groupId>
+    <groupId>io.github.ydonghao</groupId>
     <artifactId>yarch-parent</artifactId>
     <version>${yarchVersion}</version>
   </parent>
@@ -22,19 +22,19 @@
 
   <dependencies>
     <dependency>
-      <groupId>io.github.yuandonghao</groupId>
+      <groupId>io.github.ydonghao</groupId>
       <artifactId>yarch-web-spring-boot-starter</artifactId>
     </dependency>
     <dependency>
-      <groupId>io.github.yuandonghao</groupId>
+      <groupId>io.github.ydonghao</groupId>
       <artifactId>yarch-logging-spring-boot-starter</artifactId>
     </dependency>
     <dependency>
-      <groupId>io.github.yuandonghao</groupId>
+      <groupId>io.github.ydonghao</groupId>
       <artifactId>yarch-persistence-spring-boot-starter</artifactId>
     </dependency>
     <dependency>
-      <groupId>io.github.yuandonghao</groupId>
+      <groupId>io.github.ydonghao</groupId>
       <artifactId>yarch-redis-spring-boot-starter</artifactId>
     </dependency>
     <dependency>
@@ -52,7 +52,7 @@
     </dependency>
 
     <dependency>
-      <groupId>io.github.yuandonghao</groupId>
+      <groupId>io.github.ydonghao</groupId>
       <artifactId>yarch-test-spring-boot-starter</artifactId>
       <scope>test</scope>
     </dependency>

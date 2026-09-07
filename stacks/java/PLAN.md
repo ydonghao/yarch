@@ -9,7 +9,7 @@
 ## 一、定位与既定约束（来自 architecture.md 与 contract，本策划不再议）
 
 1. yarch-java = 平台构件仓（Maven 多模块单 reactor），最终发 Maven Central；ysaas 经 parent/BOM 引用，clone 即拉件。
-2. 坐标：groupId `io.github.yuandonghao`；版本 **0.1.0 起步**（0.x 不承诺兼容，阿里"必须 1.0.0 起"不采用，digest A5 已定）；starter 命名 `yarch-{功能}-spring-boot-starter`（第三方式后缀，官方 `spring-boot-starter-*` 是保留位）。
+2. 坐标：groupId `io.github.ydonghao`；版本 **0.1.0 起步**（0.x 不承诺兼容，阿里"必须 1.0.0 起"不采用，digest A5 已定）；starter 命名 `yarch-{功能}-spring-boot-starter`（第三方式后缀，官方 `spring-boot-starter-*` 是保留位）。
 3. 铁律：不含任何业务语义（租户/SaaS/INV 语义一律归业务仓）。
 4. 实现与 contract/ 不一致即 bug。术语对照已由契约锁定：`RestResponse<T>` / `PageData<T>` / `GlobalErrorCode` / `BusinessException` / `TraceIdFilter`(MDC)；`yarch-logging-spring-boot-starter` 的存在已被 logging-trace.md「各栈实现锚点」点名。
 5. 横切件归属（architecture.md 四）：日志、错误码/信封、幂等/锁、测试基座、CI 模板、DDD archetype 归 yarch。
@@ -213,4 +213,4 @@ stacks/java/                                # Maven reactor 根（聚合 POM，�
 1. **Boot 4.1 生态边角**：springdoc 等对 Boot 4.x 适配版本需 spike 验证（J3c 已设回退路径）。
 2. **MapStruct × Lombok 注解处理器协作**：已知成熟组合，parent 模板固化处理器顺序即可。
 3. **Testcontainers 依赖 Docker**：本地与 CI 均需容器运行时；README 写明前置条件。
-4. **Maven Central 发布**：central-portal + GPG 签名在 parent 预置 profile；第一批 `mvn install` 本地仓即可供 ysaas 引用，正式发布随 0.1.0 稳定后。
+4. **Maven Central 发布**：✅ 2026-09-03 拍板落位——groupId 全量统一 `io.github.ydonghao`（与 GitHub 账号一致，Central 命名空间验证以 GitHub 账号为准，零成本改名窗口在首发前，已执行：坐标 + Java 包路径 + 模板 + 文档 165 文件）；版本切 0.1.0 release（生成工程自身默认版本保留 0.1.0-SNAPSHOT 惯例）；parent/bom 补齐 license/scm/developers（bom 刻意无 parent，元数据自带）；examples 与 reactor 聚合根 deploy 排除（`maven.deploy.skip` + central `excludeArtifacts` 双保险）；`java-publish.yml` tag 发版流水线（`stacks/java/vX.Y.Z` 触发，verify 全绿门禁 + GPG + autoPublish）。**附带修复**：parent 以 `${project.version}` import bom 在被业务工程继承时按业务工程自身版本插值导致解析失败（平台 0.1.0 × 生成工程 0.1.0-SNAPSHOT 版本分叉后暴露）——改 `${yarch.version}` 属性锚定（Spring 官方 parent 同法）。首次发版前置（Central Portal 注册/命名空间验证/GPG/三组 secrets）见 README 发版节。

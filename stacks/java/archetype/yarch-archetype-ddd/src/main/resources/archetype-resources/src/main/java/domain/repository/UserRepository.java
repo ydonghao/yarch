@@ -1,7 +1,7 @@
 package ${package}.domain.repository;
 
 import ${package}.domain.model.User;
-import io.github.yuandonghao.yarch.common.web.PageData;
+import io.github.ydonghao.yarch.common.web.PageData;
 import java.util.Optional;
 
 /** 仓储接口归领域（依赖倒置），实现在 infrastructure.persistence */

@@ -5,9 +5,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>io.github.yuandonghao</groupId>
+    <groupId>io.github.ydonghao</groupId>
     <artifactId>yarch-parent</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.1.0</version>
     <relativePath>../../platform/yarch-parent</relativePath>
   </parent>
 
@@ -15,33 +15,38 @@
   <name>yarch-examples-ddd</name>
   <description>yarch DDD 七包活案例（商品+订单）：库存分布式锁、幂等下单、keyset 分页、cache-aside 缓存——同时是平台特性的端到端回归场</description>
 
+  <properties>
+    <!-- 活案例不发布（parent 的 central excludeArtifacts 同步排除） -->
+    <maven.deploy.skip>true</maven.deploy.skip>
+  </properties>
+
   <dependencies>
     <dependency>
-      <groupId>io.github.yuandonghao</groupId>
+      <groupId>io.github.ydonghao</groupId>
       <artifactId>yarch-web-spring-boot-starter</artifactId>
     </dependency>
     <dependency>
-      <groupId>io.github.yuandonghao</groupId>
+      <groupId>io.github.ydonghao</groupId>
       <artifactId>yarch-logging-spring-boot-starter</artifactId>
     </dependency>
     <dependency>
-      <groupId>io.github.yuandonghao</groupId>
+      <groupId>io.github.ydonghao</groupId>
       <artifactId>yarch-persistence-spring-boot-starter</artifactId>
     </dependency>
     <dependency>
-      <groupId>io.github.yuandonghao</groupId>
+      <groupId>io.github.ydonghao</groupId>
       <artifactId>yarch-redis-spring-boot-starter</artifactId>
     </dependency>
     <dependency>
-      <groupId>io.github.yuandonghao</groupId>
+      <groupId>io.github.ydonghao</groupId>
       <artifactId>yarch-http-spring-boot-starter</artifactId>
     </dependency>
     <dependency>
-      <groupId>io.github.yuandonghao</groupId>
+      <groupId>io.github.ydonghao</groupId>
       <artifactId>yarch-captcha-spring-boot-starter</artifactId>
     </dependency>
     <dependency>
-      <groupId>io.github.yuandonghao</groupId>
+      <groupId>io.github.ydonghao</groupId>
       <artifactId>yarch-auth-spring-boot-starter</artifactId>
     </dependency>
     <dependency>
@@ -59,7 +64,7 @@
     </dependency>
 
     <dependency>
-      <groupId>io.github.yuandonghao</groupId>
+      <groupId>io.github.ydonghao</groupId>
       <artifactId>yarch-test-spring-boot-starter</artifactId>
       <scope>test</scope>
     </dependency>

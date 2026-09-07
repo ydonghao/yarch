@@ -6,12 +6,34 @@
 
   <!-- yarch-bom：三方版本唯一仲裁。业务工程 import 本 BOM 后不写任何三方版本号。
        刻意无 parent（对标 spring-boot-dependencies 的独立形态），由 yarch-parent import。 -->
-  <groupId>io.github.yuandonghao</groupId>
+  <groupId>io.github.ydonghao</groupId>
   <artifactId>yarch-bom</artifactId>
-  <version>0.1.0-SNAPSHOT</version>
+  <version>0.1.0</version>
   <packaging>pom</packaging>
   <name>yarch-bom</name>
   <description>yarch 版本仲裁：Spring Boot 4.1.x 底座 + yarch 自有构件 + 增补三方件</description>
+
+  <!-- 本构件独立发布到 Central（无 parent 可继承），元数据自带 -->
+  <url>https://github.com/ydonghao/yarch</url>
+  <licenses>
+    <license>
+      <name>Apache-2.0</name>
+      <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <id>ydonghao</id>
+      <name>yuandonghao</name>
+      <url>https://github.com/ydonghao</url>
+    </developer>
+  </developers>
+  <scm>
+    <url>https://github.com/ydonghao/yarch</url>
+    <connection>scm:git:https://github.com/ydonghao/yarch.git</connection>
+    <developerConnection>scm:git:git@github.com:ydonghao/yarch.git</developerConnection>
+  </scm>
 
   <properties>
     <spring-boot.version>4.1.1</spring-boot.version>
@@ -38,15 +60,15 @@
       </dependency>
 
       <!-- yarch 自有构件（版本随本 BOM 走） -->
-      <dependency><groupId>io.github.yuandonghao</groupId><artifactId>yarch-common</artifactId><version>${project.version}</version></dependency>
-      <dependency><groupId>io.github.yuandonghao</groupId><artifactId>yarch-web-spring-boot-starter</artifactId><version>${project.version}</version></dependency>
-      <dependency><groupId>io.github.yuandonghao</groupId><artifactId>yarch-logging-spring-boot-starter</artifactId><version>${project.version}</version></dependency>
-      <dependency><groupId>io.github.yuandonghao</groupId><artifactId>yarch-persistence-spring-boot-starter</artifactId><version>${project.version}</version></dependency>
-      <dependency><groupId>io.github.yuandonghao</groupId><artifactId>yarch-redis-spring-boot-starter</artifactId><version>${project.version}</version></dependency>
-      <dependency><groupId>io.github.yuandonghao</groupId><artifactId>yarch-test-spring-boot-starter</artifactId><version>${project.version}</version></dependency>
-      <dependency><groupId>io.github.yuandonghao</groupId><artifactId>yarch-http-spring-boot-starter</artifactId><version>${project.version}</version></dependency>
-      <dependency><groupId>io.github.yuandonghao</groupId><artifactId>yarch-captcha-spring-boot-starter</artifactId><version>${project.version}</version></dependency>
-      <dependency><groupId>io.github.yuandonghao</groupId><artifactId>yarch-auth-spring-boot-starter</artifactId><version>${project.version}</version></dependency>
+      <dependency><groupId>io.github.ydonghao</groupId><artifactId>yarch-common</artifactId><version>${project.version}</version></dependency>
+      <dependency><groupId>io.github.ydonghao</groupId><artifactId>yarch-web-spring-boot-starter</artifactId><version>${project.version}</version></dependency>
+      <dependency><groupId>io.github.ydonghao</groupId><artifactId>yarch-logging-spring-boot-starter</artifactId><version>${project.version}</version></dependency>
+      <dependency><groupId>io.github.ydonghao</groupId><artifactId>yarch-persistence-spring-boot-starter</artifactId><version>${project.version}</version></dependency>
+      <dependency><groupId>io.github.ydonghao</groupId><artifactId>yarch-redis-spring-boot-starter</artifactId><version>${project.version}</version></dependency>
+      <dependency><groupId>io.github.ydonghao</groupId><artifactId>yarch-test-spring-boot-starter</artifactId><version>${project.version}</version></dependency>
+      <dependency><groupId>io.github.ydonghao</groupId><artifactId>yarch-http-spring-boot-starter</artifactId><version>${project.version}</version></dependency>
+      <dependency><groupId>io.github.ydonghao</groupId><artifactId>yarch-captcha-spring-boot-starter</artifactId><version>${project.version}</version></dependency>
+      <dependency><groupId>io.github.ydonghao</groupId><artifactId>yarch-auth-spring-boot-starter</artifactId><version>${project.version}</version></dependency>
 
       <!-- 增补三方件（Spring Boot BOM 未管理的） -->
       <dependency><groupId>com.baomidou</groupId><artifactId>mybatis-plus-spring-boot4-starter</artifactId><version>${mybatis-plus.version}</version></dependency>
@@ -63,4 +85,35 @@
       <dependency><groupId>org.testcontainers</groupId><artifactId>testcontainers</artifactId><version>${testcontainers.version}</version></dependency>
     </dependencies>
   </dependencyManagement>
+
+  <!-- 发布件专用（对齐 yarch-parent 的 release profile；本构件刻意无 parent，发布链路自带、版本显式） -->
+  <profiles>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>3.2.5</version>
+            <configuration>
+              <gpgArguments><arg>--pinentry-mode</arg><arg>loopback</arg></gpgArguments>
+            </configuration>
+            <executions><execution><id>sign-artifacts</id><phase>verify</phase><goals><goal>sign</goal></goals></execution></executions>
+          </plugin>
+          <plugin>
+            <groupId>org.sonatype.central</groupId>
+            <artifactId>central-publishing-maven-plugin</artifactId>
+            <version>0.11.0</version>
+            <extensions>true</extensions>
+            <configuration>
+              <publishingServerId>central</publishingServerId>
+              <autoPublish>true</autoPublish>
+              <waitUntil>published</waitUntil>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
