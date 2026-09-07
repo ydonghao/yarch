@@ -11,7 +11,7 @@
 2. 位置 `stacks/python/`，`requires-python >=3.12`；发布 tag `stacks/python/vX.Y.Z`（trusted publishing，见 P14）。
 3. 铁律：不含任何业务语义；实现与 contract/ 不一致即 bug。
 4. 术语对照（契约锁定，模块名必须命中）：`yarch_python.response.Response` / `yarch_python.response.PageData` / `yarch_python.errcode.Code` / `yarch_python.xerror.BizError` / `yarch_python.middleware` / `yarch_python.logx`（structlog）。
-5. 分层：DDD 七包同构 coze-studio（api / application / domain / crossdomain / infrastructure / types + 双入口）；手写组装根分阶段（basic→primary→complex）；`infrastructure` port/adapter 分离（repo 抽象用 `typing.Protocol`）。
+5. 分层：DDD 七包同构 coze-studio（api / application / domain / crossdomain / infrastructure / errors + 双入口；python 的 `types` 与 stdlib 冲突，故七包此层更名 `errors`）；手写组装根分阶段（basic→primary→complex）；`infrastructure` port/adapter 分离（repo 抽象用 `typing.Protocol`）。
 6. 启动触发：**celery 规约承接**（architecture.md 六-5"python 先行——celery 规约在等承接"）——`celeryx` 进第一批（P4）。
 7. 治理护栏兑现：CI 全绿 + 一行命令起工程 + 发版链路活（architecture.md 六-6）。
 
@@ -71,7 +71,7 @@ ysaas-scan/                                       # 目录名 = 服务名（regi
 ├── domain/{entity/user.py, repository/user.py}   # ③ 领域层：实体不碰 ORM，repo port 用 typing.Protocol（零框架依赖）
 ├── infrastructure/database/{models.py, user_repo.py, migrations/}   # ④ adapter + Alembic 纯 SQL 版本化（禁 create_all）
 ├── crossdomain/ · conf/ · pkg/                   # ⑤⑥⑦ 占位 README（域间防腐/配置说明/工程内共享）
-├── types/errno.py                                # 业务码 3xxx+ 段位（登记后方可使用，生成器成功提示点名）
+├── errors/errno.py                               # 业务码 3xxx+ 段位（登记后方可使用，生成器成功提示点名；types 与 stdlib 冲突故更名 errors）
 ├── tasks/users_task.py                           # celery 示例任务：ysaas-scan.users.sync（幂等演示）
 ├── tests/                                        # TestClient 冒烟 + testx 信封/分页断言 + TC 行为级示范
 ├── .env.example                                  # 共享实例隔离模式：独立 database + key 前缀=服务名（起跑主路径免 compose）

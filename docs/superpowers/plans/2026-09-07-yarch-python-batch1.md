@@ -2732,7 +2732,7 @@ def main() -> None:
   1. cd {out} && cp .env.example .env（填共享 PG/Redis 地址；独立 database 自动建库）&& uv sync
   2. uv run uvicorn main:app --reload   # web 进程；uv run celery -A celery_app worker 另进程
   3. 服务名 {args.service!r}——去 yarch 仓 contract/registry.md 登记
-  4. types/errno.py 业务码段（3xxx+）在你的仓库 docs 登记后方可使用
+  4. errors/errno.py 业务码段（3xxx+）在你的仓库 docs 登记后方可使用
 """)
 
 
@@ -2785,7 +2785,7 @@ REQUIRED = [
     "infrastructure/database/migrations/env.py", "infrastructure/database/migrations/script.py.mako",
     "infrastructure/database/migrations/versions/0001_init.py",
     "crossdomain/README.md", "conf/README.md", "pkg/README.md",
-    "types/errno.py", "tasks/users_task.py", "tests/test_smoke.py", "tests/__init__.py",
+    "errors/errno.py", "tasks/users_task.py", "tests/test_smoke.py", "tests/__init__.py",
 ]
 
 
@@ -2864,7 +2864,8 @@ select = ["E", "F", "I", "UP", "B"]
 markers = ["integration: needs docker (testcontainers)"]
 
 [tool.importlinter]
-root_packages = ["api", "application", "domain", "infrastructure", "types", "tasks"]
+include_external_packages = true  # forbidden 契约引 fastapi/sqlalchemy/celery/redis 等外部包，须纳入图
+root_packages = ["api", "application", "domain", "infrastructure", "errors", "tasks"]
 
 [[tool.importlinter.contracts]]
 name = "Domain purity (no framework, no outer layers)"
@@ -3160,7 +3161,7 @@ api_router = users.router
 ```
 
 ```python
-# _template/types/errno.py
+# _template/errors/errno.py
 """业务码登记处（3xxx-8xxx；在本仓 docs 登记后方可使用——error-codes.md 实现规则-3）。"""
 from yarch_python import errcode
 
@@ -3459,7 +3460,7 @@ CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 
 ## 纪律
 - 服务名 `{{ service }}` 去 yarch 仓 contract/registry.md 登记；
-- 业务码 3xxx+ 在本仓 docs 登记后方可使用（types/errno.py）；
+- 业务码 3xxx+ 在本仓 docs 登记后方可使用（errors/errno.py）；
 - 升级平台件：`uv add "yarch-python@X.Y.Z"`{{ '\n' }}{%- if yarch_path %}（当前为开发期 path 依赖：`{{ yarch_path }}`，yarch-python 正式发版后删除 pyproject 的 `[tool.uv.sources]` 段改版本号）{%- endif %}
 ```
 

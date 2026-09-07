@@ -32,7 +32,8 @@ select = ["E", "F", "I", "UP", "B"]
 markers = ["integration: needs docker (testcontainers)"]
 
 [tool.importlinter]
-root_packages = ["api", "application", "domain", "infrastructure", "types", "tasks"]
+include_external_packages = true  # forbidden 契约引 fastapi/sqlalchemy/celery/redis 等外部包，须纳入图
+root_packages = ["api", "application", "domain", "infrastructure", "errors", "tasks"]
 
 [[tool.importlinter.contracts]]
 name = "Domain purity (no framework, no outer layers)"

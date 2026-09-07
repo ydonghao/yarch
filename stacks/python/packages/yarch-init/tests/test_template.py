@@ -14,7 +14,7 @@ REQUIRED = [
     "infrastructure/database/migrations/script.py.mako",
     "infrastructure/database/migrations/versions/0001_init.py",
     "crossdomain/README.md", "conf/README.md", "pkg/README.md",
-    "types/errno.py", "tasks/users_task.py", "tests/test_smoke.py", "tests/__init__.py",
+    "errors/errno.py", "tasks/users_task.py", "tests/test_smoke.py", "tests/__init__.py",
 ]
 
 

@@ -42,6 +42,8 @@ def render(src: str, dst: str, variables: dict) -> int:
     for path in sorted(Path(src).rglob("*")):
         if path.is_dir() or path.name in SKIP_FILES:
             continue
+        if "__pycache__" in path.parts:  # 开发仓跑 pytest 会污染模板树（.pyc 二进制），跳过
+            continue
         rel = path.relative_to(src)
         if rel.name.endswith(".jinja"):
             # 模板源后缀规约：含 jinja 语句块而自身须保持工具可解析的文件
@@ -107,7 +109,7 @@ def main() -> None:
   1. cd {out} && cp .env.example .env（填共享 PG/Redis 地址；独立 database 自动建库）&& uv sync
   2. uv run uvicorn main:app --reload   # web 进程；uv run celery -A celery_app worker 另进程
   3. 服务名 {args.service!r}——去 yarch 仓 contract/registry.md 登记
-  4. types/errno.py 业务码段（3xxx+）在你的仓库 docs 登记后方可使用
+  4. errors/errno.py 业务码段（3xxx+）在你的仓库 docs 登记后方可使用
 """)
 
 
