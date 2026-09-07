@@ -71,7 +71,7 @@ func TestVerifySemantics(t *testing.T) {
 	h := captcha.NewHandler(store, func(id string) string { return id }, 0)
 	ctx := context.Background()
 
-	store.Issue(ctx, "k1", "AB3CD", time.Minute)
+	_ = store.Issue(ctx, "k1", "AB3CD", time.Minute)
 	if !h.Verify(ctx, "k1", "ab3cd") {
 		t.Fatal("大小写不敏感应通过")
 	}
@@ -79,7 +79,7 @@ func TestVerifySemantics(t *testing.T) {
 		t.Fatal("一次性：二次校验必须失败")
 	}
 
-	store.Issue(ctx, "k2", "XY9ZK", time.Minute)
+	_ = store.Issue(ctx, "k2", "XY9ZK", time.Minute)
 	if h.Verify(ctx, "k2", "WRONG") {
 		t.Fatal("错码必须失败")
 	}
@@ -100,7 +100,8 @@ func TestNewCode(t *testing.T) {
 			}
 		}
 	}
-	if captcha.NewCode(5) == captcha.NewCode(5) {
+	a, b := captcha.NewCode(5), captcha.NewCode(5)
+	if a == b {
 		t.Fatal("两次生成不应相同（概率级）")
 	}
 }

@@ -21,7 +21,7 @@ func EnsureDatabase(dsn string) error {
 	if err != nil {
 		return err
 	}
-	defer admin.Close()
+	defer func() { _ = admin.Close() }()
 
 	var exists bool
 	if err := admin.QueryRow(

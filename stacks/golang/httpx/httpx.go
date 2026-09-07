@@ -31,8 +31,7 @@ const (
 
 // Client 下游 HTTP 客户端。
 type Client struct {
-	hc      *http.Client
-	baseURL string
+	hc *http.Client
 }
 
 // New 构造下游客户端。timeout ≤ 0 用默认 5s；> MaxTimeout 截断为 30s（超时强制）。
@@ -78,7 +77,7 @@ func Do[T any](c *Client, ctx context.Context, method, url string, body any, hea
 	if err != nil {
 		return zero, translateTransport(err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	raw, err := io.ReadAll(io.LimitReader(resp.Body, 8<<20))
 	if err != nil {

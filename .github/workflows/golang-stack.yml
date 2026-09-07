@@ -20,8 +20,10 @@ jobs:
           go-version: '1.26'
       - name: Lint main module
         run: go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.5.0 run
-      - name: Lint template (depguard: domain 零框架依赖)
-        run: cd template && go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.5.0 run
+      - name: "Lint template (depguard: domain 零框架依赖)"
+        run: |
+          go run ./cmd/yarch-init -module github.com/lint/tpl-svc -out /tmp/tpl-svc
+          cd /tmp/tpl-svc && go mod tidy && go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.5.0 run
 
   verify:
     strategy:
@@ -40,7 +42,7 @@ jobs:
         run: go vet ./...
       - name: Test (unit + middleware/web/httpx contract)
         run: go test ./...
-      - name: Test (containers: PG/Redis behavior-level)
+      - name: "Test (containers: PG/Redis behavior-level)"
         run: cd testcontainers && go test ./...
         env:
           CGO_ENABLED: '0'

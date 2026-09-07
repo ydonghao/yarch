@@ -56,7 +56,7 @@ func TestTrace(t *testing.T) {
 
 	// ① traceparent 优先（取 trace-id 段）
 	w := ut.PerformRequest(h.Engine, "GET", "/api/v1/ping", nil, ut.Header{Key: "traceparent", Value: "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01"})
-	if string(w.Body.Bytes()) != "0af7651916cd43dd8448eb211c80319c" {
+	if w.Body.String() != "0af7651916cd43dd8448eb211c80319c" {
 		t.Fatalf("traceparent 优先失败: %s", w.Body.Bytes())
 	}
 	if got := w.Header().Get("X-Trace-Id"); got != "0af7651916cd43dd8448eb211c80319c" {
@@ -65,13 +65,13 @@ func TestTrace(t *testing.T) {
 
 	// ② 无 traceparent 看 X-Trace-Id
 	w = ut.PerformRequest(h.Engine, "GET", "/api/v1/ping", nil, ut.Header{Key: "X-Trace-Id", Value: "mytrace"})
-	if string(w.Body.Bytes()) != "mytrace" {
+	if w.Body.String() != "mytrace" {
 		t.Fatalf("X-Trace-Id 降级失败: %s", w.Body.Bytes())
 	}
 
 	// ③ 再无则生成 32 位小写 hex
 	w = ut.PerformRequest(h.Engine, "GET", "/api/v1/ping", nil)
-	tid := string(w.Body.Bytes())
+	tid := w.Body.String()
 	if len(tid) != 32 || strings.ToLower(tid) != tid {
 		t.Fatalf("生成 traceId 形状错误: %q", tid)
 	}
@@ -81,7 +81,7 @@ func TestTrace(t *testing.T) {
 
 	// ④ 非法 traceparent 忽略
 	w = ut.PerformRequest(h.Engine, "GET", "/api/v1/ping", nil, ut.Header{Key: "traceparent", Value: "garbage"})
-	if string(w.Body.Bytes()) == "garbage" {
+	if w.Body.String() == "garbage" {
 		t.Fatal("非法 traceparent 必须忽略")
 	}
 }
