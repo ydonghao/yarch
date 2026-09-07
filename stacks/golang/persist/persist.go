@@ -4,7 +4,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 
-	"github.com/yuandonghao/yarch/stacks/golang/response"
+	"github.com/ydonghao/yarch/stacks/golang/response"
 )
 
 // Open 打开 PG 连接（G3：GORM + pgx 驱动；新项目默认 PG）。

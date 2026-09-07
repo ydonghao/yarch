@@ -10,9 +10,9 @@ import (
 	"github.com/cloudwego/hertz/pkg/common/ut"
 	"log/slog"
 
-	"github.com/yuandonghao/yarch/stacks/golang/response"
-	"github.com/yuandonghao/yarch/stacks/golang/testx"
-	"github.com/yuandonghao/yarch/stacks/golang/web"
+	"github.com/ydonghao/yarch/stacks/golang/response"
+	"github.com/ydonghao/yarch/stacks/golang/testx"
+	"github.com/ydonghao/yarch/stacks/golang/web"
 
 	"{{.Module}}/api/router"
 	"{{.Module}}/application"

@@ -7,8 +7,8 @@ import (
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/google/uuid"
 
-	"github.com/yuandonghao/yarch/stacks/golang/response"
-	"github.com/yuandonghao/yarch/stacks/golang/web"
+	"github.com/ydonghao/yarch/stacks/golang/response"
+	"github.com/ydonghao/yarch/stacks/golang/web"
 
 	"{{.Module}}/api/model"
 	"{{.Module}}/domain/entity"

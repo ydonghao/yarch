@@ -6,7 +6,7 @@ package response
 import (
 	"encoding/json"
 
-	"github.com/yuandonghao/yarch/stacks/golang/errcode"
+	"github.com/ydonghao/yarch/stacks/golang/errcode"
 )
 
 // Response 统一响应信封。data 用指针承载：nil 序列化为 null，即契约要求的

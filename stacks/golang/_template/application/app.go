@@ -8,9 +8,9 @@ import (
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 
-	"github.com/yuandonghao/yarch/stacks/golang/middleware"
-	"github.com/yuandonghao/yarch/stacks/golang/persist"
-	"github.com/yuandonghao/yarch/stacks/golang/redix"
+	"github.com/ydonghao/yarch/stacks/golang/middleware"
+	"github.com/ydonghao/yarch/stacks/golang/persist"
+	"github.com/ydonghao/yarch/stacks/golang/redix"
 
 	"{{.Module}}/domain/repository"
 	"{{.Module}}/infra/database"

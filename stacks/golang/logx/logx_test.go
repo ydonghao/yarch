@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/yuandonghao/yarch/stacks/golang/logx"
+	"github.com/ydonghao/yarch/stacks/golang/logx"
 )
 
 // 契约断言：ndjson 行协议字段级（logging-trace.md v1.0）。

@@ -14,7 +14,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-const STACKS = ['java', 'golang', 'rust', 'web-react', 'web-vue'];
+const STACKS = ['java', 'golang', 'rust', 'web'];
 const CLIENTS = ['mobile', 'miniprogram', 'desktop'];
 
 function repoRoot() {

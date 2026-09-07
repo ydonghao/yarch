@@ -10,7 +10,7 @@
 //
 // yarch-go 发 tag 后无需 clone 本仓：
 //
-//	go run github.com/yuandonghao/yarch/stacks/golang/cmd/yarch-init@vX.Y.Z -module … -out …
+//	go run github.com/ydonghao/yarch/stacks/golang/cmd/yarch-init@vX.Y.Z -module … -out …
 package main
 
 import (
@@ -92,7 +92,7 @@ func main() {
 		ServiceSnake: strings.ReplaceAll(service, "-", "_"),
 		YarchVersion: "v0.0.0",
 		// 发版前 replace 指向本机平台源码；正式发版后由 -replace 换 tag（见下）
-		ReplaceLine: "\nreplace github.com/yuandonghao/yarch/stacks/golang => " + filepath.Dir(absSrc),
+		ReplaceLine: "\nreplace github.com/ydonghao/yarch/stacks/golang => " + filepath.Dir(absSrc),
 	}
 
 	n, err := render(*src, *out, v)

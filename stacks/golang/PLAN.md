@@ -11,7 +11,7 @@
 ## 一、定位与既定约束（来自 architecture.md 与 contract，本策划不再议）
 
 1. yarch-go = Go 栈平台构件（单 module 多 package），经 Go module proxy 分发；业务工程 `go get` 引入，版本步进自动跟进。
-2. module path：`github.com/yuandonghao/yarch/stacks/golang`（开发期在本仓 stacks/golang/ 下，go.mod `go 1.24` 基线；发布时独立仓库或本仓子目录 tag `/stacks/golang/vX.Y.Z` 均可）。
+2. module path：`github.com/ydonghao/yarch/stacks/golang`（开发期在本仓 stacks/golang/ 下，go.mod `go 1.24` 基线；发布时独立仓库或本仓子目录 tag `/stacks/golang/vX.Y.Z` 均可）。
 3. 铁律：不含任何业务语义；实现与 contract/ 不一致即 bug。
 4. 术语对照（契约已锁定，包名必须命中）：`response.Response` / `response.PageData` / `errcode.Code` / `xerror.BizError` / `middleware.Trace()` / `logx`（`log/slog` JSONHandler）。
 5. 分层：coze-studio 同构 DDD 七包（java J1 已预留「golang 栈直接同构对照」）；`infrastructure(contract/impl)` port/adapter 分离、`crossdomain` 域间防腐为 coze-studio 吸收项。
@@ -35,7 +35,7 @@
 ## 三、目标形态（module 树）
 
 ```
-stacks/golang/                      # module github.com/yuandonghao/yarch/stacks/golang（go 1.24）
+stacks/golang/                      # module github.com/ydonghao/yarch/stacks/golang（go 1.24）
 ├── response/                       # 契约内核①：Response[T] / PageData[T] / 构造与序列化（纯 stdlib）
 ├── errcode/                        # 契约内核②：Code 类型 + 13 码全表 + HTTP 映射 + 业务码注册
 ├── xerror/                         # 契约内核③：BizError（code + message[+细节]）

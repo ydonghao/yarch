@@ -7,7 +7,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/yuandonghao/yarch/stacks/golang/errcode"
+	"github.com/ydonghao/yarch/stacks/golang/errcode"
 )
 
 // BizError 业务异常：携带错误码与面向用户的 message（默认文案[:细节]）。

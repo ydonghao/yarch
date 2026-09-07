@@ -9,7 +9,7 @@
 标准输出，UTF-8，JSON Lines：
 
 ```json
-{"ts":"2026-08-31T12:00:00.123Z","level":"INFO","service":"ysaas","env":"prod","traceId":"0af7651916cd43dd8448eb211c80319c","logger":"io.github.yuandonghao.yarch.framework.web.TraceIdFilter","msg":"request completed","method":"GET","path":"/api/v1/users","status":200,"costMs":12}
+{"ts":"2026-08-31T12:00:00.123Z","level":"INFO","service":"ysaas","env":"prod","traceId":"0af7651916cd43dd8448eb211c80319c","logger":"io.github.ydonghao.yarch.framework.web.TraceIdFilter","msg":"request completed","method":"GET","path":"/api/v1/users","status":200,"costMs":12}
 ```
 
 | 字段 | 类型 | 必填 | 语义 |
@@ -48,7 +48,7 @@ traceId 跨越一切边界时的注入/继承规则（各 infra 规约引用本�
 | 任务产出消息（调度→MQ） | 产出消息继承当轮任务的 traceId | 同"消息队列（consume）" |
 | 网关 / 反向代理（入口） | 透传上游 `traceparent`/`X-Trace-Id`；缺省生成（Nginx `$request_id` 等） | 转发给上游；响应回显 `X-Trace-Id` |
 | 网关故障响应（fallback） | 网关自身生成/透传 | **故障响应也必须携带 `X-Trace-Id`**（见 [rest-response.md](rest-response.md) 网关故障面） |
-| 前端（web-react） | 请求带 `X-Trace-Id`；错误对象暴露响应的 `traceId` | 用户报障以 traceId 为凭证 |
+| 前端（web） | 请求带 `X-Trace-Id`；错误对象暴露响应的 `traceId` | 用户报障以 traceId 为凭证 |
 
 铁律：traceId 只在"链路入口无值"时生成一次；消息消费、任务执行是**新入口**（上游 trace 已在消息/任务参数内，继承而非再生成）。
 
@@ -59,4 +59,4 @@ traceId 跨越一切边界时的注入/继承规则（各 infra 规约引用本�
 | java | MDC key `traceId`（`TraceIdFilter` 注入） | logstash-logback-encoder（`yarch-logging-spring-boot-starter`） |
 | golang | hertz 中间件键 + slog attr | `log/slog` JSONHandler（`logx`） |
 | rust | request extensions + tracing span | tracing-subscriber 自定义 JSON（`logging`） |
-| web-react | 不持有上下文，仅生成/透传 `X-Trace-Id` 并在错误对象暴露 `traceId` | 浏览器控制台结构化 `console` 由业务决定 |
+| web | 不持有上下文，仅生成/透传 `X-Trace-Id` 并在错误对象暴露 `traceId` | 浏览器控制台结构化 `console` 由业务决定 |

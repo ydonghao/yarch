@@ -8,10 +8,10 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/yuandonghao/yarch/stacks/golang/errcode"
-	"github.com/yuandonghao/yarch/stacks/golang/persist"
-	"github.com/yuandonghao/yarch/stacks/golang/response"
-	"github.com/yuandonghao/yarch/stacks/golang/xerror"
+	"github.com/ydonghao/yarch/stacks/golang/errcode"
+	"github.com/ydonghao/yarch/stacks/golang/persist"
+	"github.com/ydonghao/yarch/stacks/golang/response"
+	"github.com/ydonghao/yarch/stacks/golang/xerror"
 
 	"{{.Module}}/domain/entity"
 )

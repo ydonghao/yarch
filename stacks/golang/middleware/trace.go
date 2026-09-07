@@ -11,7 +11,7 @@ import (
 
 	"github.com/cloudwego/hertz/pkg/app"
 
-	"github.com/yuandonghao/yarch/stacks/golang/logx"
+	"github.com/ydonghao/yarch/stacks/golang/logx"
 )
 
 const (

@@ -11,9 +11,9 @@ import (
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/cloudwego/hertz/pkg/common/ut"
 
-	"github.com/yuandonghao/yarch/stacks/golang/errcode"
-	"github.com/yuandonghao/yarch/stacks/golang/middleware"
-	"github.com/yuandonghao/yarch/stacks/golang/web"
+	"github.com/ydonghao/yarch/stacks/golang/errcode"
+	"github.com/ydonghao/yarch/stacks/golang/middleware"
+	"github.com/ydonghao/yarch/stacks/golang/web"
 )
 
 func newEngine(t *testing.T) *server.Hertz {

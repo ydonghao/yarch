@@ -6,7 +6,7 @@ import (
 	"github.com/cloudwego/hertz/pkg/app"
 	"golang.org/x/time/rate"
 
-	"github.com/yuandonghao/yarch/stacks/golang/errcode"
+	"github.com/ydonghao/yarch/stacks/golang/errcode"
 )
 
 // RateLimit 进程内限流（令牌桶，单实例档）：超限 → 429 + 1006。

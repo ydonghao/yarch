@@ -2,7 +2,7 @@ package redix_test
 
 import "testing"
 
-import "github.com/yuandonghao/yarch/stacks/golang/redix"
+import "github.com/ydonghao/yarch/stacks/golang/redix"
 
 // 契约断言：key 首段=服务名（redis.md：key 前缀即租户边界）。
 func TestKeysShape(t *testing.T) {

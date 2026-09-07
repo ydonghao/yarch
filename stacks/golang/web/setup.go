@@ -7,7 +7,7 @@ import (
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/hertz-contrib/cors"
 
-	"github.com/yuandonghao/yarch/stacks/golang/middleware"
+	"github.com/ydonghao/yarch/stacks/golang/middleware"
 )
 
 // Options Setup 装配选项（零值即默认：CORS 宽松、无限流、无幂等）。

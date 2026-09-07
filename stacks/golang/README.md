@@ -1,6 +1,6 @@
 # stacks/golang · yarch-go
 
-> yarch Go 栈平台构件（单 module `github.com/yuandonghao/yarch/stacks/golang`，go 1.24 基线；发 Go module proxy，业务工程 `go get` 引入）。
+> yarch Go 栈平台构件（单 module `github.com/ydonghao/yarch/stacks/golang`，go 1.24 基线；发 Go module proxy，业务工程 `go get` 引入）。
 > 契约唯一权威来源：[../contract/](../contract/README.md)——实现与契约不一致即 bug。
 > 策划与拍板记录：[PLAN.md](PLAN.md)（G1-G9 已拍板，2026-09-02）。
 > 架构图：[architecture-diagram.svg](architecture-diagram.svg)（六层 + Hertz 请求生命周期）。
@@ -9,7 +9,7 @@
 ## 构件（一规约一 package，对偶 java 一规约一 starter）
 
 ```
-stacks/golang/                        # module github.com/yuandonghao/yarch/stacks/golang（go 1.24）
+stacks/golang/                        # module github.com/ydonghao/yarch/stacks/golang（go 1.24）
 ├── response/                         # 契约内核①：Response[T] / PageData[T] / PageQuery（纯 stdlib）
 ├── errcode/                          # 契约内核②：Code + 13 码全表 + HTTP 映射 + 业务码注册
 ├── xerror/                           # 契约内核③：BizError（message「默认文案：细节」规则）
@@ -30,26 +30,26 @@ stacks/golang/                        # module github.com/yuandonghao/yarch/stac
 
 依赖方向：契约内核三包零框架依赖；构件间禁止反向依赖（CI golangci-lint depguard 机检模板侧同步）。
 
-## 快速开始（新人从零到一，无需 clone 本仓）
+## 快速开始（新人从零到一）
+
+当前阶段（tag 未推送，module proxy 无可用版本）从本仓跑生成器，模板随仓携带：
 
 ```bash
-# ① 一条命令生成工程（go run 远程拉取工具+模板，同 npx / mvn archetype:generate）
-go run github.com/yuandonghao/yarch/stacks/golang/cmd/yarch-init@latest \
+git clone https://github.com/ydonghao/yarch && cd yarch/stacks/golang
+go run ./cmd/yarch-init -module github.com/you/order-svc -out ~/code/order-svc
+
+# 填 .env 后起跑（连共享/自有 PG+Redis；独立 database 启动自动建库 + 迁移自动执行）
+cd ~/code/order-svc && cp .env.example .env && vi .env && go mod tidy && go run .
+```
+
+发版后（推送 tag `stacks/golang/vX.Y.Z` → module proxy 自动收录，无需注册任何平台）零 clone 一条命令：
+
+```bash
+go run github.com/ydonghao/yarch/stacks/golang/cmd/yarch-init@vX.Y.Z \
   -module github.com/you/order-svc -out order-svc
-
-# ② 填 .env 后起跑（连共享/自有 PG+Redis；独立 database 启动自动建库 + 迁移自动执行）
-cd order-svc && cp .env.example .env && vi .env && go mod tidy && go run .
-
-# ③ 平台升级（发版式升级 = go get 升版，业务工程自动跟进）
-go get github.com/yuandonghao/yarch/stacks/golang@vX.Y.Z
 ```
 
-发版机制：本栈是 yarch 仓的 monorepo 子目录 module，**推送 tag `stacks/golang/vX.Y.Z` 即发布**（Go module proxy 自动收录，无需注册任何平台）。首次发布前（当前状态），用本地路径：
-
-```bash
-git clone https://github.com/yuandonghao/yarch && cd yarch/stacks/golang
-go run ./cmd/yarch-init -module github.com/you/order-svc -out ~/code/order-svc   # 生成器同款引擎
-```
+平台升级 = 发版式 `go get github.com/ydonghao/yarch/stacks/golang@vX.Y.Z`，业务工程自动跟进。
 
 > 生成工程 go.mod 的 replace 行在首次发版后删除、版本改正式 tag（README 生成时已注明）。
 

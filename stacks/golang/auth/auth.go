@@ -11,9 +11,9 @@ import (
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/golang-jwt/jwt/v5"
 
-	"github.com/yuandonghao/yarch/stacks/golang/errcode"
-	"github.com/yuandonghao/yarch/stacks/golang/middleware"
-	"github.com/yuandonghao/yarch/stacks/golang/xerror"
+	"github.com/ydonghao/yarch/stacks/golang/errcode"
+	"github.com/ydonghao/yarch/stacks/golang/middleware"
+	"github.com/ydonghao/yarch/stacks/golang/xerror"
 )
 
 // Claims 载荷：sub=用户 ID（不透明 string），roles 附带角色（RequireRoles 用）。

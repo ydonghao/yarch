@@ -14,9 +14,9 @@ import (
 	"github.com/cloudwego/hertz/pkg/common/ut"
 	"github.com/cloudwego/hertz/pkg/route/param"
 
-	"github.com/yuandonghao/yarch/stacks/golang/errcode"
-	"github.com/yuandonghao/yarch/stacks/golang/middleware"
-	"github.com/yuandonghao/yarch/stacks/golang/response"
+	"github.com/ydonghao/yarch/stacks/golang/errcode"
+	"github.com/ydonghao/yarch/stacks/golang/middleware"
+	"github.com/ydonghao/yarch/stacks/golang/response"
 )
 
 func testLogger() *slog.Logger {

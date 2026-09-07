@@ -3,7 +3,7 @@ package database
 import (
 	"embed"
 
-	"github.com/yuandonghao/yarch/stacks/golang/persist"
+	"github.com/ydonghao/yarch/stacks/golang/persist"
 )
 
 //go:embed migration/*.sql

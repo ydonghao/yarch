@@ -5,7 +5,7 @@ package repository
 import (
 	"context"
 
-	"github.com/yuandonghao/yarch/stacks/golang/response"
+	"github.com/ydonghao/yarch/stacks/golang/response"
 
 	"{{.Module}}/domain/entity"
 )

@@ -9,10 +9,10 @@ import (
 
 	"github.com/cloudwego/hertz/pkg/app"
 
-	"github.com/yuandonghao/yarch/stacks/golang/errcode"
-	"github.com/yuandonghao/yarch/stacks/golang/middleware"
-	"github.com/yuandonghao/yarch/stacks/golang/response"
-	"github.com/yuandonghao/yarch/stacks/golang/xerror"
+	"github.com/ydonghao/yarch/stacks/golang/errcode"
+	"github.com/ydonghao/yarch/stacks/golang/middleware"
+	"github.com/ydonghao/yarch/stacks/golang/response"
+	"github.com/ydonghao/yarch/stacks/golang/xerror"
 )
 
 // Bind 统一绑定与校验：请求体 JSON 语法/类型错误 → 1002；字段校验失败 → 1001。

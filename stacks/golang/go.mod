@@ -1,4 +1,4 @@
-module github.com/yuandonghao/yarch/stacks/golang
+module github.com/ydonghao/yarch/stacks/golang
 
 go 1.24
 

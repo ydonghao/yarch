@@ -7,7 +7,7 @@ import (
 
 	"github.com/cloudwego/hertz/pkg/app"
 
-	"github.com/yuandonghao/yarch/stacks/golang/logx"
+	"github.com/ydonghao/yarch/stacks/golang/logx"
 )
 
 // OperationLogRecord 操作日志记录（ndjson 行协议口径 + 存储 SPI）。
