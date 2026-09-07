@@ -8,9 +8,9 @@
 | `web/` | yarch-web：pnpm workspace（contract 契约包 + react/vue 适配 + UI 档模板） | npm |
 | `golang/` | yarch-go：单 module 多 package（Hertz + DDD 七包模板）+ testcontainers 子 module | Go module |
 | `rust/` | yarch-rust：axum + DDD | crates.io |
-| `python/` | yarch-python：FastAPI + DDD | PyPI |
+| `python/` | yarch-python：FastAPI + DDD ✅（第一批 2026-09-07：契约内核 + logx/middleware/web/persist/redix/httpx + celeryx 承接 + testx + 生成器/模板，workspace 双发行版全绿） | PyPI |
 | `node/` | yarch-node：NestJS + DDD | npm |
 
-> 当前阶段：java ✅（reactor 16 模块全绿）；web ✅（W0-W5 冻结 + admin-demo 全链路）；golang ✅（第一批 2026-09-02：契约内核三包 + logx/middleware/web/persist/redix/httpx + testx + DDD 模板，三 module 全绿）；rust 触发式；python / node 已入册待启动（2026-09-03 全域扩展拍板，python 先行）。
+> 当前阶段：java ✅（reactor 16 模块全绿）；web ✅（W0-W5 冻结 + admin-demo 全链路）；golang ✅（第一批 2026-09-02：契约内核三包 + logx/middleware/web/persist/redix/httpx + testx + DDD 模板，三 module 全绿）；python ✅（第一批 2026-09-07：契约内核 + logx/middleware/web/persist/redix/httpx + celeryx 承接 + testx + 生成器/模板，workspace 双发行版全绿）；rust 触发式；node 已入册待启动（2026-09-03 全域扩展拍板）。
 >
 > 边界：dotnet / php 经评审裁撤不纳入（2026-09-03）；C/C++ 不设业务栈，以 [../embedded/](../embedded/)（规划）固件形态进入；交互端见 [../clients/](../clients/)（android / ios 原生双轨已入册规划，触发式）。全域治理护栏（触发登记制 / 最低维护标准 / 方言一致性机检）见 [../docs/architecture.md](../docs/architecture.md) 第六节。

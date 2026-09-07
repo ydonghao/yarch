@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 486" font-family="PingFang SC, Microsoft YaHei, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"/>
+    </marker>
+    <marker id="arrowH" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <rect width="900" height="486" fill="#f8fafc"/>
+  <text x="450" y="27" text-anchor="middle" font-size="19" font-weight="700" fill="#0f172a">yarch-python · 架构总览（FastAPI + DDD 七包）</text>
+  <text x="450" y="45" text-anchor="middle" font-size="10.5" fill="#64748b">uv workspace 双发行版：yarch-python（平台构件，import yarch_python）+ yarch-init（生成器）—— 契约唯一权威 contract/ · celery 规约承接</text>
+
+  <!-- L1 业务工程层 -->
+  <rect x="30" y="52" width="840" height="58" rx="10" fill="#eef2ff" stroke="#6366f1" stroke-width="1.5"/>
+  <text x="42" y="71" font-size="12" font-weight="700" fill="#3730a3">① 业务工程（yarch-init 生成 · 服务名过 registry 一-1 校验，一次渲染全局封死）</text>
+  <rect x="42" y="78" width="560" height="26" rx="6" fill="#ffffff" stroke="#a5b4fc"/>
+  <text x="322" y="89" text-anchor="middle" font-size="10" font-weight="600" fill="#1e1b4b">DDD 七包：api · application（组装根 basic→primary→complex） · domain（entity + Protocol port） · crossdomain</text>
+  <text x="322" y="100" text-anchor="middle" font-size="9.5" fill="#475569">infrastructure（models / Alembic 纯 SQL 迁移） · errors（业务码 3xxx+，即他栈 types 层——避 stdlib 冲突）</text>
+  <rect x="614" y="78" width="244" height="26" rx="6" fill="#ffffff" stroke="#a5b4fc"/>
+  <text x="736" y="89" text-anchor="middle" font-size="10" font-weight="600" fill="#1e1b4b">双入口分离 + 共享实例隔离</text>
+  <text x="736" y="100" text-anchor="middle" font-size="9.5" fill="#475569">main.py(web) · celery_app.py(worker/beat)；独立 database + 前缀=服务名</text>
+
+  <line x1="450" y1="110" x2="450" y2="126" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="462" y="122" font-size="10" fill="#475569">yarch-init（Jinja2 渲染 + registry 校验 + 残留扫描）· 平台件经 uv add yarch-python 引入</text>
+
+  <!-- L2 显式装配层 -->
+  <rect x="30" y="128" width="840" height="52" rx="10" fill="#ecfeff" stroke="#06b6d4" stroke-width="1.5"/>
+  <text x="42" y="146" font-size="12" font-weight="700" fill="#155e75">② 显式装配（无 Spring 式自动装配 —— 手写组装根 + web.setup() 即「Web 装配」对偶物）</text>
+  <g font-size="10" fill="#0f172a">
+    <rect x="42"  y="154" width="196" height="20" rx="6" fill="#fff" stroke="#67e8f9"/><text x="140"  y="168" text-anchor="middle">main.py 组装根（分阶段）</text>
+    <rect x="248" y="154" width="196" height="20" rx="6" fill="#fff" stroke="#67e8f9"/><text x="346" y="168" text-anchor="middle">web.setup(app) 一行挂中间件链</text>
+    <rect x="454" y="154" width="196" height="20" rx="6" fill="#fff" stroke="#67e8f9"/><text x="552" y="168" text-anchor="middle">settings：.env + YARCH_ENV</text>
+    <rect x="660" y="154" width="198" height="20" rx="6" fill="#fff" stroke="#67e8f9"/><text x="759" y="168" text-anchor="middle">Makefile · Dockerfile（uv）</text>
+  </g>
+
+  <line x1="450" y1="180" x2="450" y2="196" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="462" y="192" font-size="10" fill="#475569">setup() 装配的正是这些 module —— 显式 import · 不启用的规约不进依赖图（无全家桶）</text>
+
+  <!-- L3 平台构件层 -->
+  <rect x="30" y="198" width="840" height="100" rx="10" fill="#f0fdf4" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="42" y="216" font-size="12" font-weight="700" fill="#14532d">③ 平台构件 yarch-python（一规约一 module，对偶 java 一规约一 starter / golang 一 package）</text>
+  <g font-size="10" fill="#0f172a">
+    <rect x="42" y="224" width="200" height="34" rx="7" fill="#fff" stroke="#86efac"/><text x="142" y="237" text-anchor="middle" font-weight="600">response · errcode · xerror</text><text x="142" y="250" text-anchor="middle" fill="#64748b" font-size="8.5">契约内核组 · 零框架依赖</text>
+    <rect x="250" y="224" width="80" height="34" rx="7" fill="#fff" stroke="#86efac"/><text x="290" y="237" text-anchor="middle" font-weight="600">logx</text><text x="290" y="250" text-anchor="middle" fill="#64748b" font-size="8.5">structlog ndjson</text>
+    <rect x="336" y="224" width="80" height="34" rx="7" fill="#fff" stroke="#86efac"/><text x="376" y="237" text-anchor="middle" font-weight="600">middleware</text><text x="376" y="250" text-anchor="middle" fill="#64748b" font-size="8.5">中间件链五件</text>
+    <rect x="422" y="224" width="80" height="34" rx="7" fill="#fff" stroke="#86efac"/><text x="462" y="237" text-anchor="middle" font-weight="600">web</text><text x="462" y="250" text-anchor="middle" fill="#64748b" font-size="8.5">信封·1001/1002</text>
+    <rect x="508" y="224" width="80" height="34" rx="7" fill="#fff" stroke="#86efac"/><text x="548" y="237" text-anchor="middle" font-weight="600">persist</text><text x="548" y="250" text-anchor="middle" fill="#64748b" font-size="8.5">逻辑删除·审计</text>
+    <rect x="594" y="224" width="80" height="34" rx="7" fill="#fff" stroke="#86efac"/><text x="634" y="237" text-anchor="middle" font-weight="600">redix</text><text x="634" y="250" text-anchor="middle" fill="#64748b" font-size="8.5">keys·锁·幂等</text>
+    <rect x="680" y="224" width="80" height="34" rx="7" fill="#fff" stroke="#86efac"/><text x="720" y="237" text-anchor="middle" font-weight="600">httpx</text><text x="720" y="250" text-anchor="middle" fill="#64748b" font-size="8.5">超时·1008/1009</text>
+    <rect x="766" y="224" width="80" height="34" rx="7" fill="#fff" stroke="#86efac"/><text x="806" y="237" text-anchor="middle" font-weight="600">celeryx</text><text x="806" y="250" text-anchor="middle" fill="#64748b" font-size="8.5">celery 默认封死</text>
+  </g>
+  <rect x="42" y="264" width="804" height="24" rx="6" fill="#dcfce7" stroke="#86efac"/>
+  <text x="444" y="280" text-anchor="middle" font-size="10" fill="#166534">testx 基座：契约断言（13 码全表 · 信封形状 · ndjson 字段级，跨栈 conformance 同表）+ testcontainers 真 PG/Redis + import-linter 依赖方向机检</text>
+
+  <line x1="450" y1="298" x2="450" y2="314" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="462" y="310" font-size="10" fill="#475569">实现对齐契约（术语由契约锁定 · 不一致即 bug）</text>
+
+  <!-- L4 统一契约层 -->
+  <rect x="30" y="316" width="840" height="44" rx="10" fill="#fefce8" stroke="#eab308" stroke-width="1.5"/>
+  <text x="42" y="332" font-size="12" font-weight="700" fill="#713f12">④ 统一契约（contract/，唯一权威 —— 实现不一致即 bug）</text>
+  <text x="42" y="346" font-size="10" fill="#422006">api 四件套：RestResponse 形状 · 错误码段位（0/1xxx/2xxx 归 yarch，3xxx+ 业务仓登记）· ndjson + W3C traceparent · REST 约定（/api/v1 · D6 空页 · Idempotency-Key）</text>
+  <text x="42" y="357" font-size="10" font-weight="600" fill="#854d0e">python 术语（契约锁定）：yarch_python.response.Response/PageData · errcode.Code · xerror.BizError · middleware.TraceMiddleware(contextvars) · logx（structlog）</text>
+
+  <line x1="450" y1="360" x2="450" y2="374" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- L5 运行底座 -->
+  <rect x="30" y="376" width="840" height="28" rx="8" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="42" y="394" font-size="11.5" font-weight="700" fill="#334155">⑤ 运行底座</text>
+  <text x="118" y="394" font-size="10" fill="#475569">Python 3.12/3.13 双矩阵 · FastAPI · pydantic v2 · SQLAlchemy 2.x + psycopg3 · Celery · structlog · PG 17 · Redis 7 · uv · ruff/mypy CI · PyPI trusted publishing</text>
+
+  <!-- L6 FastAPI 请求生命周期 -->
+  <rect x="30" y="412" width="840" height="60" rx="10" fill="#ffffff" stroke="#64748b" stroke-width="1.5"/>
+  <text x="42" y="430" font-size="12" font-weight="700" fill="#0f172a">⑥ FastAPI 请求生命周期（中间件链外→内：AccessLog &gt; Trace &gt; Recovery &gt; 幂等/限流 → 路由；回程信封 + X-Trace-Id 恒回显）</text>
+  <g font-size="9.5" fill="#0f172a">
+    <rect x="42"  y="438" width="100" height="24" rx="6" fill="#f1f5f9" stroke="#94a3b8"/><text x="92"  y="453" text-anchor="middle" font-weight="600">请求 /api/v1/…</text>
+    <rect x="154" y="438" width="100" height="24" rx="6" fill="#ecfeff" stroke="#22d3ee"/><text x="204" y="453" text-anchor="middle" font-weight="600">AccessLog·ndjson</text>
+    <rect x="266" y="438" width="100" height="24" rx="6" fill="#ecfeff" stroke="#22d3ee"/><text x="316" y="453" text-anchor="middle" font-weight="600">Trace 三级入口</text>
+    <rect x="378" y="438" width="100" height="24" rx="6" fill="#ecfeff" stroke="#22d3ee"/><text x="428" y="453" text-anchor="middle" font-weight="600">Recovery→1000</text>
+    <rect x="490" y="438" width="100" height="24" rx="6" fill="#ecfeff" stroke="#22d3ee"/><text x="540" y="453" text-anchor="middle" font-weight="600">幂等/限流 1007/1006</text>
+    <rect x="602" y="438" width="100" height="24" rx="6" fill="#eef2ff" stroke="#818cf8"/><text x="652" y="453" text-anchor="middle" font-weight="600">路由→Handler</text>
+    <rect x="714" y="438" width="100" height="24" rx="6" fill="#eef2ff" stroke="#818cf8"/><text x="764" y="453" text-anchor="middle" font-weight="600">信封回包+X-Trace-Id</text>
+    <line x1="143" y1="450" x2="151" y2="450" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowH)"/>
+    <line x1="255" y1="450" x2="263" y2="450" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowH)"/>
+    <line x1="367" y1="450" x2="375" y2="450" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowH)"/>
+    <line x1="479" y1="450" x2="487" y2="450" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowH)"/>
+    <line x1="591" y1="450" x2="599" y2="450" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowH)"/>
+    <line x1="703" y1="450" x2="711" y2="450" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowH)"/>
+  </g>
+  <path d="M 764 462 L 764 468 L 92 468" fill="none" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#arrowH)"/>
+  <text x="450" y="480" text-anchor="middle" font-size="9" fill="#64748b">回程：{code, message, data, traceId} 信封 · traceId 经 contextvars 贯穿 logx / celeryx / httpx 出口（traceparent 注入）</text>
+</svg>

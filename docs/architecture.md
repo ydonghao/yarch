@@ -43,7 +43,7 @@ yarch/
 │   ├── golang/                # yarch-golang：Hertz+DDD → Go module（从 yagent 反向沉淀）
 │   ├── web/                   # yarch-web：pnpm workspace（contract 契约包 + react/vue 适配 + UI 档模板）→ npm
 │   ├── rust/                  # yarch-rust：axum+DDD → crates.io（触发式）
-│   ├── python/                # yarch-python：FastAPI+DDD → PyPI（正式入册，待启动）
+│   ├── python/                # yarch-python：FastAPI+DDD → PyPI（第一批已交付 2026-09-07）
 │   └── node/                  # yarch-node：NestJS+DDD → npm（正式入册，待启动）
 ├── clients/                   # 交互端（按项目需要生长；契约适配对偶 web 的 @yarch/contract）
 │   ├── mobile/                # android：Kotlin+Jetpack Compose ｜ ios：Swift+SwiftUI（均触发式规划）；跨端备选 uni-app（兼小程序）/ Flutter
@@ -70,6 +70,10 @@ Java（五层架构：业务工程 / Web 装配 / 平台构件 / 统一契约 / 
 Golang（pkg 构件 + Hertz 请求生命周期）：
 
 ![yarch-golang：pkg 构件 + Hertz 请求生命周期](../stacks/golang/architecture-diagram.svg)
+
+Python（module 构件 + FastAPI 请求生命周期）：
+
+![yarch-python：module 构件 + FastAPI 请求生命周期](../stacks/python/architecture-diagram.svg)
 
 web（包模块 + 一次请求的数据流）：
 
@@ -101,7 +105,7 @@ web（包模块 + 一次请求的数据流）：
 3. **第三批**：`stacks/golang`——从 yagent 既有实践反向沉淀，不重写 ✅（2026-09-02 第一批构件落地：结构同构 coze-studio、语义按契约重铸，三 module 全绿）；
 4. **按需**：rust / clients / archetype（`yarch init`）；
 5. **全域扩展（2026-09-03 拍板；dotnet / php 经评审裁撤不纳入）**：
-   - 新正式栈：`stacks/python`（先行——celery 规约在等承接）、`stacks/node`（NestJS，与 web 同生态共享工具链）；
+   - 新正式栈：`stacks/python`（先行——celery 规约在等承接）✅（2026-09-07 第一批交付：契约内核 + logx/middleware/web/persist/redix/httpx + celeryx 承接 + testx + 生成器/模板，uv workspace 双发行版全绿）、`stacks/node`（NestJS，与 web 同生态共享工具链）；
    - 领域契约首发：`contract/domains/device.md`、`ai.md`（各先出决策清单评审，未成文）；
    - `embedded/esp32` 固件模板（守 device 契约；C/C++ 不设业务栈，以此形态进入）；
    - kotlin 不独立发栈，作为 java 栈第二 archetype；

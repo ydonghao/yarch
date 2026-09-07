@@ -1,6 +1,7 @@
 # stacks/python · yarch-python 脚手架策划案
 
-> **状态：策划案定稿（2026-09-07），P1-P14 已拍板**（P1-P4 交互拍板，P5-P14 随整案按推荐值通过），待开工。
+> **状态：第一批施工完成（2026-09-07），P1-P14 已拍板**（P1-P4 交互拍板，P5-P14 随整案按推荐值通过）。
+> 验收记录（2026-09-07）：**82 tests 全绿**——13 码全表 / 信封逐字节 / ndjson 字段级 / traceId 三级入口回显 / 1001·1002 分型 / 分页 D6 真 PG / 幂等三态真 Redis / 限流 / 逻辑删除·审计 / 锁 token / celeryx 强制默认 / 生成后冒烟 e2e；实施偏差见第九节「实施偏差登记」。
 > 输入：[contract/](../../contract/README.md) 24 份定稿规约（唯一权威，celery.md 为本栈启动触发）· [docs/architecture.md](../../docs/architecture.md)（FastAPI+DDD 既定、全域治理护栏）· [golang PLAN](../golang/PLAN.md) 与 web `@yarch/create-admin` 脚手架范式（三栈同构基准）。
 > 注：本文件 P1-P14 指 python 栈决策编号，与 postgresql.md 的 G1-G10、golang 栈 G1-G9 无关。
 > PyPI 命名核实（2026-09-07）：`yarch` / `yarch-python` / `yarch-init` 均未占用。
@@ -162,7 +163,7 @@ uvx yarch-init@latest --service ysaas-scan --out ysaas-scan
 
 ## 七、分批施工清单
 
-**第一批（本策划拍板后启动）**：
+**第一批 ✅（2026-09-07 完成，下方 13 项全交付）**：
 
 1. workspace 骨架（根 pyproject + 双 packages + uv.lock + .python-version）；
 2. 契约内核三件（response / errcode / xerror）+ 契约断言；
@@ -189,3 +190,14 @@ uvx yarch-init@latest --service ysaas-scan --out ysaas-scan
 5. 0.x 不承诺兼容；正式发版待第一批全绿；
 6. 支持面 macOS + Linux（CI），Windows 不在矩阵；
 7. celery 行为级断言依赖真 broker：TC Redis 起 broker，与 redix 断言共享容器，无额外开销。
+
+## 九、实施偏差登记（2026-09-07）
+
+施工期对任务书/策划案的必要偏离，全部为落地修正、不改变契约语义：
+
+1. **types→errors**：模板七包第五层由 `types/` 更名 `errors/`（python `types` 与 stdlib 冲突；一-5 与四节脚手架同步更新），业务码落 `errors/errno.py`；
+2. **模板 pyproject 用 `.jinja` 后缀**：规避 Jinja2 定界符与 Python 源码 `{{`/`{%` 冲突（八-1 的落地解法），渲染时重命名为 `pyproject.toml`；
+3. **settings `env_file` + `extra=ignore`**：pydantic-settings 显式读 `.env` 且容忍无关环境变量（模板冒烟期修正：进程 env 覆盖 .env 的 CI 探活形态依赖此配置）；
+4. **accesslog 上下文快照**：AccessLog 在最外层、与内层 Trace 共享同一 task context，Trace 的 finally 复位先于本层落日志——改为响应期快照 traceId、落日志前重 bind 后复位（源码内有注释说明）；
+5. **testcontainers 4.15 community 口径**：pyproject 声明 `testcontainers[postgres,redis]>=4.8`，uv.lock 实钉 4.15.0（community 模块），与 golang/java 栈容器基座同定位；
+6. **`uv sync --all-packages`**：uv 0.11 语义（裸 sync 只装 workspace 根、`package=false` 即空集），主仓与 README/CI 命令一律带 `--all-packages`（生成工程无 workspace，仍用裸 `uv sync`）。

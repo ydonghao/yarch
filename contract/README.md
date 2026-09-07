@@ -149,10 +149,10 @@
 
 ## 术语对照（各栈方言）
 
-| 概念 | java | golang | rust | web |
-|---|---|---|---|---|
-| 响应体 | `RestResponse<T>` | `response.Response` | `RestResponse<T>` | `RestResponse<T>` |
-| 分页负载 | `PageData<T>` | `response.PageData` | `PageData<T>` | `PageData<T>` |
-| 错误码 | `GlobalErrorCode` | `errcode.Code` | `ErrorCode` | `errorCodes` 常量 |
-| 业务异常 | `BusinessException` | `xerror.BizError` | `BizError` | `ApiError` |
-| 追踪 ID | `TraceIdFilter`(MDC) | `middleware.Trace()` | `trace_middleware` | `apiClient` 注入/透出 |
+| 概念 | java | golang | rust | web | python |
+|---|---|---|---|---|---|
+| 响应体 | `RestResponse<T>` | `response.Response` | `RestResponse<T>` | `RestResponse<T>` | `yarch_python.response.Response` |
+| 分页负载 | `PageData<T>` | `response.PageData` | `PageData<T>` | `PageData<T>` | `yarch_python.response.PageData` |
+| 错误码 | `GlobalErrorCode` | `errcode.Code` | `ErrorCode` | `errorCodes` 常量 | `errcode.Code` |
+| 业务异常 | `BusinessException` | `xerror.BizError` | `BizError` | `ApiError` | `xerror.BizError` |
+| 追踪 ID | `TraceIdFilter`(MDC) | `middleware.Trace()` | `trace_middleware` | `apiClient` 注入/透出 | `middleware.TraceMiddleware`(contextvars) |

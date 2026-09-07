@@ -14,7 +14,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-const STACKS = ['java', 'golang', 'rust', 'web'];
+const STACKS = ['java', 'golang', 'rust', 'web', 'python'];
 const CLIENTS = ['mobile', 'miniprogram', 'desktop'];
 
 function repoRoot() {
