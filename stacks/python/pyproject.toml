@@ -48,6 +48,7 @@ type = "forbidden"
 source_modules = [
     "yarch_python.response",
     "yarch_python.errcode",
+    "yarch_python.xerror",
 ]
 forbidden_modules = [
     "fastapi",
