@@ -74,7 +74,13 @@ def setup(
 ) -> None:
     logx.setup(service, env)
     app.state.service = service
-    # starlette：后 add 的在外层。目标外→内：AccessLog > Trace > Recovery > (Idem) > (Rate)
+    # starlette：后 add 的在外层。目标外→内：AccessLog > Trace > Recovery > (Rate) > (Idem)。
+    # Rate 必须在 Idem 外层：限流拒绝的请求不得进入幂等流程——否则 429 会被幂等层捕获
+    # 落库为 done，同键合法重试在 TTL 内永远回放 429、操作永不执行
+    if idempotency_store is not None:
+        from yarch_python.middleware.idempotency import IdempotencyMiddleware
+
+        app.add_middleware(IdempotencyMiddleware, store=idempotency_store, service=service)
     if rate_limit is not None:
         from yarch_python.middleware.ratelimit import RateLimitMiddleware
 
@@ -82,10 +88,6 @@ def setup(
         app.add_middleware(
             RateLimitMiddleware, limiter=limiter, limit=limit, window_s=window_s, service=service
         )
-    if idempotency_store is not None:
-        from yarch_python.middleware.idempotency import IdempotencyMiddleware
-
-        app.add_middleware(IdempotencyMiddleware, store=idempotency_store, service=service)
     app.add_middleware(RecoveryMiddleware)
     app.add_middleware(TraceMiddleware)
     app.add_middleware(AccessLogMiddleware)

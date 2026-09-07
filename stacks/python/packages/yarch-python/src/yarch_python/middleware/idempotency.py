@@ -101,12 +101,16 @@ class IdempotencyMiddleware:
         try:
             await self.app(scope, _replay_receive(body), send_capture)
         except BaseException:
-            # 执行失败释放 pending：同键重试可再执行（rest-conventions 幂等总则-1）
+            # 执行失败释放 pending：同键重试可再执行（rest-conventions 幂等总则-1）。
+            # 已开始但未完成的残缺响应不落库——release 后不得再被 finally 二次写入 done
             self.store.release(key)
             raise
-        finally:
-            chunks = captured.get("chunks")
-            if captured.get("status") is not None and chunks is not None:
+        chunks = captured.get("chunks")
+        if captured.get("status") is not None and chunks is not None:
+            if captured["status"] >= 500:
+                # 5xx 不落 done：释放占位允许重试（与 java 栈 IdempotencyInterceptor 口径一致）
+                self.store.release(key)
+            else:
                 self.store.store_response(
                     key, captured["status"], b"".join(chunks).decode("utf-8", "replace")
                 )
