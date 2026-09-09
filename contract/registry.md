@@ -1,6 +1,6 @@
 # registry/ · 资源命名登记处
 
-> **定位**：共享基础设施（一台服务器多项目共用 PG/Redis/Kafka/Nacos/MinIO…）的**租户边界标识唯一登记处**；**前端应用名（微前端）同样在此登记**（第四节，2026-09-07 起）。全部 infra 规约的隔离模型（Redis key 前缀、Kafka/RocketMQ topic 前缀、Nacos Group、ES 索引前缀、MinIO bucket、Milvus collection、CH/SR 库名）都压在"服务名唯一"这一前提上——**本表就是那个前提的守门人**（架构评审 P0-4，2026-09-01）。
+> **定位**：共享基础设施（一台服务器多项目共用 PG/Redis/Kafka/Nacos/MinIO…）的**租户边界标识唯一登记处**；**前端应用名（微前端）同样在此登记**（第四节，2026-09-07 起）；**移动 App 亦在此登记**（第五节，2026-09-09 起）。全部 infra 规约的隔离模型（Redis key 前缀、Kafka/RocketMQ topic 前缀、Nacos Group、ES 索引前缀、MinIO bucket、Milvus collection、CH/SR 库名）都压在"服务名唯一"这一前提上——**本表就是那个前提的守门人**（架构评审 P0-4，2026-09-01）。
 
 ## 一、服务名规则（租户边界标识）
 
@@ -40,4 +40,17 @@
 
 | 应用名 | 类型（基座/子应用） | 属主服务名 | 路由前缀 | 登记日期 | 备注 |
 |---|---|---|---|---|---|
-| — | — | — | — | — | 首个微前端项目接入时正式登记（规划：ysaas-console 基座） |
+| `ysaas-console` | 基座 | `ysaas` | `/` | 2026-09-09 | 微前端首批示例（仓内 stacks/web/examples/ysaas-console） |
+| `ysaas-billing` | 子应用 | `ysaas` | `/ysaas-billing` | 2026-09-09 | 微前端首批示例（仓内 stacks/web/examples/ysaas-billing） |
+
+## 五、移动 App 登记（clients）
+
+> 条文出处：[clients/client-shared.md](clients/client-shared.md) 四；约束对象：android / ios 原生 App。App 名是服务名在终端空间的延伸；**双端包标识（applicationId / bundle id）必须一致且互为派生**——推送证书、深链 scheme、商店资源都以它为锚。
+
+1. 【强制】App 名格式同服务名（一-1），由「**已登记服务名-用途**」两段构成（如 `ysaas-companion`）；首段必须能在本表一、二节查到属主，不得直接使用纯服务名。
+2. 【强制】同一 App 的 `applicationId`（android）与 bundle id（ios）由 App 名按各平台惯例派生（[clients/android.md](clients/android.md) 三、[clients/ios.md](clients/ios.md) 三模板定式），双端不一致即登记缺陷。
+3. 【强制】App 名一经登记并上架（商店资源 / 推送证书 / 深链 scheme）即冻结；改名走一-3 同款变更评审。
+
+| App 名 | 属主服务名 | applicationId / bundle id | 平台（android/ios/双端） | 登记日期 | 备注 |
+|---|---|---|---|---|---|
+| — | — | — | — | — | 首个移动 App 工程创建时正式登记 |

@@ -1,7 +1,7 @@
 # contract/ · 跨栈统一契约与规约
 
 > 多栈脚手架的灵魂：各栈长得不一样没关系，必须说同一种接口语言。
-> 本目录是全部栈实现的**唯一权威来源**，改契约必须先改这里。已落地：java / golang / web / python；规划中：node / embedded 固件 / clients 移动端契约适配 / rust（触发式）。
+> 本目录是全部栈实现的**唯一权威来源**，改契约必须先改这里。已落地：java / golang / web / python；clients 移动端规约已定稿（2026-09-09，实现触发式）；规划中：node / embedded 固件 / rust（触发式）。
 
 ## 规约治理（等级定义 / 豁免与变更 / 机检路线）
 
@@ -53,6 +53,8 @@
 | qdrant | — | minio-s3、kafka（向量生成管道）、pgvector（降级路径） |
 | celery | redis/rabbitmq（broker，共享 Redis 必配 global_keyprefix） | api（幂等/traceId）、kafka/rocketmq、xxl-job（分工边界） |
 | web/micro-frontend | — | api 四件套（信封/错误码/traceId 口径）、registry（前端应用名登记）、nginx（静态托管） |
+| clients/client-shared | — | api 四件套（信封/错误码/traceId/幂等口径）、registry（App 名登记） |
+| clients/android / clients/ios | clients/client-shared | api 四件套（口径协作参考）、registry（App 名与包标识登记） |
 
 ## 关键架构决策登记表（唯一权威）
 
@@ -68,6 +70,7 @@
 | 文档库 | MongoDB 仅文档型刚需经评审引入，默认 PG | 已生效 |
 | API 契约 D1-D6（2026-09-01 拍板：**业界标准优先于阿里手册**） | D1 int32 数字段位+标识符（非阿里 A/B/C 字符串）；D2 单 message 不引入 userTip；D3 kebab-case；D4 ISO-8601 UTC；D5 路径版本 `/v1/`；D6 越界返回空页（200+空 list+真实 total，参数非法仍 1001） | 已生效 |
 | 微前端载器分档 | 应用级集成默认 **micro-app**（Vite 零改造/低侵入）；存量与复杂沙箱档 **qiankun**；**Module Federation** 限同仓模块共享场景；wujie 不入册（维护活跃度不足）。规约条文载器无关（[web/micro-frontend.md](web/micro-frontend.md)）；观察哨：micro-app 持续停更则默认档切 qiankun | 已生效（2026-09-07） |
+| 移动端规约 M1-M7（2026-09-09 拍板） | 落位 contract/clients/ 三份：client-shared 共享契约 + android + ios 方言。融合基准 Android=**Google 官方**（风格/架构/Now in Android 范式；DI=Hilt）；iOS=**官方 API 设计指南 + Airbnb 风格**（SwiftLint+SwiftFormat 机检）；iOS 工程生成 **xcodegen+SPM**；iOS 架构 **MVVM+@Observable**。min 基线双档分文件夹：android minsdk26 默认 / 24 扩展，ios17 默认 / 16 扩展（降级 ObservableObject）；targetSdk ≥ 36 硬线（Play 2026-08-31 起） | 已生效（2026-09-09） |
 
 **租户边界标识**（服务名）登记处：[registry.md](registry.md)。
 
@@ -111,6 +114,14 @@
 |---|---|---|
 | [微前端](web/micro-frontend.md) | v1.0 已定稿 | 基座↔子应用彼此之间的契约：应用名一名三用（路由前缀/storage 前缀/事件前缀）/ 职责分界 / 通信三通道 / 登录态与 401 跳转唯一归基座 / 独立·集成双模式 / 独立发版；**条文载器无关**，载器分档见关键架构决策登记表 |
 
+## 客户端规约（clients/ · 2026-09-09 新设层）
+
+| 规约 | 状态 | 一句话 |
+|---|---|---|
+| [客户端共享契约](clients/client-shared.md) | v1.0 已定稿 | 平台无关：信封解包单点 / 错误三分类（业务·传输·取消）/ traceId 透传与报障凭证 / 网络纪律（超时单点·禁明文·取消传导）/ App 命名与登记 / 双端概念同构方言表 |
+| [Android 客户端](clients/android.md) | v1.0 已定稿 | Kotlin+Compose+M3：UDF/ViewModel/Repository，Now in Android 工程范式（version catalog + convention plugins），Hilt，ktlint+detekt+Lint 三重机检，minsdk26 默认 / 24 扩展，targetSdk ≥ 36 硬线 |
+| [iOS 客户端](clients/ios.md) | v1.0 已定稿 | Swift+SwiftUI+HIG：MVVM+@Observable（16 档降级 ObservableObject），xcodegen+SPM，SwiftLint（Airbnb 基准）+SwiftFormat，Swift Testing 新代码，privacy manifest 合规 |
+
 ## 领域契约（domains/ · 规划层）
 
 新领域（机器人、AI 等）的唯一进门通道：先立领域契约评审定稿，再于至少两个语言侧实现（单一实现不成领域）。首发规划（2026-09-03 拍板，均未成文，启动前按工作流先出决策清单）：
@@ -127,6 +138,7 @@
 - API 契约：**v1.0 已定稿**（2026-09-01 评审通过，D1-D6 按"业界标准优先于阿里手册"拍板）
 - infra 规约：**全部 20 份 v1.0 已定稿**（mysql/postgresql/redis/higress 2026-09-01 先行定稿并完成 higress 官方校准；其余 16 份同日评审通过）
 - 前端规约（web/）：**2026-09-07 新设层**，微前端 v1.0 已定稿（经 MF0-MF7 决策清单拍板）
+- 客户端规约（clients/）：**2026-09-09 新设层**，client-shared + android + ios 三份 v1.0 已定稿（经 M1-M7 决策清单拍板）
 - 领域契约（domains/）：**2026-09-03 拍板设立**，device / ai 首发规划中，均未成文
 - 各栈实现的 code/message/字段名与本目录不一致时，**以本目录为准，实现视为 bug**。
 
@@ -145,6 +157,7 @@
 | 2026-09-01 | **infra 16 份草案评审通过，全部升 v1.0 定稿**——规约层 24 份全部定稿（api 四件套 + infra 20 份 + registry） | 已定稿 |
 | 2026-09-03 | **全域扩展拍板**：设立 contract/domains/ 领域契约层（device / ai 首发规划）；yarch 定位升"云-边-端全域"；dotnet / php 裁撤不纳入 | 已生效 |
 | 2026-09-07 | **新设 contract/web/ 前端规约层**：微前端规约 v1.0 定稿（条文载器无关；载器分档拍板 micro-app 默认 / qiankun 存量档 / Module Federation 同仓共享档 / wujie 不入册）；registry.md 新增前端应用名登记（首段 = 服务名、一名三用） | 已定稿 |
+| 2026-09-09 | **新设 contract/clients/ 客户端规约层**：client-shared + android + ios 三份 v1.0 定稿（M1-M7 拍板：融合基准 Google 官方 / 官方 API 设计指南+Airbnb；xcodegen+SPM；Hilt；MVVM+@Observable；min 双基线分文件夹；targetSdk≥36）；registry.md 新增移动 App 登记（首段 = 服务名、双端包标识一致互为派生） | 已定稿 |
 | — | 遗留项：低频组件强制级占比复审；机检条文标注启动（下一步：随 stacks 重做启动 `yarch lint`/AI 审查清单） | 待办 |
 
 ## 术语对照（各栈方言）
