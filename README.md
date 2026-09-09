@@ -7,7 +7,7 @@
 [![python-stack](https://github.com/ydonghao/yarch/actions/workflows/python-stack.yml/badge.svg)](https://github.com/ydonghao/yarch/actions/workflows/python-stack.yml)
 [![web-stack](https://github.com/ydonghao/yarch/actions/workflows/web-stack.yml/badge.svg)](https://github.com/ydonghao/yarch/actions/workflows/web-stack.yml)
 [![golang-stack](https://github.com/ydonghao/yarch/actions/workflows/golang-stack.yml/badge.svg)](https://github.com/ydonghao/yarch/actions/workflows/golang-stack.yml)
-[![Contract](https://img.shields.io/badge/Contract-25%20specs%20v1.0-gold.svg)](contract/)
+[![Contract](https://img.shields.io/badge/Contract-29%20specs%20v1.0-gold.svg)](contract/)
 
 跨项目复用的**工程架构平台**——不是又一个 CRUD 框架，而是让多个技术栈说同一种接口语言的契约体系。
 
@@ -145,20 +145,21 @@ go env -w GOPROXY=https://goproxy.cn,direct
 
 ```
 yarch/
-├── contract/          # 契约层（唯一权威来源，25 份 v1.0 定稿）
+├── contract/          # 契约层（唯一权威来源，29 份 v1.0 定稿）
 │   ├── api/           #   四件套：信封 · 错误码 · 日志/traceId · REST 约定
 │   ├── infra/         #   20 份：PG · MySQL · Redis · Kafka · MQ · 向量 · OLAP · 网关 · …
 │   ├── web/           #   微前端规约（micro-app 默认档）
+│   ├── clients/       #   客户端规约三份：client-shared · android · ios
 │   └── registry.md    #   服务名（租户边界）唯一登记处
 │
 ├── stacks/            # 栈实现层（发各自生态的包）
 │   ├── java/          #   ✅ 16 模块：parent/BOM + 8 starter + 双 archetype + 双 examples
 │   ├── python/        #   ✅ uv workspace 双发行版：yarch-python 构件 + yarch-init 生成器（DDD 模板）
-│   ├── web/           #   ✅ 5 包：contract + react/vue 适配 + create-admin 生成器（3 档模板资产）
+│   ├── web/           #   ✅ 5 包：contract + react/vue 适配 + create-admin 生成器（三档单应用 + 基座/子应用微前端档）
 │   ├── golang/        #   ✅ 3 module：契约内核 + 六构件 + DDD 模板
 │   └── rust/          #   预留（触发式）
 │
-├── clients/           # mobile · miniprogram · desktop(Tauri) 按需生长
+├── clients/           # android · ios 规约已定稿（实现触发式）；miniprogram · desktop(Tauri) 按需生长
 ├── tools/             # locate-scaffolds → 将来 yarch init CLI
 └── docs/              # 架构文档 + 对标解析（ruoyi/yudao/coli 缺口 G/E 决策清单）
 ```
@@ -189,11 +190,13 @@ yarch/
 |---|---|
 | `@yarch/contract` | 信封类型/解包 / 错误码常量表 / ApiError / traceId / fetch 封装 / 导航端口 |
 | `@yarch/react` / `@yarch/vue` | 框架薄适配（注入各 router 导航） |
-| `@yarch/create-admin` | **工程生成器**：交互问答 + archetype 全量渲染 + registry 命名校验（golang `yarch-init` 对偶） |
+| `@yarch/create-admin` | **工程生成器**：交互问答 + archetype 全量渲染 + registry 命名校验（golang `yarch-init` 对偶）；`--micro base\|sub` 生成微前端基座/子应用；全模板内置 `AGENTS.md` AI 施工守则 |
 | `create/templates/admin-semi` | 默认档资产（Vite + React + Semi Design，抖音系） |
 | `create/templates/admin-antd` | antd 档资产（蚂蚁系） |
 | `create/templates/admin-arco` | Arco Design 档资产（字节系） |
+| `create/templates/base-semi` / `sub-semi` | 微前端档资产：基座（manifest 装配/共享运行时/登录态唯一）+ 子应用（独立·集成双模式，集成产物框架体积归零） |
 | `examples/admin-demo` | 全链路对接 Java 后端（验证码/分页/幂等/状态机） |
+| `examples/ysaas-console` + `ysaas-billing` | 微前端活案例：基座+子应用（事件上行/双模式/加载失败重试），playwright e2e 六用例 |
 
 ### Python（`stacks/python/`）
 
@@ -225,9 +228,9 @@ stacks/python  → response.Response · errcode.Code  · middleware.TraceMiddlew
 
 ## 状态
 
-- **契约层**：25 份 v1.0 定稿（api 四件套 + web 微前端 + infra 20 份 + registry）
+- **契约层**：29 份 v1.0 定稿（api 四件套 + infra 20 份 + web 微前端 + clients 三份 + registry）
 - **Java**：16 模块 reactor verify 全绿 · CI（JDK 21/25）
-- **Web**：contract 4/4 · depcruise 0 违规 · 生成后冒烟三档全绿（生成 → install → tsc → build）· CI（Node 22/24）
+- **Web**：contract 4/4 · depcruise 0 违规 · 生成后冒烟三档全绿（生成 → install → tsc → build）· 微前端集成 e2e 六用例全绿（playwright）· CI（Node 22/24）
 - **Golang**：3 module 全绿
 - **Python**：99 tests 全绿 · CI（Python 3.12/3.13，含生成工程冒烟）
 - **发版**：Java 13 件 0.1.0 已上 Maven Central（2026-09-03，`archetype:generate` 零 clone 即用；源码锚 `stacks/java/v0.1.0`，后续版本推 tag `stacks/java/vX.Y.Z` 走 `java-publish.yml`）；Web 三包 0.1.0 已上 npm（`npm create @yarch/admin@latest` 即用；源码锚 `stacks/web/v0.1.0`，后续推 tag 走 CI 发版）；Golang `stacks/golang/v0.1.0` 已推 tag 并被 module proxy 收录（`go get github.com/ydonghao/yarch/stacks/golang@v0.1.0` 即用）；Python PyPI trusted publishing 就绪（`stacks/python/vX.Y.Z`），**tag 待推送**——当前从本仓跑生成器（见上方从 0 到 1）

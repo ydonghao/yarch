@@ -23,7 +23,11 @@
 
 ### web（stacks/web）
 
-- **修复**：depcruise 规则锚定失效——`pages-are-thin` / `no-reverse-deps` 两条规则因路径前缀不匹配从未命中（机检实际是摆设）；admin-demo 两页直调域 api 的违规随之修复（收进 feature hooks 层）
+- **新增**：微前端落地（web v0.2.0 主体）——`@yarch/contract` 新增微前端契约六模块（应用事件总线 / 前缀化 storage / manifest 登记 / 挂载 props / 共享单例标记 / 应用名前缀工具），react·vue 适配层同步导航端口；create 生成器新增 `--micro base|sub` 档（base-semi 基座 / sub-semi 子应用模板，应用名过 registry 登记表核对）；仓内双示例 ysaas-console（基座）+ ysaas-billing（子应用）全链路跑通
+- **新增**：微前端集成 e2e（playwright 真浏览器六用例：沙箱加载/事件上行/contract 单例/storage 前缀/重挂幂等）接入 `pnpm test:e2e` 与 CI；登记机检 `pnpm check:micro`（registry.md ↔ 配置 ↔ 快照三方一致）；depcruise 新增载器归属/导航注册归属/跨应用直连三条微前端规则
+- **修复**：Semi UI 在 React 19 下命令式弹层（Toast/Notification）静默不渲染——入口统一注入 `semiGlobal.config.createRoot`（三档模板 + 微前端模板 + admin-demo 全量）
+- **修复**：基座登录页对已登录访问不再滞留（会话恢复直达 `/login` 一律回首页）；子应用事件上行订阅从首页页面上移至常驻布局壳——路由切换不再丢订阅
+- **修复**：e2e 网络口径钉死 127.0.0.1（vite 默认绑 localhost 在 macOS 为 ::1 only，CI/本地探活与浏览器侧访问不一致会造成假失败）
 
 ### 仓库
 
@@ -31,6 +35,7 @@
 - 根 README 同步 python 栈（四栈快速开始/构件表/机检表/状态），徽章换为 CI 活链接
 - 契约锚点表对齐已落地栈：rust 除名（触发式预留）、python 补位
 - 内部施工计划文档（docs/superpowers/）移出公开树
+- 契约层新设 clients/ 客户端规约：client-shared + android + ios 三份 v1.0 定稿（M1-M7 拍板：Google 官方基准 / 官方 API 设计指南+Airbnb / xcodegen+SPM / Hilt / MVVM+@Observable / targetSdk≥36 硬线）；registry.md 新增第五节移动 App 登记；`ysaas-console`（基座）与 `ysaas-billing`（子应用）正式登记为首批前端应用名
 
 ## [0.1.0] - 2026-09-03（java / web）
 
