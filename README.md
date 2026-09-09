@@ -105,7 +105,7 @@ uv run celery -A celery_app worker -Q order-svc.default   # ③ 需要异步任�
 ```bash
 # Java：改 pom 继承的 yarch-parent 版本一行（BOM 仲裁全链版本）
 # Web：pnpm update @yarch/contract @yarch/react
-# Golang：go get github.com/ydonghao/yarch/stacks/golang@vX.Y.Z（发版后）
+# Golang：go get github.com/ydonghao/yarch/stacks/golang@vX.Y.Z（v0.1.0 已收录）
 # Python：uv add "yarch-python@X.Y.Z"
 ```
 </details>
@@ -230,7 +230,7 @@ stacks/python  → response.Response · errcode.Code  · middleware.TraceMiddlew
 - **Web**：contract 4/4 · depcruise 0 违规 · 生成后冒烟三档全绿（生成 → install → tsc → build）· CI（Node 22/24）
 - **Golang**：3 module 全绿
 - **Python**：99 tests 全绿 · CI（Python 3.12/3.13，含生成工程冒烟）
-- **发版**：Java 13 件 0.1.0 已上 Maven Central（2026-09-03，`archetype:generate` 零 clone 即用；后续推 tag `stacks/java/vX.Y.Z` 走 `java-publish.yml`）；Web 三包 0.1.0 已上 npm（`npm create @yarch/admin@latest` 即用；后续推 tag `stacks/web/vX.Y.Z` 走 CI 发版）；Golang tag 发版路径就绪（`stacks/golang/vX.Y.Z` → module proxy，无需注册任何平台），**tag 待推送**——当前生成器随本仓使用（见上方从 0 到 1）；Python PyPI trusted publishing 就绪（`stacks/python/vX.Y.Z`），**tag 待推送**——当前从本仓跑生成器（见上方从 0 到 1）
+- **发版**：Java 13 件 0.1.0 已上 Maven Central（2026-09-03，`archetype:generate` 零 clone 即用；源码锚 `stacks/java/v0.1.0`，后续版本推 tag `stacks/java/vX.Y.Z` 走 `java-publish.yml`）；Web 三包 0.1.0 已上 npm（`npm create @yarch/admin@latest` 即用；源码锚 `stacks/web/v0.1.0`，后续推 tag 走 CI 发版）；Golang `stacks/golang/v0.1.0` 已推 tag 并被 module proxy 收录（`go get github.com/ydonghao/yarch/stacks/golang@v0.1.0` 即用）；Python PyPI trusted publishing 就绪（`stacks/python/vX.Y.Z`），**tag 待推送**——当前从本仓跑生成器（见上方从 0 到 1）
 
 ## License
 
