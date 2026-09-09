@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@playwright/test':
+        specifier: ^1.63.0
+        version: 1.63.0
       dependency-cruiser:
         specifier: ^18.2.0
         version: 18.2.0
@@ -29,6 +32,86 @@ importers:
       react-dom:
         specifier: ^19
         version: 19.2.8(react@19.2.8)
+      react-router-dom:
+        specifier: ^7
+        version: 7.18.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+    devDependencies:
+      '@types/react':
+        specifier: ^19
+        version: 19.2.18
+      '@types/react-dom':
+        specifier: ^19
+        version: 19.2.5(@types/react@19.2.18)
+      '@vitejs/plugin-react':
+        specifier: ^4
+        version: 4.7.0(vite@6.4.3)
+      typescript:
+        specifier: ^5.6
+        version: 5.9.3
+      vite:
+        specifier: ^6
+        version: 6.4.3
+
+  examples/ysaas-billing:
+    dependencies:
+      '@douyinfe/semi-ui':
+        specifier: ^2
+        version: 2.103.0(@floating-ui/dom@1.8.0)(@tiptap/suggestion@3.31.0(@floating-ui/dom@1.8.0)(@tiptap/core@3.31.0(@tiptap/pm@3.31.0))(@tiptap/pm@3.31.0))(@types/react-dom@19.2.5(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@yarch/contract':
+        specifier: workspace:*
+        version: link:../../packages/contract
+      '@yarch/react':
+        specifier: workspace:*
+        version: link:../../packages/react
+    devDependencies:
+      '@types/react':
+        specifier: ^19
+        version: 19.2.18
+      '@types/react-dom':
+        specifier: ^19
+        version: 19.2.5(@types/react@19.2.18)
+      '@vitejs/plugin-react':
+        specifier: ^4
+        version: 4.7.0(vite@6.4.3)
+      react:
+        specifier: ^19
+        version: 19.2.8
+      react-dom:
+        specifier: ^19
+        version: 19.2.8(react@19.2.8)
+      react-router-dom:
+        specifier: ^7
+        version: 7.18.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      typescript:
+        specifier: ^5.6
+        version: 5.9.3
+      vite:
+        specifier: ^6
+        version: 6.4.3
+
+  examples/ysaas-console:
+    dependencies:
+      '@douyinfe/semi-ui':
+        specifier: ^2
+        version: 2.103.0(@floating-ui/dom@1.8.0)(@tiptap/suggestion@3.31.0(@floating-ui/dom@1.8.0)(@tiptap/core@3.31.0(@tiptap/pm@3.31.0))(@tiptap/pm@3.31.0))(@types/react-dom@19.2.5(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@micro-zoe/micro-app':
+        specifier: ^1.0.0-rc.32
+        version: 1.0.0-rc.32
+      '@yarch/contract':
+        specifier: workspace:*
+        version: link:../../packages/contract
+      '@yarch/react':
+        specifier: workspace:*
+        version: link:../../packages/react
+      react:
+        specifier: ^19
+        version: 19.2.8
+      react-dom:
+        specifier: ^19
+        version: 19.2.8(react@19.2.8)
+      react-router:
+        specifier: ^7
+        version: 7.18.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       react-router-dom:
         specifier: ^7
         version: 7.18.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -407,11 +490,19 @@ packages:
   '@mdx-js/mdx@3.1.1':
     resolution: {integrity: sha512-f6ZO2ifpwAQIpzGWaBQT2TXxPv6z3RBzQKpVftEWN78Vl/YweF1uwussDx8ECAXVtr3Rs89fKyG9YlzUs9DyGQ==}
 
+  '@micro-zoe/micro-app@1.0.0-rc.32':
+    resolution: {integrity: sha512-1M34tdcZB9yEvOozMJ/1tOnFVnX3QJtWe4kDevpO/GjNJ5oFjq6gE9jiInJSvvcYZcZTKrIWcM9xUzbFbIFG0A==}
+
   '@napi-rs/lzma-linux-x64-gnu@1.5.1':
     resolution: {integrity: sha512-oTXEIha4SsuXdTA4Iyskj0kpdx2yVXdhd75c2v3xGrHFfVMsbhTPZU/nMPL4sWKo4pBHm3aucLaqGlF696dTyQ==}
     engines: {node: ^22.20 || ^24.12 || >=25}
     cpu: [x64]
     os: [linux]
+
+  '@playwright/test@1.63.0':
+    resolution: {integrity: sha512-oxMK4vllB9RK5NQ2l1pq1IfOf2AvnEuj/vYGDj0H2nMtmtZpKtCwt/l00GEO6xjGfpBNAvjovvYdCm50dRQkpQ==}
+    engines: {node: '>=20'}
+    hasBin: true
 
   '@rolldown/pluginutils@1.0.0-beta.27':
     resolution: {integrity: sha512-+d0F4MKMCbeVUJwG96uQ4SgAznZNSq93I3V+9NHA4OpvqG8mRCpGdKmK8l/dl02h2CCDHwW2FqilnTyDcAnqjA==}
@@ -1428,6 +1519,16 @@ packages:
     resolution: {integrity: sha512-qcJu88Q2IWqJsDD529JKMdwGm/dvInW4HvQnRwiH9JtihJvzGOscDtHE3x1pBKeUOTysQ8kVmLnJ2kJu7yhcGA==}
     engines: {node: '>=12'}
 
+  playwright-core@1.63.0:
+    resolution: {integrity: sha512-rYCsBF/M5HjUch52bbtVONEFjv6Xu8sm8h72dNlR5bzIE1fvC/bxgspzkjSfU+MweEMmPM8KJebG6nnyxo5mCg==}
+    engines: {node: '>=20'}
+    hasBin: true
+
+  playwright@1.63.0:
+    resolution: {integrity: sha512-+7ziBLidS4NaNCdt57SUDT+wYmmd5fmiQejUic/kb+YsYSCPyOOE9sebzMjNmQrsnNpDJqd4WHvV/8lfKfUDUg==}
+    engines: {node: '>=20'}
+    hasBin: true
+
   postcss@8.5.26:
     resolution: {integrity: sha512-u82N74LFzG8ca+dD8puPnplTXoGH4fTPpVGuIbt36G3qvNlkvfD0lEAZSxaly3KX8TS/L1A1gsCEmvKmBcVbkQ==}
     engines: {node: ^10 || ^12 || >=14}
@@ -2225,8 +2326,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@micro-zoe/micro-app@1.0.0-rc.32': {}
+
   '@napi-rs/lzma-linux-x64-gnu@1.5.1':
     optional: true
+
+  '@playwright/test@1.63.0':
+    dependencies:
+      playwright: 1.63.0
 
   '@rolldown/pluginutils@1.0.0-beta.27': {}
 
@@ -3521,6 +3628,12 @@ snapshots:
   picomatch@4.0.5: {}
 
   picomatch@4.0.7: {}
+
+  playwright-core@1.63.0: {}
+
+  playwright@1.63.0:
+    dependencies:
+      playwright-core: 1.63.0
 
   postcss@8.5.26:
     dependencies:

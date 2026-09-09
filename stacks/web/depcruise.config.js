@@ -24,5 +24,26 @@ module.exports = {
       from: { path: "^packages/contract" },
       to: { path: "(react|vue)" },
     },
+    {
+      name: "micro-loader-only-in-base",
+      comment: "微前端载器只属基座（micro-frontend.md 三-2/十一-2）——子应用模板/工程禁 import @micro-zoe/micro-app",
+      severity: "error",
+      from: { path: "(templates/sub-semi|examples/ysaas-billing)/src/" },
+      to: { path: "^(node_modules/)?@micro-zoe/micro-app" },
+    },
+    {
+      name: "micro-navigator-register-only-in-base",
+      comment: "导航端口注册唯一归基座（十-2）——子应用业务层禁 import @yarch/react（供给层 supply/ 独立模式注册除外）",
+      severity: "error",
+      from: { path: "(templates/sub-semi|examples/ysaas-billing)/src/(app|features|pages|layouts|ui|events)/" },
+      to: { path: "^(node_modules/)?@yarch/react" },
+    },
+    {
+      name: "micro-no-cross-app-imports",
+      comment: "子应用禁直连基座源码（十二-2 应用边界）——共享只经基座 window 全局供给层（八-1/八-2）",
+      severity: "error",
+      from: { path: "(templates/sub-semi|examples/ysaas-billing)/src/" },
+      to: { path: "(templates/base-semi|examples/ysaas-console)/src/" },
+    },
   ],
 };

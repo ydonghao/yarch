@@ -9,9 +9,13 @@
     "test": "pnpm -r --if-present test",
     "lint": "pnpm -r --if-present lint",
     "gen": "node packages/create/bin/create-admin.mjs",
-    "check:deps": "depcruise packages/contract/src packages/react/src packages/vue/src packages/create/templates/admin-semi/src packages/create/templates/admin-antd/src packages/create/templates/admin-arco/src examples/admin-demo/src --config depcruise.config.js"
+    "check:deps": "depcruise packages/contract/src packages/react/src packages/vue/src packages/create/templates/admin-semi/src packages/create/templates/admin-antd/src packages/create/templates/admin-arco/src packages/create/templates/base-semi/src packages/create/templates/sub-semi/src examples/admin-demo/src examples/ysaas-console/src examples/ysaas-billing/src --config depcruise.config.js",
+    "check:micro": "node scripts/check-micro.mjs",
+    "build:examples": "pnpm --filter ysaas-billing build && pnpm --filter ysaas-billing build:micro && pnpm --filter ysaas-console build",
+    "test:e2e": "pnpm build:examples && playwright test --config e2e/playwright.config.ts"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "dependency-cruiser": "^18.2.0"
   }
 }

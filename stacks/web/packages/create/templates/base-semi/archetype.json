@@ -1,0 +1,13 @@
+{
+  "description": "yarch 微前端基座模板 · Semi 档：micro-app 载器（默认档）+ manifest 声明式装配 + 登录态/导航/主题/错误兜底五权归基座",
+  "variables": [
+    { "name": "packageName", "desc": "应用名（= npm 包名 = 路由前缀 = storage/事件前缀，micro-frontend.md 二-1/二-2）", "required": true, "default": "" },
+    { "name": "appName", "desc": "展示名（index.html 标题）", "required": false, "default": "= packageName" },
+    { "name": "service", "desc": "首段服务名（registry.md 已登记，二-1）", "required": false, "default": "" },
+    { "name": "description", "desc": "工程描述（package.json）", "required": false, "default": "" },
+    { "name": "port", "desc": "vite dev 端口", "required": false, "default": "5173" },
+    { "name": "proxyTarget", "desc": "/api/v1 反向代理目标", "required": false, "default": "http://localhost:8080" },
+    { "name": "yarchContractDep", "desc": "@yarch/contract 依赖（发版前 file: 本地路径，发版后 ^x.y.z）", "required": false, "default": "" },
+    { "name": "yarchReactDep", "desc": "@yarch/react 依赖（同上）", "required": false, "default": "" }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "noEmit": true,
+    "paths": {
+      "@yarch/contract": ["../../packages/contract/src/index.ts"],
+      "@yarch/react": ["../../packages/react/src/index.ts"],
+      "@supply": ["./src/supply/standalone.ts"]
+    }
+  },
+  "include": [
+    "src"
+  ]
+}

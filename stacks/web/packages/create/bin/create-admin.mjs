@@ -18,6 +18,7 @@ import { readFileSync, writeFileSync, readdirSync, mkdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join, resolve } from "node:path";
 import readline from "node:readline/promises";
+import { parseRegistryMd } from "./registry.mjs";
 
 const PKG_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const UI_TIERS = {
@@ -25,6 +26,13 @@ const UI_TIERS = {
   antd: "antd（蚂蚁系）",
   arco: "Arco Design（字节系）",
 };
+// 微前端模板档（W10）：载器 micro-app（contract/README 登记表默认档），UI 档本批固定 semi，其余档触发式。
+const MICRO_KINDS = {
+  base: "微前端基座（micro-frontend.md 一-1：全局唯一，承载布局/菜单/登录态/路由分发/错误兜底）",
+  sub: "微前端子应用（micro-frontend.md 一-3：独立·集成双运行形态，只做域内页面）",
+};
+// @yarch 底座版本依赖（--deps version 形态）；与本仓发版版本同步 bump。
+const YARCH_VERSION = "^0.2.0";
 
 const servicePattern = /^[a-z][a-z0-9-]{1,31}$/;
 // 禁裸通用词（registry.md 一-1/一-2 口径摘录，与 golang yarch-init 同款；完整表以 contract/registry.md 为准）。
@@ -40,11 +48,13 @@ const PLACEHOLDER = /\{\{\s*([a-zA-Z][a-zA-Z0-9]*)\s*\}\}/g;
 
 function usage() {
   return [
-    "用法：create-admin <工程名|输出目录> [--name <名>] [--ui semi|antd|arco] [--desc <描述>]",
-    "              [--port <端口>] [--proxy <目标>] [--group <GitLab分组>] [--deps file|version]",
-    "              [--src <模板根>] [--out <目录>] [--yes]",
+    "用法：create-admin <工程名|输出目录> [--name <名>] [--ui semi|antd|arco] [--micro base|sub]",
+    "              [--registry <registry.md 路径>] [--desc <描述>] [--port <端口>] [--proxy <目标>]",
+    "              [--group <GitLab分组>] [--deps file|version] [--src <模板根>] [--out <目录>] [--yes]",
+    "  --micro   微前端模板档（W10）：base=基座 / sub=子应用；缺省=单应用 admin（不受微前端规约约束）",
+    "  --registry  微前端名称核对用的 contract/registry.md 路径（默认用包内快照 bin/registry-snapshot.json）",
     "  --yes     非交互：缺省项全走默认值（CI 用）",
-    "  --deps    @yarch 底座依赖形态：version（默认，^0.1.0，需 @yarch 已发 npm）| file（发版前本地过渡）",
+    "  --deps    @yarch 底座依赖形态：version（默认，^0.2.0，需 @yarch 已发 npm）| file（发版前本地过渡）",
   ].join("\n");
 }
 
@@ -73,6 +83,43 @@ function validateName(name) {
   }
   if (name.includes('"') || name.includes("\\")) {
     return '不得包含双引号与反斜杠（要写进 package.json）';
+  }
+  return null;
+}
+
+// —— 微前端应用名校验（micro-frontend.md 二-1/二-4，十三表「创建期」机检）——
+
+// 快照来源：--registry 指向的 registry.md（CI/内网用最新表）优先，否则用随包分发的快照。
+function loadRegistry(registryArg) {
+  if (registryArg) {
+    return parseRegistryMd(readFileSync(resolve(registryArg), "utf8"));
+  }
+  try {
+    const snapshot = JSON.parse(readFileSync(join(PKG_ROOT, "bin", "registry-snapshot.json"), "utf8"));
+    return {
+      serviceNames: new Set(snapshot.serviceNames),
+      appNames: new Set(snapshot.appNames),
+    };
+  } catch {
+    return null;
+  }
+}
+
+function validateMicroName(name, registry) {
+  const baseErr = validateName(name);
+  if (baseErr) return baseErr;
+  if (!registry) {
+    return "无法核对 registry.md（缺 bin/registry-snapshot.json 且未传 --registry <path>）——微前端应用名必须核对登记表（二-1）";
+  }
+  if (!name.includes("-")) {
+    return "微前端应用名须由「服务名-用途/域」两段及以上构成（micro-frontend.md 二-1，正例 ysaas-billing）";
+  }
+  const service = name.split("-")[0];
+  if (!registry.serviceNames.has(service)) {
+    return `首段 ${service} 不在 registry.md 二节已登记服务名表（二-1）；若快照过期，用 --registry 指向最新 contract/registry.md`;
+  }
+  if (registry.appNames.has(name)) {
+    return `应用名 ${name} 已在 registry.md 四节登记（二-4：跨项目不得重名）`;
   }
   return null;
 }
@@ -144,11 +191,22 @@ async function main() {
   const args = parseArgs(process.argv.slice(2));
   const nameArg = args.name || (args._.length > 0 && !args._[0].startsWith("/") ? args._[0] : null);
 
+  let micro = args.micro;
+  if (micro !== undefined && !(micro in MICRO_KINDS)) {
+    fatal(`--micro 须为 ${Object.keys(MICRO_KINDS).join("|")}，当前：${micro}`);
+  }
   const ui = args.ui ?? "semi";
   if (!(ui in UI_TIERS)) fatal(`--ui 须为 ${Object.keys(UI_TIERS).join("|")}，当前：${ui}`);
+  if (micro && ui !== "semi") {
+    fatal("微前端模板档本批仅 semi（W1 默认档）；其余 UI 档触发式扩展（PLAN.md W10）");
+  }
 
   const interactive = !args.yes && process.stdin.isTTY;
   if (!nameArg && !interactive) fatal(`工程名必填（或用 --yes 走交互外模式）：\n${usage()}`);
+
+  // 微前端形态才需要登记表核对（二-1 首段=已登记服务名；单应用仍走一-1/一-2 正则+禁裸词）。
+  const needsRegistry = micro !== undefined || interactive; // 交互形态问答后可能选 micro
+  const registry = needsRegistry ? loadRegistry(args.registry) : null;
 
   const rl = interactive ? readline.createInterface({ input: process.stdin, output: process.stdout }) : null;
   try {
@@ -160,17 +218,34 @@ async function main() {
 
     if (interactive) {
       console.log("yarch web 工程生成器（@yarch/create-admin）\n");
-      if (!name) name = await askText(rl, "工程名（= npm 包名 = registry 服务名）", { validate: validateName });
-      else if (validateName(name)) fatal(validateName(name));
+      if (micro === undefined) {
+        const kindIdx = await askSelect(
+          rl,
+          "工程形态（micro-frontend.md 一：单应用不受微前端规约约束；基座全局唯一、子应用双运行形态）",
+          [
+            "单应用 admin（默认，npm create @yarch/admin 常规形态）",
+            "微前端基座 base（--micro base）",
+            "微前端子应用 sub（--micro sub）",
+          ],
+          0,
+        );
+        micro = kindIdx === 0 ? undefined : kindIdx === 1 ? "base" : "sub";
+      }
+      const validator = micro ? (v) => validateMicroName(v, registry) : validateName;
+      const nameLabel = micro
+        ? "应用名（= 路由前缀 = storage/事件前缀，二-2 一名三用；首段=已登记服务名）"
+        : "工程名（= npm 包名 = registry 服务名）";
+      if (!name) name = await askText(rl, nameLabel, { validate: validator });
+      else if (validator(name)) fatal(validator(name));
       if (!description) {
         description = await askText(rl, "工程描述", {
-          fallback: `${name}：基于 yarch web 脚手架生成的中后台工程`,
+          fallback: `${name}：基于 yarch web 脚手架生成的${micro ? (micro === "base" ? "微前端基座" : "微前端子应用") : "中后台"}工程`,
           validate: (v) => (v.includes('"') || v.includes("\\") ? "不得包含双引号与反斜杠（要写进 package.json）" : null),
         });
       }
       if (!port) {
         port = await askText(rl, "dev 端口", {
-          fallback: "5173",
+          fallback: micro === "sub" ? "5174" : "5173",
           validate: (v) => (/^\d{4,5}$/.test(v) && Number(v) >= 1024 && Number(v) <= 65535 ? null : "1024~65535 的数字端口号"),
         });
       }
@@ -184,10 +259,10 @@ async function main() {
     }
 
     if (!name) fatal(`工程名缺失。\n${usage()}`);
-    const nameErr = validateName(name);
+    const nameErr = micro ? validateMicroName(name, registry) : validateName(name);
     if (nameErr) fatal(`工程名 ${JSON.stringify(name)} ${nameErr}`);
-    description ??= `${name}：基于 yarch web 脚手架生成的中后台工程`;
-    port ??= "5173";
+    description ??= `${name}：基于 yarch web 脚手架生成的${micro ? (micro === "base" ? "微前端基座" : "微前端子应用") : "中后台"}工程`;
+    port ??= micro === "sub" ? "5174" : "5173";
     proxyTarget ??= "http://localhost:8080";
     group ??= "";
     if (!/^\d{4,5}$/.test(port) || Number(port) < 1024 || Number(port) > 65535) {
@@ -197,14 +272,22 @@ async function main() {
       fatal(`代理目标 ${proxyTarget} 无效：须为 http(s):// 开头`);
     }
 
-    // @yarch 底座依赖形态（W8）：version = ^0.1.0（标准形态，@yarch/contract、@yarch/react 已发 npm）；
+    // @yarch 底座依赖形态（W8）：version = 版本依赖（标准形态，@yarch/contract、@yarch/react 已发 npm）；
     // file: 绝对路径 = golang replace 行对偶（发版前本地过渡，yarch 源码变更后重跑 pnpm install 刷新）。
     const depsMode = args.deps === "file" ? "file" : "version";
-    const yarchContractDep =
-      depsMode === "version" ? "^0.1.0" : `file:${resolve(PKG_ROOT, "../contract")}`;
-    const yarchReactDep = depsMode === "version" ? "^0.1.0" : `file:${resolve(PKG_ROOT, "../react")}`;
+    const yarchContractDep = depsMode === "version" ? YARCH_VERSION : `file:${resolve(PKG_ROOT, "../contract")}`;
+    const yarchReactDep = depsMode === "version" ? YARCH_VERSION : `file:${resolve(PKG_ROOT, "../react")}`;
 
-    const vars = { packageName: name, appName: name, description, port, proxyTarget, yarchContractDep, yarchReactDep };
+    const vars = {
+      packageName: name,
+      appName: name,
+      service: name.split("-")[0],
+      description,
+      port,
+      proxyTarget,
+      yarchContractDep,
+      yarchReactDep,
+    };
 
     const outDir = resolve(args.out || (args._.length > 0 ? args._[args._.length - 1] : name));
     let existing;
@@ -215,7 +298,9 @@ async function main() {
     }
     if (existing && existing.length > 0) fatal(`输出目录 ${outDir} 非空`);
 
-    const templateDir = resolve(args.src || join(PKG_ROOT, "templates", `admin-${ui}`));
+    const templateDir = resolve(
+      args.src || join(PKG_ROOT, "templates", micro ? `${micro}-semi` : `admin-${ui}`),
+    );
     try {
       readFileSync(join(templateDir, "archetype.json"));
     } catch {
@@ -230,12 +315,19 @@ async function main() {
 
     const tierDesc = JSON.parse(readFileSync(join(templateDir, "archetype.json"), "utf8")).description;
     const groupHint = group ? `（属主建议：${group}/${name}）` : "";
-    console.log(`✅ 已生成 ${outDir}（${n} 个文件，admin-${ui} 档）—— ${tierDesc}
+    const tierLabel = micro ? `${micro}-semi 档` : `admin-${ui} 档`;
+    const registryHint = micro
+      ? `2. 应用名已置为 ${JSON.stringify(name)}——去 yarch 仓 contract/registry.md 四节前端应用名登记表登记${groupHint}
+  3. ${micro === "base"
+        ? "基座：micro-apps.config.ts 是子应用入口登记表（十二-2，git 纳管）；子应用接入只改此表"
+        : "子应用：在基座仓 micro-apps.config.ts 登记入口（十二-2）；pnpm dev 独立运行 / pnpm dev:micro 被基座加载（十一）"}`
+      : `2. 服务名已置为 ${JSON.stringify(name)}——去 yarch 仓 contract/registry.md 登记表登记${groupHint}`;
+    console.log(`✅ 已生成 ${outDir}（${n} 个文件，${tierLabel}）—— ${tierDesc}
 
 下一步：
   1. cd ${outDir} && pnpm install && pnpm dev        # http://localhost:${port}
-  2. 服务名已置为 ${JSON.stringify(name)}——去 yarch 仓 contract/registry.md 登记表登记${groupHint}
-  3. @yarch 底座为 ${depsMode === "version" ? "^0.1.0 版本依赖（升级 = pnpm update @yarch/contract @yarch/react）" : "file: 本地依赖（发版前过渡；正式发版后改用默认 version 形态重新生成或手动替换）"}
+${registryHint}
+  ${micro ? "4" : "3"}. @yarch 底座为 ${depsMode === "version" ? `${YARCH_VERSION} 版本依赖（升级 = pnpm update @yarch/contract @yarch/react）` : "file: 本地依赖（发版前过渡；正式发版后改用默认 version 形态重新生成或手动替换）"}
 `);
   } finally {
     if (rl) rl.close();

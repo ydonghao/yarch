@@ -28,3 +28,13 @@ logs/
 .superpowers/
 __pycache__/
 *.pyc
+
+# web e2e / playwright 产物
+test-results/
+playwright-report/
+
+# 微前端集成构建产物（dist/ 规则覆盖不到 dist-micro）
+dist-micro/
+
+# AI 会话本地产物
+.zcode/

@@ -42,13 +42,33 @@ pnpm build      # tsc --noEmit + vite build
 - **升级底座**：`pnpm update @yarch/contract @yarch/react`；
 - **登记**：按生成后的控制台提醒，去 yarch 仓 `contract/registry.md` 登记服务名（PR 即登记）。
 
+## 微前端：一条命令生成基座 / 子应用
+
+```bash
+# 基座（布局/菜单/登录态/路由分发/错误兜底，全局唯一）
+npm create @yarch/admin@latest ysaas-console -- --micro base
+
+# 子应用（独立·集成双运行形态，只做域内页面）
+npm create @yarch/admin@latest ysaas-billing -- --micro sub --port 5174
+```
+
+与单应用档的差异（规约：[micro-frontend.md](../../../contract/web/micro-frontend.md)）：
+
+- **应用名双重校验**：在服务名规则之上加「服务名-用途」两段式 + `contract/registry.md` 登记表核对（重名/未登记当场拒绝；登记表离线时可用包内快照）；
+- **基座**：`micro-apps.config.ts` 登记表声明式装配菜单与路由分发（禁硬编码子应用路由）、登录态唯一持有、共享运行时注册（`src/micro/shared.ts`）、加载失败重试页；
+- **子应用**：`src/supply/` 供给层实现独立·集成双运行（十一-2）——独立模式全量自足可单独 `pnpm dev`，集成构建（`pnpm build:micro` → `dist-micro/`）react 系与 contract 由基座 window 全局提供，产物体积里框架消失；
+- **UI 档**：本批仅 Semi（`--ui` 其余档触发式扩展）。
+
+仓内活案例：[examples/ysaas-console](../examples/ysaas-console)（基座）+ [examples/ysaas-billing](../examples/ysaas-billing)（子应用），事件上行/双模式/e2e 全链路。
+
 <details>
 <summary><b>附录：交互问答明细 · flags 全表 · 命名规则 · 原理 · 发布（点开）</b></summary>
 
-### 交互问答（6 项，回车走默认）
+### 交互问答（单应用 6 项；微前端形态在最前多一项「工程形态」）
 
 | # | 问题 | 默认 |
 |---|---|---|
+| 0 | 工程形态：1) 单应用（默认）2) 微前端基座 3) 微前端子应用 | 单应用 |
 | 1 | 工程名（= npm 包名 = registry 服务名，须过校验） | 必填 |
 | 2 | UI 档：1) Semi（默认）2) antd 3) Arco | semi |
 | 3 | 工程描述 | `<工程名>：基于 yarch web 脚手架生成的中后台工程` |
@@ -70,6 +90,8 @@ pnpm build      # tsc --noEmit + vite build
 |---|---|---|
 | `--name` | 工程名 | 也可用第一个位置参数 |
 | `--ui` | `semi` \| `antd` \| `arco` | 非法值报错 |
+| `--micro` | `base` \| `sub` | 微前端模板档；缺省=单应用 admin（不受微前端规约约束） |
+| `--registry` | 路径 | 微前端应用名核对用的 registry.md（缺省用包内快照） |
 | `--desc` | 文本 | 不得含双引号/反斜杠 |
 | `--port` | 1024~65535 | |
 | `--proxy` | `http(s)://…` | API 代理目标 |

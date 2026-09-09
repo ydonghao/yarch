@@ -1,6 +1,6 @@
 {
   "name": "@yarch/react",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "yarch React 适配层：注入 react-router 导航实现（薄）",
   "type": "module",
   "main": "src/index.ts",

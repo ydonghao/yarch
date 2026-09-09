@@ -1,0 +1,19 @@
+# 静态托管样例（micro-frontend.md 十二-3/十二-4，对齐 contract/infra/nginx.md 一-2 配置纪律）：
+# 构建产物内容寻址（hash 文件名）且旧版本保留——回滚 = 基座 manifest 指针回拨，不重发构建；
+# 一应用一 root，try_files 兜底 history 路由 404。
+server {
+  listen 80;
+  server_name console.example.com;
+
+  # 基座（本工程产物）
+  location /ysaas-console/ {
+    alias /data/www/ysaas-console/;
+    try_files $uri $uri/ /ysaas-console/index.html;
+  }
+
+  # 子应用（独立发版、独立回滚，十二-1；入口 URL 登记在基座 micro-apps.config.ts）
+  location /ysaas-billing/ {
+    alias /data/www/ysaas-billing/;
+    try_files $uri $uri/ /ysaas-billing/index.html;
+  }
+}

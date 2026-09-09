@@ -32,8 +32,10 @@ jobs:
         run: pnpm install --no-frozen-lockfile
       - name: 契约断言测试
         run: pnpm --filter @yarch/contract test
+      - name: 微前端登记机检（十二-2）
+        run: pnpm check:micro
       - name: 依赖方向机检
-        run: pnpm exec depcruise packages/contract/src packages/react/src packages/vue/src packages/create/templates/admin-semi/src packages/create/templates/admin-antd/src packages/create/templates/admin-arco/src examples/admin-demo/src --config depcruise.config.js
+        run: pnpm check:deps
       - name: 生成后冒烟（W9：三档 生成 → install → tsc → build）
         run: |
           SMOKE="$(mktemp -d)"
@@ -43,3 +45,7 @@ jobs:
             node packages/create/bin/create-admin.mjs "smoke-$t" --ui "$t" --yes --deps file --out "$SMOKE/admin-$t"
             ( cd "$SMOKE/admin-$t" && pnpm install --no-frozen-lockfile && pnpm exec tsc --noEmit && pnpm exec vite build )
           done
+      - name: 微前端集成 e2e（双示例构建 + playwright 真浏览器）
+        run: |
+          pnpm exec playwright install --with-deps chromium
+          pnpm test:e2e
