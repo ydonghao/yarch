@@ -1,7 +1,7 @@
 # contract/ · 跨栈统一契约与规约
 
 > 多栈脚手架的灵魂：各栈长得不一样没关系，必须说同一种接口语言。
-> 本目录是全部栈实现的**唯一权威来源**，改契约必须先改这里。已落地：java / golang / web / python；clients 移动端规约已定稿（2026-09-09，实现触发式）；**规约已立待施工**：stacks/rust（axum）+ embedded/esp32（esp-idf-hal std，2026-09-14）；规划中：node（触发式）。
+> 本目录是全部栈实现的**唯一权威来源**，改契约必须先改这里。已落地：java / golang / web / python；clients 移动端规约已定稿（2026-09-09，实现触发式）；**规约已立待施工**：stacks/rust（axum）+ embedded/esp32（esp-idf-hal std，2026-09-14）；规划中：node（触发式）。**agent/ AI 施工规约已定稿**（2026-09-14：约束全部工程的 AI 代理上下文、生态扩展出口与自家 CLI）。
 
 ## 规约治理（等级定义 / 豁免与变更 / 机检路线）
 
@@ -59,6 +59,8 @@
 | domains/device | — | api（logging-trace JSON 口径）、registry（设备名/产品族登记）、redis（影子缓存前缀） |
 | embedded/esp32 | domains/device | api（口径协作参考）、registry（设备登记） |
 | stacks/rust | api 四件套 | postgresql（sqlx）、redis（幂等/锁/限流封装） |
+| agent/agents-md / agent/extensions | — | contract 全域（锚点引用对象）、cli（生成器产出三件套自检义务） |
+| agent/cli | — | agents-md（生成物须含合规 AGENTS.md 三件套）、extensions（生成物扩展出口） |
 
 ## 关键架构决策登记表（唯一权威）
 
@@ -79,6 +81,7 @@
 | 领域契约首发 device.md（2026-09-14 拍板 Dv1-Dv6） | 落位 contract/domains/device.md v1.0：设备标识两段 `{product}/{device}` / MQTT topic 六段定式（env 前缀单点）/ 遥测 ndjson 四字段（ts·traceId·metrics·fw，复用 logging-trace 口径）/ OTA 双分区+回滚+验签 / 影子 Redis 缓存+命令回执对齐信封哲学 / TLS 强制+一设备一证书。首个双方言验证=microduck（云端 Go + esp32 Rust） | 已生效（2026-09-14） |
 | embedded/esp32 规约 E1-E8（2026-09-14 拍板） | 技术路线 **esp-idf-hal std**（WiFi/MQTT/OTA/TLS 成熟是决定性因素；no_std esp-hal 不入册）；HAL 次版本锁定（~0.46/~0.52）；首档 esp32 经典款；cargo generate + 模板目录；固件不发库模板随仓；clippy+rustfmt+host 单测 CI；与云栈 rust 零共享 crate | 已生效（2026-09-14） |
 | Rust 云栈 R1-R7（2026-09-14 拍板） | **axum 0.8**（crates.io 4.67 亿下载无争议默认）+ sqlx + tokio 单体业务栈；DDD 七包（errors 目录同 python 修正口径）；workspace 两 crate（yarch-contract 零框架 + yarch-axum 装配）；**cargo-generate + 模板目录**（生态标准通道，远期统一 CLI 收编 `--lang rust`）；crates.io 发版 tag `stacks/rust/vX.Y.Z`；clippy deny warnings + rustfmt + cargo-deny + 契约断言；MSRV 1.80 | 已生效（2026-09-14） |
+| AI 施工规约 A1-A6（2026-09-14 拍板） | **新设 contract/agent/ 层**：AGENTS.md 唯一事实源 + CLAUDE.md/GEMINI.md 仅一行 `@AGENTS.md` 派生（禁分叉；目录型配置不生成不维护）；四章节定式（工程地图/命令表/红线清单/契约锚点）+ 篇幅 ≤150 行（Codex 32 KiB 最严口径）；锚点双要素引用 = N2 机器可读出口首个消费场景；扩展出口首批只纳管 .mcp.json（凭证 `${ENV}` 引用）+ skills（`.agents/skills/` 跨厂商位置，`.claude/skills` 链接派生），hooks/subagents 参考级；自家 CLI 交互规约 cli.md（一行命令铁律成文 + `--yes` 非交互 + `--json` + 退出码 0/1/2 + 幂等）。目录命名避开 domains/ai.md「LLM 接入」占位。依据：[ai-cli-ecosystem-digest.md](../docs/references/ai-cli-ecosystem-digest.md) | 已生效（2026-09-14） |
 
 **租户边界标识**（服务名）登记处：[registry.md](registry.md)。
 
@@ -141,7 +144,19 @@
 | [device.md（设备接入）](domains/device.md) | v1.0 已定稿 | 设备标识两段 / MQTT topic 六段定式 / 遥测 ndjson 四字段（ts·traceId·metrics·fw）/ OTA 双分区+回滚+验签 / 影子+命令回执对齐信封 / TLS 强制一设备一证书 |
 | ai.md（LLM 接入） | 规划 · 未成文 | 流式响应 / token 计费 / prompt 与 RAG 管道约定 |
 
+> 命名消歧（2026-09-14）：`domains/ai.md` 规划位 = **LLM 接入**业务域（未成文）；`agent/`（下节）= **AI 施工代理**规约层（已定稿）——两者不同物，勿混称"ai 规约"。
+
 > 首个合体验证候选项目：microduck（桌面机器人——云端 Go 接入侧 + esp32 Rust 固件侧，正好凑齐 device 契约的双方言验证）。
+
+## AI 施工规约（agent/ · 2026-09-14 新设层）
+
+约束对象不是某个栈，而是**全部工程被 AI 编码代理（Claude Code / Codex / Gemini CLI / Cursor / Copilot / ZCode 等）施工时的上下文与扩展出口**，以及 yarch 自家生成器 CLI 的交互形态。立项依据与生态矩阵：[ai-cli-ecosystem-digest.md](../docs/references/ai-cli-ecosystem-digest.md)。
+
+| 规约 | 状态 | 一句话 |
+|---|---|---|
+| [agents-md.md](agent/agents-md.md) | v1.0 已定稿 | AGENTS.md 唯一事实源 + CLAUDE.md/GEMINI.md 一行派生 / 四章节定式（工程地图·命令表·红线清单·契约锚点）/ 篇幅 ≤150 行 / 锚点双要素引用 |
+| [extensions.md](agent/extensions.md) | v1.0 已定稿 | 扩展出口纳管：.mcp.json 唯一入库位置 + 凭证 `${ENV}` 引用 / skills 走 `.agents/skills/` 跨厂商位置（.claude/skills 链接派生）/ hooks·subagents 参考级 |
+| [cli.md](agent/cli.md) | v1.0 已定稿 | 自家 CLI 交互：一行命令铁律成文 / `--yes` 全非交互 / `--json` stdout 纯净 / 退出码 0·1·2 / 幂等与 `--force` / 成员登记表 |
 
 ## 契约版本
 
@@ -149,7 +164,8 @@
 - infra 规约：**全部 20 份 v1.0 已定稿**（mysql/postgresql/redis/higress 2026-09-01 先行定稿并完成 higress 官方校准；其余 16 份同日评审通过）
 - 前端规约（web/）：**2026-09-07 新设层**，微前端 v1.0 已定稿（经 MF0-MF7 决策清单拍板）
 - 客户端规约（clients/）：**2026-09-09 新设层**，client-shared + android + ios 三份 v1.0 已定稿（经 M1-M7 决策清单拍板）；2026-09-10 增 miniprogram + game 两份 v1.0（经 MP1-MP5/G1-G4 决策清单拍板），共五份
-- 领域契约（domains/）：**2026-09-03 拍板设立**；device.md **v1.0 已定稿**（2026-09-14，Dv1-Dv6 拍板口径），ai.md 规划中未成文
+- 领域契约（domains/）：**2026-09-03 拍板设立**；device.md **v1.0 已定稿**（2026-09-14，Dv1-Dv6 拍板口径），ai.md（LLM 接入）规划中未成文
+- AI 施工规约（agent/）：**2026-09-14 新设层**，agents-md + extensions + cli 三份 v1.0 已定稿（经 A1-A6 决策清单拍板）
 - 各栈实现的 code/message/字段名与本目录不一致时，**以本目录为准，实现视为 bug**。
 
 ## 评审与变更记录
@@ -170,6 +186,7 @@
 | 2026-09-09 | **新设 contract/clients/ 客户端规约层**：client-shared + android + ios 三份 v1.0 定稿（M1-M7 拍板：融合基准 Google 官方 / 官方 API 设计指南+Airbnb；xcodegen+SPM；Hilt；MVVM+@Observable；min 双基线分文件夹；targetSdk≥36）；registry.md 新增移动 App 登记（首段 = 服务名、双端包标识一致互为派生） | 已定稿 |
 | 2026-09-10 | **clients 层扩两份**：miniprogram + game v1.0 定稿（MP1-MP5/G1-G4 拍板：原生+TS 默认档；渲染与 web 分开、三层共享；Cocos/Unity·团结双档；@yarch/contract 三端同源）；registry.md 新增第六节小程序与小游戏登记；client-shared 约束对象扩 game | 已定稿 |
 | 2026-09-14 | **领域契约首发 + 双轨规约立项**：device.md v1.0 定稿（Dv1-Dv6：设备标识两段/topic 六段/遥测 ndjson/OTA 双分区/影子/信封回执/TLS 一设备一证书）；embedded/esp32 规约 v1.0 定稿（E1-E8：esp-idf-hal std 路线/no_std 不入册）；stacks/rust 规约 v1.0 定稿（R1-R7：axum 默认/cargo-generate 通道/crates.io 发版）——两轨零共享 crate | 已定稿 |
+| 2026-09-14 | **新设 contract/agent/ AI 施工规约层**：agents-md + extensions + cli 三份 v1.0 定稿（A1-A6 拍板：AGENTS.md SSOT + 一行派生 / 四章节定式 / .mcp.json 与 skills 首批纳管 / 自家 CLI 一行命令铁律成文）；yarch 仓根 AGENTS.md 三件套带头合规；生态依据 digest 见 docs/references/ | 已定稿 |
 | — | 遗留项：低频组件强制级占比复审；机检条文标注启动（下一步：随 stacks 重做启动 `yarch lint`/AI 审查清单） | 待办 |
 
 ## 术语对照（各栈方言）
