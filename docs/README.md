@@ -17,6 +17,8 @@
 | [alibaba-mysql-digest.md](references/alibaba-mysql-digest.md) | 阿里 MySQL 章 50 条全量解析 + ORM G1-G10 四栈方言表（条文已定稿为 [../contract/infra/mysql.md](../contract/infra/mysql.md)） |
 | [ruoyi-yudao-coli-gap-digest.md](references/ruoyi-yudao-coli-gap-digest.md) | ruoyi/芋道/coli 脚手架对标缺口解析；**G1-G10 对齐决策清单在此**（java 栈精细打磨的前置） |
 | [market-landscape-digest.md](references/market-landscape-digest.md) | 2026-09 市场全景（SDD/生成器/微前端/跨端）；**N1-N5 决策清单在此**（AGENTS.md 已随批落地 web 栈，契约机器可读出口等待拍板） |
+| [rust-stack-digest.md](references/rust-stack-digest.md) | Rust 云栈解析（axum 生态 + cargo-generate 生成器）；**R1-R7 决策清单在此**（stacks/rust 规约立项前置） |
+| [embedded-esp32-rust-digest.md](references/embedded-esp32-rust-digest.md) | 嵌入式 ESP32 Rust 解析（esp-idf-hal std vs esp-hal no_std 选型）；**E1-E8 决策清单在此**（embedded/esp32 规约立项前置；须先成文 device.md） |
 | [android-official-guides-digest.md](references/android-official-guides-digest.md) | Google 官方三份（风格/架构/M3）+ Now in Android 逐项取舍 + 阿里 Android 手册逐块取舍 + Play API 36 时间线（条文已定稿为 [../contract/clients/android.md](../contract/clients/android.md)） |
 | [ios-official-guides-digest.md](references/ios-official-guides-digest.md) | Swift API 设计指南 + Airbnb 逐块取舍与偏差登记 + SwiftLint/SwiftFormat + xcodegen/Tuist 对比 + Swift Testing（条文已定稿为 [../contract/clients/ios.md](../contract/clients/ios.md)） |
 | [miniprogram-game-digest.md](references/miniprogram-game-digest.md) | 小程序与小游戏立项调研：官方规约三层拆解 / 原生 vs Taro vs uni-app / 引擎双档格局 / 分层共享边界；**MP1-MP5 · G1-G4 决策清单在此**（已全部拍板，条文定稿为 [../contract/clients/miniprogram.md](../contract/clients/miniprogram.md) / [game.md](../contract/clients/game.md)） |
