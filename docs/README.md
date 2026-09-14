@@ -3,6 +3,7 @@
 | 内容 | 文件 | 说明 |
 |---|---|---|
 | 架构设计 | [architecture.md](architecture.md) | 仓库结构的权威落盘：定位 / 契约层 / 分界线 / 施工节奏 |
+| 发展策划 | [development-roadmap.md](development-roadmap.md) | 2026-09→12 方向：契约机器可读出口 / AI 代理出口 / 全端生成器统一 / 维护健康（市场调研推导，四支柱+路线图+观察哨） |
 | 架构图 | [architecture-diagram.svg](architecture-diagram.svg) / [.png](architecture-diagram.png) | 架构总览图（源文件与 2x 位图） |
 | 参考资料 | [references/](references/) | 规约的来源解析与审阅材料 |
 
@@ -18,5 +19,6 @@
 | [market-landscape-digest.md](references/market-landscape-digest.md) | 2026-09 市场全景（SDD/生成器/微前端/跨端）；**N1-N5 决策清单在此**（AGENTS.md 已随批落地 web 栈，契约机器可读出口等待拍板） |
 | [android-official-guides-digest.md](references/android-official-guides-digest.md) | Google 官方三份（风格/架构/M3）+ Now in Android 逐项取舍 + 阿里 Android 手册逐块取舍 + Play API 36 时间线（条文已定稿为 [../contract/clients/android.md](../contract/clients/android.md)） |
 | [ios-official-guides-digest.md](references/ios-official-guides-digest.md) | Swift API 设计指南 + Airbnb 逐块取舍与偏差登记 + SwiftLint/SwiftFormat + xcodegen/Tuist 对比 + Swift Testing（条文已定稿为 [../contract/clients/ios.md](../contract/clients/ios.md)） |
+| [miniprogram-game-digest.md](references/miniprogram-game-digest.md) | 小程序与小游戏立项调研：官方规约三层拆解 / 原生 vs Taro vs uni-app / 引擎双档格局 / 分层共享边界；**MP1-MP5 · G1-G4 决策清单在此**（已全部拍板，条文定稿为 [../contract/clients/miniprogram.md](../contract/clients/miniprogram.md) / [game.md](../contract/clients/game.md)） |
 
 新解析材料（Nacos、消息队列等研究）按需增补进本组，命名 `{来源}-{主题}-digest.md`。
