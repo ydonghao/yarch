@@ -1,7 +1,7 @@
 # contract/ · 跨栈统一契约与规约
 
 > 多栈脚手架的灵魂：各栈长得不一样没关系，必须说同一种接口语言。
-> 本目录是全部栈实现的**唯一权威来源**，改契约必须先改这里。已落地：java / golang / web / python；clients 移动端规约已定稿（2026-09-09，实现触发式）；规划中：node / embedded 固件 / rust（触发式）。
+> 本目录是全部栈实现的**唯一权威来源**，改契约必须先改这里。已落地：java / golang / web / python；clients 移动端规约已定稿（2026-09-09，实现触发式）；**规约已立待施工**：stacks/rust（axum）+ embedded/esp32（esp-idf-hal std，2026-09-14）；规划中：node（触发式）。
 
 ## 规约治理（等级定义 / 豁免与变更 / 机检路线）
 
@@ -55,6 +55,10 @@
 | web/micro-frontend | — | api 四件套（信封/错误码/traceId 口径）、registry（前端应用名登记）、nginx（静态托管） |
 | clients/client-shared | — | api 四件套（信封/错误码/traceId/幂等口径）、registry（App 名登记） |
 | clients/android / clients/ios | clients/client-shared | api 四件套（口径协作参考）、registry（App 名与包标识登记） |
+| clients/miniprogram / clients/game | — | client-shared（协作参考）、api 四件套（信封/错误码/traceId 口径）、registry（小程序与小游戏登记） |
+| domains/device | — | api（logging-trace JSON 口径）、registry（设备名/产品族登记）、redis（影子缓存前缀） |
+| embedded/esp32 | domains/device | api（口径协作参考）、registry（设备登记） |
+| stacks/rust | api 四件套 | postgresql（sqlx）、redis（幂等/锁/限流封装） |
 
 ## 关键架构决策登记表（唯一权威）
 
@@ -71,6 +75,10 @@
 | API 契约 D1-D6（2026-09-01 拍板：**业界标准优先于阿里手册**） | D1 int32 数字段位+标识符（非阿里 A/B/C 字符串）；D2 单 message 不引入 userTip；D3 kebab-case；D4 ISO-8601 UTC；D5 路径版本 `/v1/`；D6 越界返回空页（200+空 list+真实 total，参数非法仍 1001） | 已生效 |
 | 微前端载器分档 | 应用级集成默认 **micro-app**（Vite 零改造/低侵入）；存量与复杂沙箱档 **qiankun**；**Module Federation** 限同仓模块共享场景；wujie 不入册（维护活跃度不足）。规约条文载器无关（[web/micro-frontend.md](web/micro-frontend.md)）；观察哨：micro-app 持续停更则默认档切 qiankun | 已生效（2026-09-07） |
 | 移动端规约 M1-M7（2026-09-09 拍板） | 落位 contract/clients/ 三份：client-shared 共享契约 + android + ios 方言。融合基准 Android=**Google 官方**（风格/架构/Now in Android 范式；DI=Hilt）；iOS=**官方 API 设计指南 + Airbnb 风格**（SwiftLint+SwiftFormat 机检）；iOS 工程生成 **xcodegen+SPM**；iOS 架构 **MVVM+@Observable**。min 基线双档分文件夹：android minsdk26 默认 / 24 扩展，ios17 默认 / 16 扩展（降级 ObservableObject）；targetSdk ≥ 36 硬线（Play 2026-08-31 起） | 已生效（2026-09-09） |
+| 小程序与游戏端规约 MP1-MP5/G1-G4（2026-09-10 拍板） | 落位 contract/clients/ 两份：miniprogram（**原生+TS 唯一入册栈**，Taro/uni-app 不入默认档——多端诉求升级登记，叠加不推翻；三段式结构补官方旗舰参考工程缺位）+ game（**渲染层与 web 禁共享，契约内核/领域逻辑/design token 三层共享**；Cocos Creator 默认档 / Unity·团结 3D 重度档；首包 4MB 硬线；v1.0 先窄后宽）。TS 契约内核 = **@yarch/contract 三端同源**（web/miniprogram/game，transport 可插拔注入 wx.request / 引擎 HTTP 适配器） | 已生效（2026-09-10） |
+| 领域契约首发 device.md（2026-09-14 拍板 Dv1-Dv6） | 落位 contract/domains/device.md v1.0：设备标识两段 `{product}/{device}` / MQTT topic 六段定式（env 前缀单点）/ 遥测 ndjson 四字段（ts·traceId·metrics·fw，复用 logging-trace 口径）/ OTA 双分区+回滚+验签 / 影子 Redis 缓存+命令回执对齐信封哲学 / TLS 强制+一设备一证书。首个双方言验证=microduck（云端 Go + esp32 Rust） | 已生效（2026-09-14） |
+| embedded/esp32 规约 E1-E8（2026-09-14 拍板） | 技术路线 **esp-idf-hal std**（WiFi/MQTT/OTA/TLS 成熟是决定性因素；no_std esp-hal 不入册）；HAL 次版本锁定（~0.46/~0.52）；首档 esp32 经典款；cargo generate + 模板目录；固件不发库模板随仓；clippy+rustfmt+host 单测 CI；与云栈 rust 零共享 crate | 已生效（2026-09-14） |
+| Rust 云栈 R1-R7（2026-09-14 拍板） | **axum 0.8**（crates.io 4.67 亿下载无争议默认）+ sqlx + tokio 单体业务栈；DDD 七包（errors 目录同 python 修正口径）；workspace 两 crate（yarch-contract 零框架 + yarch-axum 装配）；**cargo-generate + 模板目录**（生态标准通道，远期统一 CLI 收编 `--lang rust`）；crates.io 发版 tag `stacks/rust/vX.Y.Z`；clippy deny warnings + rustfmt + cargo-deny + 契约断言；MSRV 1.80 | 已生效（2026-09-14） |
 
 **租户边界标识**（服务名）登记处：[registry.md](registry.md)。
 
@@ -121,25 +129,27 @@
 | [客户端共享契约](clients/client-shared.md) | v1.0 已定稿 | 平台无关：信封解包单点 / 错误三分类（业务·传输·取消）/ traceId 透传与报障凭证 / 网络纪律（超时单点·禁明文·取消传导）/ App 命名与登记 / 双端概念同构方言表 |
 | [Android 客户端](clients/android.md) | v1.0 已定稿 | Kotlin+Compose+M3：UDF/ViewModel/Repository，Now in Android 工程范式（version catalog + convention plugins），Hilt，ktlint+detekt+Lint 三重机检，minsdk26 默认 / 24 扩展，targetSdk ≥ 36 硬线 |
 | [iOS 客户端](clients/ios.md) | v1.0 已定稿 | Swift+SwiftUI+HIG：MVVM+@Observable（16 档降级 ObservableObject），xcodegen+SPM，SwiftLint（Airbnb 基准）+SwiftFormat，Swift Testing 新代码，privacy manifest 合规 |
+| [小程序客户端](clients/miniprogram.md) | v1.0 已定稿 | 原生+TS 唯一入册栈（Taro/uni-app 不入默认档，多端诉求升级登记）；三段式结构（官方无旗舰参考工程，范式自选登记）/ miniprogram-ci 发布管线 / 主包 2MB·整包 30MB 预算 / wx.request 适配器注入 @yarch/contract / 体验评分 ≥90 机检 |
+| [游戏客户端](clients/game.md) | v1.0 已定稿 | 分层边界（渲染与 web 禁共享，契约内核/领域逻辑/design token 三层共享）/ Cocos 默认 · Unity·团结 3D 重度双档 / 首包 4MB 硬线 / v1.0 先窄后宽（性能口径参考级，重度项目触发升格） |
 
-## 领域契约（domains/ · 规划层）
+## 领域契约（domains/）
 
-新领域（机器人、AI 等）的唯一进门通道：先立领域契约评审定稿，再于至少两个语言侧实现（单一实现不成领域）。首发规划（2026-09-03 拍板，均未成文，启动前按工作流先出决策清单）：
+新领域（机器人、AI 等）的唯一进门通道：先立领域契约评审定稿，再于至少两个语言侧实现（单一实现不成领域）。
 
 | 契约 | 状态 | 一句话 |
 |---|---|---|
-| device.md（设备接入） | 规划 · 未成文 | MQTT topic 约定 / 遥测 schema（复用 [api/logging-trace.md](api/logging-trace.md) JSON 口径）/ OTA 包格式；云端栈与 embedded/esp32 固件同表实现 |
+| [device.md（设备接入）](domains/device.md) | v1.0 已定稿 | 设备标识两段 / MQTT topic 六段定式 / 遥测 ndjson 四字段（ts·traceId·metrics·fw）/ OTA 双分区+回滚+验签 / 影子+命令回执对齐信封 / TLS 强制一设备一证书 |
 | ai.md（LLM 接入） | 规划 · 未成文 | 流式响应 / token 计费 / prompt 与 RAG 管道约定 |
 
-> 首个合体验证候选项目：microduck（桌面机器人——云端 Go 接入侧 + esp32 固件侧，正好凑齐 device 契约的双方言验证）。
+> 首个合体验证候选项目：microduck（桌面机器人——云端 Go 接入侧 + esp32 Rust 固件侧，正好凑齐 device 契约的双方言验证）。
 
 ## 契约版本
 
 - API 契约：**v1.0 已定稿**（2026-09-01 评审通过，D1-D6 按"业界标准优先于阿里手册"拍板）
 - infra 规约：**全部 20 份 v1.0 已定稿**（mysql/postgresql/redis/higress 2026-09-01 先行定稿并完成 higress 官方校准；其余 16 份同日评审通过）
 - 前端规约（web/）：**2026-09-07 新设层**，微前端 v1.0 已定稿（经 MF0-MF7 决策清单拍板）
-- 客户端规约（clients/）：**2026-09-09 新设层**，client-shared + android + ios 三份 v1.0 已定稿（经 M1-M7 决策清单拍板）
-- 领域契约（domains/）：**2026-09-03 拍板设立**，device / ai 首发规划中，均未成文
+- 客户端规约（clients/）：**2026-09-09 新设层**，client-shared + android + ios 三份 v1.0 已定稿（经 M1-M7 决策清单拍板）；2026-09-10 增 miniprogram + game 两份 v1.0（经 MP1-MP5/G1-G4 决策清单拍板），共五份
+- 领域契约（domains/）：**2026-09-03 拍板设立**；device.md **v1.0 已定稿**（2026-09-14，Dv1-Dv6 拍板口径），ai.md 规划中未成文
 - 各栈实现的 code/message/字段名与本目录不一致时，**以本目录为准，实现视为 bug**。
 
 ## 评审与变更记录
@@ -158,6 +168,8 @@
 | 2026-09-03 | **全域扩展拍板**：设立 contract/domains/ 领域契约层（device / ai 首发规划）；yarch 定位升"云-边-端全域"；dotnet / php 裁撤不纳入 | 已生效 |
 | 2026-09-07 | **新设 contract/web/ 前端规约层**：微前端规约 v1.0 定稿（条文载器无关；载器分档拍板 micro-app 默认 / qiankun 存量档 / Module Federation 同仓共享档 / wujie 不入册）；registry.md 新增前端应用名登记（首段 = 服务名、一名三用） | 已定稿 |
 | 2026-09-09 | **新设 contract/clients/ 客户端规约层**：client-shared + android + ios 三份 v1.0 定稿（M1-M7 拍板：融合基准 Google 官方 / 官方 API 设计指南+Airbnb；xcodegen+SPM；Hilt；MVVM+@Observable；min 双基线分文件夹；targetSdk≥36）；registry.md 新增移动 App 登记（首段 = 服务名、双端包标识一致互为派生） | 已定稿 |
+| 2026-09-10 | **clients 层扩两份**：miniprogram + game v1.0 定稿（MP1-MP5/G1-G4 拍板：原生+TS 默认档；渲染与 web 分开、三层共享；Cocos/Unity·团结双档；@yarch/contract 三端同源）；registry.md 新增第六节小程序与小游戏登记；client-shared 约束对象扩 game | 已定稿 |
+| 2026-09-14 | **领域契约首发 + 双轨规约立项**：device.md v1.0 定稿（Dv1-Dv6：设备标识两段/topic 六段/遥测 ndjson/OTA 双分区/影子/信封回执/TLS 一设备一证书）；embedded/esp32 规约 v1.0 定稿（E1-E8：esp-idf-hal std 路线/no_std 不入册）；stacks/rust 规约 v1.0 定稿（R1-R7：axum 默认/cargo-generate 通道/crates.io 发版）——两轨零共享 crate | 已定稿 |
 | — | 遗留项：低频组件强制级占比复审；机检条文标注启动（下一步：随 stacks 重做启动 `yarch lint`/AI 审查清单） | 待办 |
 
 ## 术语对照（各栈方言）
@@ -170,4 +182,4 @@
 | 业务异常 | `BusinessException` | `xerror.BizError` | `ApiError` | `xerror.BizError` |
 | 追踪 ID | `TraceIdFilter`(MDC) | `middleware.Trace()` | `apiClient` 注入/透出 | `middleware.TraceMiddleware`(contextvars) |
 
-> rust 为触发式预留栈，落地后再入本表（届时以其实现为准登记方言名）。
+> **rust 两轨**（2026-09-14 立项，规约已立、工程未动工，实现落地后以实为准入表）：云栈 `stacks/rust`（axum，workspace 两 crate——`yarch_contract::response/errcode/trace` + `yarch_axum::middleware`）；固件轨 `embedded/esp32`（esp-idf-hal std，device.md 方言——非 REST 语义，信封哲学映射 MQTT resp 回执）。两轨零共享 crate。

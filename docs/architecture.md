@@ -27,7 +27,7 @@ ysaas 是第一个客户；任何 Java/Go/Rust/Python/Node/前端工程都可以
 
 契约层已扩展收录数据与中间件规约：`infra/` 共 18 份（索引见 [../contract/README.md](../contract/README.md)）**全部 20 份已定稿 v1.0（2026-09-01 评审通过；higress 已对照官方文档校准）**：mysql、postgresql、mongodb、redis、redisearch、timescale、pgvector、qdrant、milvus、kafka、rocketmq、nacos、nginx、higress、elasticsearch、clickhouse、starrocks、minio-s3、xxl-job、celery；规约组合与依赖模型（前置硬 / 参考软 / 互斥分工）见 [../contract/README.md](../contract/README.md)。关键架构决策（MQ 双轨 / OLAP 双引擎 / 向量起步 pgvector / 网关分工 / 默认 PostgreSQL）与规约治理（等级定义、豁免与变更流程）**唯一登记处为 [../contract/README.md](../contract/README.md)**；服务名（租户边界标识）登记处为 [../contract/registry.md](../contract/registry.md)。
 
-**领域契约（`domains/`，2026-09-03 新设层级）**：机器人、AI 等新领域的唯一进门通道——先立领域契约评审定稿，再做至少两个语言侧实现（单一实现不成领域）。首发规划：`device.md`（设备接入：MQTT topic 约定 / 遥测 schema 复用 api/logging-trace 的 JSON 口径 / OTA 包格式）、`ai.md`（LLM 接入：流式响应 / token 计费 / prompt 与 RAG 管道约定）。均未成文，启动前按工作流先出决策清单。
+**领域契约（`domains/`，2026-09-03 新设层级）**：机器人、AI 等新领域的唯一进门通道——先立领域契约评审定稿，再做至少两个语言侧实现（单一实现不成领域）。`device.md`（设备接入：MQTT topic 六段定式 / 遥测 schema 复用 api/logging-trace 的 JSON 口径 / OTA 双分区回滚 / 影子 / TLS）**v1.0 已定稿（2026-09-14）**；`ai.md`（LLM 接入：流式响应 / token 计费 / prompt 与 RAG 管道约定）规划中未成文。
 
 ## 三、仓库结构
 
@@ -37,19 +37,22 @@ yarch/
 │   ├── api/                   # RestResponse / errno 段位 / log+trace / REST 四件套
 │   ├── infra/                 # 数据与中间件规约 20 份
 │   ├── web/                   # 前端规约（微前端 v1.0，2026-09-07 设立）
-│   └── domains/               # 【规划】领域契约：device / ai 首发（新领域唯一进门通道）
+│   └── domains/               # 领域契约：device.md 已定稿（2026-09-14）/ ai 规划（新领域唯一进门通道）
 ├── stacks/                    # 云端业务工程方言层（DDD+REST 语义只在这层成立）
 │   ├── java/                  # yarch-java：parent/dependencies/common/framework/archetype → Maven Central（kotlin 拟作本栈第二 archetype，不独立发栈）
 │   ├── golang/                # yarch-golang：Hertz+DDD → Go module（从 yagent 反向沉淀）
 │   ├── web/                   # yarch-web：pnpm workspace（contract 契约包 + react/vue 适配 + UI 档模板）→ npm
-│   ├── rust/                  # yarch-rust：axum+DDD → crates.io（触发式）
+│   ├── rust/                  # yarch-rust：axum+DDD → crates.io（规约 v1.0 已立 2026-09-14，工程待动工）
 │   ├── python/                # yarch-python：FastAPI+DDD → PyPI（第一批已交付 2026-09-07）
 │   └── node/                  # yarch-node：NestJS+DDD → npm（正式入册，待启动）
-├── clients/                   # 交互端（按项目需要生长；契约适配对偶 web 的 @yarch/contract）
-│   ├── mobile/                # android：Kotlin+Jetpack Compose ｜ ios：Swift+SwiftUI（均触发式规划）；跨端备选 uni-app（兼小程序）/ Flutter
+├── clients/                   # 交互端（规约 contract/clients/ 三份 2026-09-09 定稿；契约适配对偶 web 的 @yarch/contract）
+│   ├── android/               # yarch-client-android：Kotlin 契约内核库（→ Maven Central）；App 栈 Kotlin+Compose+M3+Hilt
+│   ├── ios/                   # yarch-client-ios：SPM 契约内核库（git tag 直引零注册）；App 栈 Swift+SwiftUI+MVVM+@Observable
+│   ├── create/                # 模板资产四档（android minsdk26/24 + ios17/16，2026-09-10 交付）+ 统一生成器（第三批）
 │   ├── miniprogram/           # 小程序
 │   └── desktop/               # Tauri（Rust+Web，兼 Rust 练手落点）
-├── embedded/                  # 【规划】物理端固件方言：esp32 起步，守 device 领域契约（C/C++ 由此门进入，不设业务栈）
+├── embedded/                  # 物理端固件方言：esp32 起步，守 device 领域契约（C/C++ 由此门进入，不设业务栈；esp-idf-hal std 路线规约 v1.0 已立 2026-09-14）
+│   └── esp32/                 # spec.md + PLAN.md + templates/（cargo-generate）
 ├── tools/
 │   └── locate-scaffolds.cjs   # 模板定位器（将来长成 yarch init CLI，全栈统一门面）
 └── docs/                      # 工程规范
@@ -103,13 +106,15 @@ web（包模块 + 一次请求的数据流）：
 1. ~~第一步：`contract/` 四件套梳理清楚、评审定稿~~ ✅ 2026-09-01 定稿 v1.0（D1-D6 按"业界标准优先于阿里手册"拍板）；infra 规约 18 份同步成文（3 定稿 + 15 草案）；
 2. **第二批**：`stacks/java` + `stacks/web`（规划期名 web-react，落位时合并为一目录；ysaas 硬需求）✅；
 3. **第三批**：`stacks/golang`——从 yagent 既有实践反向沉淀，不重写 ✅（2026-09-02 第一批构件落地：结构同构 coze-studio、语义按契约重铸，三 module 全绿）；
-4. **按需**：rust / clients / archetype（`yarch init`）；
+4. **按需**：clients / archetype（`yarch init`）；
 5. **全域扩展（2026-09-03 拍板；dotnet / php 经评审裁撤不纳入）**：
    - 新正式栈：`stacks/python`（先行——celery 规约在等承接）✅（2026-09-07 第一批交付：契约内核 + logx/middleware/web/persist/redix/httpx + celeryx 承接 + testx + 生成器/模板，uv workspace 双发行版全绿）、`stacks/node`（NestJS，与 web 同生态共享工具链）；
-   - 领域契约首发：`contract/domains/device.md`、`ai.md`（各先出决策清单评审，未成文）；
-   - `embedded/esp32` 固件模板（守 device 契约；C/C++ 不设业务栈，以此形态进入）；
+   - 领域契约首发：`contract/domains/device.md` ✅（2026-09-14 定稿 v1.0，Dv1-Dv6）、`ai.md`（规划中未成文）；
+   - `embedded/esp32` 固件模板（守 device 契约；C/C++ 不设业务栈，以此形态进入）——**规约 v1.0 已立（2026-09-14，E1-E8：esp-idf-hal std 路线），工程待动工**；
+   - **rust 云栈 `stacks/rust`（2026-09-14 立项）**：规约 v1.0 已立（R1-R7：axum 0.8 + sqlx + tokio 单体 DDD，cargo-generate 模板，crates.io 发版），工程待动工；
    - kotlin 不独立发栈，作为 java 栈第二 archetype；
    - **移动端原生双轨入册（2026-09-03 追加）**：`clients/mobile/android`（Kotlin + Jetpack Compose）、`clients/mobile/ios`（Swift + SwiftUI），触发式——登记触发为 microduck 配套 App；各带契约适配件（RestResponse 解码 / errno 段位 / X-Trace-Id 透传），适配件可分别发 Maven Central（AAR）/ Swift Package Manager；跨端备选 uni-app / Flutter 同槽位触发式，启用时原生与跨端二选一，不做四轨并维；
+   - **移动端启动（2026-09-09 拍板 M1-M7，演进上一条）**：规约层 `contract/clients/` 三份定稿（client-shared + android + ios）；目录重构为 `clients/{android, ios, create}`；**消费者 = 自研 App**（触发不再挂 microduck）；第一批 = 双端契约内核库（纯 Kotlin/JVM 库 + SPM package，本地全绿），模板与统一生成器按 [../clients/PLAN.md](../clients/PLAN.md) 第二三批；
 6. **全域治理护栏（2026-09-03 定稿）**：
    - **触发登记制**：无触发条件的栈不进规划；占位栈不建目录，只在文档留名；
    - **最低维护标准**：CI 全绿 + 一行命令起工程 + 发版链路活；连续两个季度不达标降级 archived（目录保留、移出支持列表）；
