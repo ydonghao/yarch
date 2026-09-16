@@ -16,10 +16,10 @@ stacks/python/                                   # uv workspace（根 pyproject 
 │       ├── errcode/                             #   契约内核②：Code + 13 码全表 + HTTP 映射 + 业务码注册
 │       ├── xerror/                              #   契约内核③：BizError（message「默认文案：细节」规则）
 │       ├── logx/                                #   structlog ndjson 行协议（ts/level/service/env/traceId/logger/msg）+ contextvars
-│       ├── middleware/                          #   Trace(traceparent 优先) / Recovery→1000 / AccessLog / Idempotency→1007 / RateLimit→1006
+│       ├── middleware/                          #   Trace(traceparent 优先) / Recovery→1000 / AccessLog / Idempotency→1007 / RateLimit→1006 / Signature→2001
 │       ├── web/                                 #   setup() 一行装配 + 信封回包 + 1001/1002 分型 + 分页绑定(D6)
 │       ├── persist/                             #   SQLAlchemy 2.x + psycopg3：逻辑删除 is_deleted + 审计 + page_of 分页下推 + Alembic 辅助
-│       ├── redix/                               #   Keys(首段=服务名) + JSON Cache + Lock + Idempotency(三态) + FixedWindowLimiter
+│       ├── redix/                               #   Keys(首段=服务名) + JSON Cache + Lock + Idempotency(三态) + FixedWindowLimiter + RedisNonceStore
 │       ├── httpx/                               #   下游客户端：超时强制(≤30s) + traceparent 注入 + 信封解包 + 1008/1009
 │       ├── celeryx/                             #   celery 装配件：celery.md 强制默认一次性封死（keyprefix/队列/命名/json-only/超时/重试/beat 单实例/trace 头/失败 SPI）
 │       └── testx/                               #   契约断言（13 码/信封/ndjson/PageData，跨栈 conformance 同表）+ TC PG/Redis 基座
