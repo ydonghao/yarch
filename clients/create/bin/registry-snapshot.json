@@ -1,0 +1,17 @@
+{
+  "source": "contract/registry.md",
+  "generatedAt": "2026-09-14T03:15:47.736Z",
+  "serviceNames": [
+    "yagent",
+    "ybookreading",
+    "ysaas"
+  ],
+  "appNames": [
+    "ysaas-billing",
+    "ysaas-console"
+  ],
+  "mobileAppNames": [
+    "ybookreading-reader"
+  ],
+  "clientNames": []
+}

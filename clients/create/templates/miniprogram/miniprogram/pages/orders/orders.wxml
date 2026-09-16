@@ -1,0 +1,12 @@
+<view class="orders-page">
+  <van-cell-group inset>
+    <van-cell
+      wx:for="{{ orders }}"
+      wx:key="id"
+      title="{{ item.title }}"
+      value="¥{{ item.amount }}"
+      label="{{ item.status }}"
+    />
+  </van-cell-group>
+  <van-empty wx:if="{{ !loading && orders.length === 0 }}" description="暂无订单" />
+</view>

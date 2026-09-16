@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Compose 全权接管主题（token 在 :core:designsystem）；manifest 侧只需可启动的基础窗口主题 -->
+    <style name="Theme.{{appClassName}}" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@android:color/white</item>
+    </style>
+</resources>

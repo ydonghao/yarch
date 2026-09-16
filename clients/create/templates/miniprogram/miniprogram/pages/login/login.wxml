@@ -1,0 +1,27 @@
+<view class="login-page">
+  <view class="login-header">
+    <text class="login-title">{{appName}}</text>
+  </view>
+  <van-cell-group inset>
+    <van-field
+      value="{{ username }}"
+      label="账号"
+      placeholder="请输入账号"
+      bind:input="onUsernameInput"
+      clearable
+    />
+    <van-field
+      value="{{ password }}"
+      label="密码"
+      placeholder="请输入密码"
+      password
+      bind:input="onPasswordInput"
+      clearable
+    />
+  </van-cell-group>
+  <view class="login-actions">
+    <van-button type="primary" block loading="{{ loading }}" bind:click="onLogin">
+      登录
+    </van-button>
+  </view>
+</view>

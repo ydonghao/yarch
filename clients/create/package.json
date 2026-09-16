@@ -1,0 +1,14 @@
+{
+  "name": "@yarch/create-app",
+  "version": "0.1.0",
+  "description": "yarch 客户端工程生成器（android/ios/miniprogram/game-cocos）：交互问答 + {{var}} 渲染 + registry 五六节校验 + 生成后冒烟",
+  "type": "module",
+  "bin": {
+    "yarch-init-app": "./bin/yarch-init-app.mjs"
+  },
+  "files": ["bin", "templates", "README.md"],
+  "engines": { "node": ">=20" },
+  "publishConfig": { "access": "public" },
+  "repository": { "type": "git", "url": "git+https://github.com/ydonghao/yarch.git", "directory": "clients/create" },
+  "license": "Apache-2.0"
+}

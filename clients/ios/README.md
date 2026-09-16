@@ -1,10 +1,22 @@
 # ios/
 
-iOS 原生客户端落位（规约：[../../contract/clients/ios.md](../../contract/clients/ios.md)，前置 [client-shared](../../contract/clients/client-shared.md)）：
+iOS 原生客户端落位（规约：[../../contract/clients/ios.md](../../contract/clients/ios.md)，前置 [client-shared](../../contract/clients/client-shared.md)；施工计划：[../PLAN.md](../PLAN.md)）。
 
-- **栈**：Swift + SwiftUI + HIG；MVVM + @Observable（M6）；Swift 6 严格并发；依赖管理 SPM 唯一。
-- **契约内核**：`yarch-client-ios`（SPM package）——信封解包 / 错误三分类 / traceId 注入，git tag 直引零注册（对照 android 侧发 Central，各取生态最短路径）。
-- **工程范式**：xcodegen 生成（`project.yml` 入仓、`.xcodeproj` 不入仓）；模块化本地 SPM package（App 壳 + ContractKit / DesignSystem / Features/*）。
-- **双基线模板**：`ios17`（默认，@Observable）/ `ios16`（扩展，降级 ObservableObject）分文件夹；Xcode/SDK 跟当前 stable。
-- **机检**：SwiftLint（Airbnb 配置起步，偏差登记在 [digest 附 B](../../docs/references/ios-official-guides-digest.md)）+ SwiftFormat；测试新代码 Swift Testing、UI 测试 XCTest。
-- **一行命令**：`yarch init ios <app名>`（App 名按 registry 五节登记，双端包标识一致互为派生）。
+## yarch-client-ios（第一批已交付）
+
+SPM package（`ContractKit`）——信封解包 / 错误三分类 / traceId 注入 / 超时单点 / 401 单点刷新重放。Swift 6 严格并发、Codable + URLSession async/await、**零第三方依赖**；消费走 git tag 直引（SPM，零注册）。
+
+- **API 面**：`RestResponse/Page` · `ApiError/NetworkError(-1)` · `HttpConfig` · `makeTraceId` · `ApiClient.get/post/call`
+- **测试**：Swift Testing（URLProtocol 桩），运行：`swift test`
+- **本机注意**：CommandLineTools 缺 `Testing` 模块——完整工具链在 Xcode.app 里，跑测试用
+  `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer swift test`（不动全局 xcode-select；CI macos runner 自带完整 Xcode 无此问题）
+
+```swift
+let client = ApiClient(baseURL: URL(string: "https://api.example.com")!)
+let page: Page<User>? = try await client.get("api/v1/users", query: ["page": "1"])
+```
+
+## 后续批次（见 PLAN）
+
+- 第二批：`ios17/16` 双基线模板（xcodegen `project.yml` + App 壳 + ContractKit/DesignSystem/Features 本地 SPM package 骨架 + SwiftLint(Airbnb)/SwiftFormat 预接线；`.xcodeproj` 构建验证走 CI macos runner）
+- 第三批：`yarch init app --platform ios|both`（clients/create 统一生成器）

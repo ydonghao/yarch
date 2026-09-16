@@ -14,10 +14,10 @@ stacks/golang/                        # module github.com/ydonghao/yarch/stacks/
 ├── errcode/                          # 契约内核②：Code + 13 码全表 + HTTP 映射 + 业务码注册
 ├── xerror/                           # 契约内核③：BizError（message「默认文案：细节」规则）
 ├── logx/                             # slog ndjson 行协议（ts/level/service/env/traceId/logger/msg）
-├── middleware/                       # Trace(traceparent 优先) / Recovery→1000 / AccessLog / Idempotency→1007 / RateLimit→1006
+├── middleware/                       # Trace(traceparent 优先) / Recovery→1000 / AccessLog / Idempotency→1007 / RateLimit→1006 / SignedApi→2001
 ├── web/                              # Setup(h) 一行装配 + Bind(1001/1002) + BindPageQuery(D6) + 信封回包
 ├── persist/                          # GORM(pgx) + 逻辑删除 is_deleted + 审计 + PageOf 分页下推 + golang-migrate
-├── redix/                            # Keys(首段=服务名) + JSON Cache + Lock + Idempotency(SET NX PX) + RateLimiter(Lua 窗口)
+├── redix/                            # Keys(首段=服务名) + JSON Cache + Lock + Idempotency(SET NX PX) + RateLimiter(Lua 窗口) + NonceStore(SET NX)
 ├── httpx/                            # 下游客户端：超时强制(≤30s) + traceparent 注入 + 信封解包 + 1008/1009
 ├── auth/                             # JWT 机制件：HS256 签发/解析 + RequireAuth/RequireRoles + 2xxx 映射（账号模型归业务）
 ├── captcha/                          # 图形验证码：PNG + dataURL + Redis 一次性 token（GETDEL）+ GET /api/v1/captcha

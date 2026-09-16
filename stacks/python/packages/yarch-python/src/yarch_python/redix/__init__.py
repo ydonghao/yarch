@@ -89,5 +89,20 @@ class FixedWindowLimiter:
         return int(c) <= limit
 
 
+class RedisNonceStore:
+    """nonce 一次性消费存储（SET NX PX；跨实例签名防重放档，实现 middleware 签名件的
+    store 协议，对偶 java RedisNonceStore / golang redix.NonceStore）。fail-closed：
+    签名是认证语义（非增强），存储故障时拒绝（→2001），与限流 fail-open 口径相反。"""
+
+    def __init__(self, redis: Redis):
+        self.redis = redis
+
+    def consume(self, key: str, ttl_s: float) -> bool:
+        try:
+            return bool(self.redis.set(key, 1, nx=True, px=int(ttl_s * 1000)))
+        except Exception:
+            return False
+
+
 def lock(redis: Redis, name: str, *, timeout_s: float = 10) -> Lock:
     return redis.lock(name, timeout=timeout_s)

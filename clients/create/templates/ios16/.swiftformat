@@ -1,0 +1,5 @@
+--indent 4
+--linebreaks lf
+--maxwidth 100
+--stripunusedargs closure-only
+--swiftformat version

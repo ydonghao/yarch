@@ -1,0 +1,27 @@
+{
+  "miniprogramRoot": "miniprogram/",
+  "compileType": "miniprogram",
+  "appid": "{{appId}}",
+  "projectname": "{{packageName}}",
+  "description": "{{description}}",
+  "packNpmManually": true,
+  "packNpmRelationList": [
+    {
+      "packageJsonPath": "./package.json",
+      "miniprogramNpmDistDir": "./miniprogram/"
+    }
+  ],
+  "setting": {
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "minified": true,
+    "useCompilerPlugins": ["typescript"],
+    "babelSetting": {
+      "ignoreList": [],
+      "babelPlugins": [],
+      "babelPresets": []
+    }
+  },
+  "libVersion": "3.7.0"
+}

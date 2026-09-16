@@ -1,0 +1,14 @@
+{
+  "description": "yarch iOS 工程模板 · ios17 默认档（Swift + SwiftUI，MVVM + @Observable，xcodegen + SPM，SwiftLint Airbnb 基准 + SwiftFormat）",
+  "variables": [
+    { "name": "packageName", "desc": "应用名（= registry 五节登记名，首段须为已登记服务名）", "required": true, "default": "" },
+    { "name": "appName", "desc": "展示名", "required": false, "default": "= packageName" },
+    { "name": "service", "desc": "首段服务名（registry 一/二节，由 packageName 首段派生）", "required": false, "default": "" },
+    { "name": "description", "desc": "工程描述", "required": false, "default": "" },
+    { "name": "appClassName", "desc": "Swift 主类名 / xcodegen target 名（PascalCase，如 YsaasShop）", "required": false, "default": "" },
+    { "name": "bundleIdPrefix", "desc": "bundle id 前缀（io.github.ydonghao）", "required": false, "default": "io.github.ydonghao" },
+    { "name": "appPackageSegment", "desc": "bundle id 末段（packageName 去短横线）", "required": false, "default": "" },
+    { "name": "appBundleId", "desc": "完整 bundle id（{bundleIdPrefix}.{appPackageSegment}）", "required": false, "default": "" },
+    { "name": "yarchClientPath", "desc": "yarch-client-ios (ContractKit) 源码路径（SPM path，发版前本地，发版后改 url+version）", "required": false, "default": "" }
+  ]
+}

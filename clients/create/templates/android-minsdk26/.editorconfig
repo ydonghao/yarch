@@ -1,0 +1,15 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+
+[*.{kt,kts}]
+indent_size = 4
+# ktlint code style 对齐官方 Android Studio 默认（contract/clients/android.md 一-2/九-1）
+ktlint_code_style = android_studio
+# Composable 函数按惯例 PascalCase（NIA 同款豁免）
+ktlint_function_naming_ignore_when_annotated_with = Composable
+# function-signature 对多参折行过于挑剔（NIA 同款处置：禁用，签名风格由评审把握）
+ktlint_standard_function-signature = disabled

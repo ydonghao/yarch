@@ -1,0 +1,4 @@
+{
+  "desc": "yarch 小程序模板：{{description}}",
+  "rules": [{ "action": "allow", "page": "*" }]
+}

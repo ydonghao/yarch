@@ -13,7 +13,9 @@
 
 **策略一句话：把契约从「写给人看的规约」升级为「人与 AI 共同消费的机器工件」。**
 
-## 二、四个支柱（按依赖序）
+**目标场景（2026-09-16 EP1 拍板，企业级定位修订）**：**企业级应用/游戏交付**——定位句与护城河判断不变，场景改变优先级：**realtime > 可观测（含审计）> 埋点管道** 三轨立项（EP9 序），多租户/i18n 等既有「不做」边界细化登记于 [../contract/README.md](../contract/README.md) 决策表 EP 行（依据 [references/enterprise-capability-gap-digest.md](references/enterprise-capability-gap-digest.md)）。
+
+## 二、五个支柱（按依赖序）
 
 ### 支柱 1 · 契约机器可读出口（**主引擎**,market digest N2 升级为主线）
 
@@ -47,12 +49,20 @@
 - **存量 P2 backlog 清偿**(python 终审 20 条 + 评审遗留：http.ts 超时、限流调用方维度、幂等回放 Location、InMemoryIdempotencyStore 无界等）——列 GitHub issues 分批消化；
 - **微前端观察哨条文补强**(N4):`micro-frontend.md` 附则补「1.0 长期 RC 无 GA」与「持续停更」并列触发条件（市场事实：rc.32 仍两个月前发布，默认档维持，但长期 RC 是新风险信号）。
 
+### 支柱 5 · 企业级能力轨（2026-09-16 EP 立项，按 EP9 序）
+
+- **三轨契约全部成文（2026-09-16 两批拍板）**：第一轨 [realtime](../contract/api/realtime.md)（RT1-RT9）+ 第二轨可观测（OB1-OB9：logging-trace v1.1 spanId/租户行、[audit](../contract/api/audit.md) 审计留存、[prometheus](../contract/infra/prometheus.md) + [grafana](../contract/infra/grafana.md) 新 infra 两份）+ 第三轨 [telemetry](../contract/api/telemetry.md)（TM1-TM8）；EP2-R/EP3-R 随批落地（租户传播行 + 错误码稳定 key 就绪位）；client-shared 增六/七节；
+- **实现全部触发式**：首个消费工程立项时施工——客户端内核首批 web + miniprogram + cocos（RT9/TM6 对齐，realtime 与 telemetry 同批摊成本），服务端装配件与观测栈 compose 资产随企业级试点；
+- **随批施工项（2026-09-16 已落地）**：EP5 @SignedApi/Masks 跨栈对齐（golang + python）、EP6 CI 安全扫描（Dependabot + CodeQL）；
+- **后置登记**：通知通道领域契约（domains/notification.md，三轨后排队 EP7）；支付协议层（EP8）与桌面端（EP10）触发式。
+
 ## 三、路线图（市场窗口驱动，约 90 天）
 
 | 阶段 | 内容 | 完成信号 |
 |---|---|---|
 | **P0 守底（合并即跑）** | dev 分支合 main（微前端 0.2.0 + 移动端规约/模板/生成器 + AGENTS.md 全量）;python 推 tag 发版；web 0.2.0 发版 | 四条 CI 全绿 + 三栈一行命令零 clone 可用 |
 | **P1 一致性底座（2-3 周）** | 支柱 1 契约 dist（error-codes.json + envelope schema）+ 四栈 conformance 改同源；N1 剩余三栈 AGENTS.md；仓根 AGENTS.md(N3) | 四栈断言同一份 json;`AGENTS.md` 覆盖全部生成器出口 |
+| **P1.5 企业级第一轨（与 P1 并行，契约批已落）** | realtime.md v1.0 成文 + client-shared 六节（2026-09-16）；EP5 签名/脱敏跨栈对齐 + EP6 CI 安全扫描；首个消费工程触发实现 | 五端契约断言 + 三端内核冒烟（触发时）；四栈 EP5 对齐件测试绿 |
 | **P2 领域兑现（3-4 周）** | device.md + ai.md 领域契约成文（microduck 合体验证候选）；存量 P2 backlog 消化 | microduck 云端 Go + esp32 固件同表实现跑通 |
 | **P3 生态收敛（滚动）** | yarch 统一 CLI（支柱 3);OpenAPI 导出（N5 视 P1 进展）；微前端观察哨条文补强 | `yarch init --platform` 一条命令起任意端 |
 
@@ -68,7 +78,7 @@
 ## 五、不做什么（明确裁撤）
 
 - **不自建 SDD 流程框架**（Spec Kit 已有）——yarch 只供给契约工件，不抢流程层；
-- **不做业务中台**（芋道/ruoyi 的业务模块：多租户/字典/监控页）——yarch = 架构平台，G7-G10 拍板已定；
+- **不做业务中台**（芋道/ruoyi 的业务模块：工作流/支付通道/字典/监控页）——yarch = 架构平台，G7-G10 拍板已定；**多租户按 EP2（2026-09-16）拆两层**：账号模型归业务仓（ysaas），租户上下文传播机制契约（header → 日志 → trace）归 yarch、随可观测轨批出决策清单；
 - **dotnet/php 不回摆**（2026-09-03 裁撤）;
 - **商城领域契约不立**（2026-09-11 拍板）;
 - **rust/embedded 不预写**——触发登记制不变（device/ai 契约成文后 esp32 随 microduck 触发）。

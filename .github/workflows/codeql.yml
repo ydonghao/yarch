@@ -1,0 +1,56 @@
+# codeql — 依赖与代码安全扫描（EP6，2026-09-16）：四语言矩阵，与各栈构建 workflow 并行的第二道 CI 门
+name: codeql
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "30 5 * * 1" # 每周一 05:30（本地时区随 runner UTC）
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - language: java-kotlin
+          - language: javascript-typescript
+          - language: python
+          - language: go
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+
+      # 编译型语言须在 CodeQL 环境内完成构建（monorepo：显式进入子目录）
+      - name: Setup JDK 21（java enforcer 基线）
+        if: matrix.language == 'java-kotlin'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Build (java)
+        if: matrix.language == 'java-kotlin'
+        run: mvn -q -B -DskipTests package
+        working-directory: stacks/java
+
+      - name: Build (go)
+        if: matrix.language == 'go'
+        run: go build ./...
+        working-directory: stacks/golang
+
+      - uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"

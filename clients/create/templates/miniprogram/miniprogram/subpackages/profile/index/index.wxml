@@ -1,0 +1,6 @@
+<view class="profile-page">
+  <van-cell-group inset>
+    <van-cell title="应用" value="{{packageName}}" />
+    <van-cell title="版本" value="{{ version }}" />
+  </van-cell-group>
+</view>

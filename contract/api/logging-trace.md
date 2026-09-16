@@ -1,6 +1,6 @@
-# 契约 · 日志与追踪（v1.0 已定稿）
+# 契约 · 日志与追踪（v1.1 已定稿）
 
-> **状态：已定稿**（2026-09-01 评审通过；D1-D6 已拍板，口径为"业界标准优先于阿里手册"，结论见 [../../docs/references/alibaba-java-manual-digest.md](../../docs/references/alibaba-java-manual-digest.md) D 表）。
+> **状态：已定稿**（v1.0 2026-09-01 评审通过，D1-D6 拍板；**v1.1 2026-09-16 增量修订**——OB2/EP2-R/TM 拍板：入口解析 `traceparent` 时提取 **spanId** 入上下文与日志字段；租户上下文 **`X-Tenant-Id`** 进传播矩阵；**埋点上报**边界进矩阵。兼容性：traceId 语义与响应头回显不变，纯增量字段）。
 
 目标：跨栈排障一条链拉通——任意一行日志都能用 `traceId` 串起一次请求的全部足迹。
 
@@ -19,6 +19,8 @@
 | `service` | string | 是 | 服务名（进程级，来自配置） |
 | `env` | string | 是 | `local` / `dev` / `staging` / `prod` |
 | `traceId` | string | 条件 | 请求上下文内必有；后台任务/启动日志可为空 |
+| `spanId` | string | 条件 | 请求上下文有 span 语义时必有（v1.1：入口 `traceparent` 提取） |
+| `tenantId` | string | 条件 | 存在租户上下文时透传记录（v1.1，见传播矩阵"租户上下文"行） |
 | `logger` | string | 是 | 记录点标识（Java 类名 / Go 包名 / Python logger 名 / TS 模块名） |
 | `msg` | string | 是 | 事件描述 |
 | 其余 | any | 否 | 自由键值对，camelCase |
@@ -27,12 +29,12 @@
 
 ## traceId 贯穿（OpenTelemetry 口径）
 
-1. **入口**：服务端优先解析请求头 `traceparent`（W3C，`00-{traceId}-{spanId}-{flag}`，取 trace-id 段）；无则看 `X-Trace-Id`；再无则自己生成 32 位小写 hex；
+1. **入口**：服务端优先解析请求头 `traceparent`（W3C，`00-{traceId}-{spanId}-{flag}`，**v1.1：trace-id 与 span-id 两段均入上下文**）；无则看 `X-Trace-Id`；再无则自己生成 32 位小写 hex；
 2. **传播**：处理过程中该值进入各栈的上下文载体（Java MDC / Go ctx 或中间件键 / Python contextvars / TS 由服务端管理，客户端只透传）；
 3. **出口**：
-   - 响应头 `X-Trace-Id` 恒回显；
+   - 响应头 `X-Trace-Id` 恒回显（**不新增 spanId 响应头**）；
    - 响应体 `RestResponse.traceId` 恒等于它；
-   - 调用下游（HTTP/RPC）时携带 `traceparent`，无 span 语义的客户端至少带 `X-Trace-Id`；
+   - 调用下游（HTTP/RPC）时携带 `traceparent`（span-id 段由发起方自生成，无 span 语义的客户端至少带 `X-Trace-Id`）；
 4. **生成**：128-bit 随机数的 32 位小写 hex；全链路不改变、不重新生成（除入口为空时）。
 
 ## 跨进程传播矩阵
@@ -49,6 +51,8 @@ traceId 跨越一切边界时的注入/继承规则（各 infra 规约引用本�
 | 网关 / 反向代理（入口） | 透传上游 `traceparent`/`X-Trace-Id`；缺省生成（Nginx `$request_id` 等） | 转发给上游；响应回显 `X-Trace-Id` |
 | 网关故障响应（fallback） | 网关自身生成/透传 | **故障响应也必须携带 `X-Trace-Id`**（见 [rest-response.md](rest-response.md) 网关故障面） |
 | 前端（web） | 请求带 `X-Trace-Id`；错误对象暴露响应的 `traceId` | 用户报障以 traceId 为凭证 |
+| 埋点上报（客户端 → 摄入端点，v1.1） | 埋点 SDK 事件携带会话 traceId（复用口径，[../clients/client-shared.md](../clients/client-shared.md) 二-1；协议见 [telemetry.md](telemetry.md) 三） | 摄入服务日志与落库事件携带同值——客户端行为与服务端处理同链可查 |
+| 租户上下文（`X-Tenant-Id`，v1.1） | 网关/服务入口解析（可选头）入上下文；下游调用与 MQ 消息属性**与 traceId 同批透传**；日志字段 `tenantId` | 各服务记录与透传；隔离模型（schema/库/行级）归业务仓（EP2 拍板：机制归 yarch、模型归业务） |
 
 铁律：traceId 只在"链路入口无值"时生成一次；消息消费、任务执行是**新入口**（上游 trace 已在消息/任务参数内，继承而非再生成）。
 

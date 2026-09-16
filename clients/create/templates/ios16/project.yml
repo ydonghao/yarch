@@ -1,0 +1,41 @@
+name: {{appClassName}}
+options:
+  bundleIdPrefix: {{bundleIdPrefix}}
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+packages:
+  DesignSystem:
+    path: Packages/DesignSystem
+  Login:
+    path: Packages/Features/Login
+  Users:
+    path: Packages/Features/Users
+targets:
+  {{appClassName}}:
+    type: application
+    platform: iOS
+    sources:
+      - App/Sources
+    dependencies:
+      - package: DesignSystem
+      - package: Login
+      - package: Users
+    info:
+      path: App/Info.plist
+      properties:
+        CFBundleDisplayName: {{appClassName}}
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        # 环境注入位（client-shared 三-5）：环境切换改构建配置，禁散落业务代码
+        API_BASE_URL: https://api.example.com/
+    settings:
+      base:
+        SWIFT_VERSION: "6.0"
+        TARGETED_DEVICE_FAMILY: "1"
+schemes:
+  {{appClassName}}:
+    build:
+      targets:
+        {{appClassName}}: all

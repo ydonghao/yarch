@@ -1,0 +1,26 @@
+# detekt 默认配置的工程化微调（自动发现路径 config/detekt/detekt.yml）。
+# 原则（contract/clients/android.md 九）：静态分析与格式分离——格式归 ktlint，此处只调复杂度与代码味阈值。
+build:
+  maxIssues: 0
+
+complexity:
+  LongMethod:
+    threshold: 120
+  LongParameterList:
+    active: false
+  TooManyFunctions:
+    active: false
+  CyclomaticComplexMethod:
+    threshold: 15
+
+style:
+  WildcardImport:
+    active: true
+  ReturnCount:
+    max: 5
+  MagicNumber:
+    active: false
+
+naming:
+  FunctionNaming:
+    ignoreAnnotated: ['Composable']

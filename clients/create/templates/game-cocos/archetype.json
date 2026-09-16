@@ -1,0 +1,13 @@
+{
+  "description": "yarch Cocos Creator 游戏工程模板：@yarch/contract/cocos 运行时自动检测（小游戏→wx / H5→fetch），分层共享边界（game.md 一-2 渲染禁共享/三层共享），首包 4MB 预算",
+  "variables": [
+    { "name": "packageName", "desc": "应用名（= registry 六节登记名，首段须为已登记服务名）", "required": true, "default": "" },
+    { "name": "appName", "desc": "展示名（游戏名）", "required": false, "default": "= packageName" },
+    { "name": "service", "desc": "首段服务名（registry 一/二节，由 packageName 首段派生）", "required": false, "default": "" },
+    { "name": "appId", "desc": "微信小游戏 AppID（registry 六节登记；H5 档留空）", "required": false, "default": "" },
+    { "name": "description", "desc": "工程描述", "required": false, "default": "" },
+    { "name": "baseUrl", "desc": "API base URL", "required": false, "default": "https://api.example.com" },
+    { "name": "yarchContractDep", "desc": "@yarch/contract 依赖（发版前 file: 本地路径，发版后 ^x.y.z）", "required": false, "default": "" },
+    { "name": "cocosVersion", "desc": "Cocos Creator 引擎版本（game.md 二-1：版本钉死在工程配置）", "required": false, "default": "3.8.0" }
+  ]
+}

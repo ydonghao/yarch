@@ -1,0 +1,13 @@
+{
+  "description": "yarch Android 工程模板 · minsdk26 默认档（Kotlin + Compose + M3，Now in Android 范式，build-logic 四 convention 插件，Hilt）",
+  "variables": [
+    { "name": "packageName", "desc": "应用名（= registry 五节登记名，首段须为已登记服务名）", "required": true, "default": "" },
+    { "name": "appName", "desc": "展示名", "required": false, "default": "= packageName" },
+    { "name": "service", "desc": "首段服务名（registry 一/二节，由 packageName 首段派生）", "required": false, "default": "" },
+    { "name": "description", "desc": "工程描述", "required": false, "default": "" },
+    { "name": "appPackageSegment", "desc": "包路径末段（packageName 去短横线，如 ysaasshop）", "required": false, "default": "" },
+    { "name": "appApplicationId", "desc": "applicationId / namespace（io.github.ydonghao.{appPackageSegment}）", "required": false, "default": "" },
+    { "name": "appClassName", "desc": "Application 类名（PascalCase，如 YsaasShop）", "required": false, "default": "" },
+    { "name": "yarchClientPath", "desc": "yarch-client-android 源码路径（includeBuild，发版前本地，发版后删改版本依赖）", "required": false, "default": "" }
+  ]
+}

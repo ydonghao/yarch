@@ -1,0 +1,12 @@
+{
+  "description": "yarch 微信小程序工程模板（原生 + TypeScript + Vant Weapp）：登录+列表走 @yarch/contract/wx 契约全链路（信封解包/traceId/401 刷新重放），miniprogram-ci 发布管线",
+  "variables": [
+    { "name": "packageName", "desc": "应用名（= registry 六节登记名，首段须为已登记服务名）", "required": true, "default": "" },
+    { "name": "appName", "desc": "展示名（小程序名）", "required": false, "default": "= packageName" },
+    { "name": "service", "desc": "首段服务名（registry 一/二节，由 packageName 首段派生）", "required": false, "default": "" },
+    { "name": "appId", "desc": "微信 AppID（registry 六节登记）", "required": false, "default": "" },
+    { "name": "description", "desc": "工程描述", "required": false, "default": "" },
+    { "name": "baseUrl", "desc": "API base URL", "required": false, "default": "https://api.example.com" },
+    { "name": "yarchContractDep", "desc": "@yarch/contract 依赖（发版前 file: 本地路径，发版后 ^x.y.z）", "required": false, "default": "" }
+  ]
+}

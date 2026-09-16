@@ -1,0 +1,73 @@
+name: clients-ios
+
+# 移动端 ios CI（clients/PLAN.md C8/C9）：
+# check = 契约内核 swift test；template-smoke = 双基线档经生成器生成后测试与构建（占位符模板不可裸测）。
+# SwiftLint/SwiftFormat 门禁随模板预接线。
+
+on:
+  push:
+    branches: [main, dev]
+    paths: ['clients/ios/**', 'clients/create/**', '.github/workflows/clients-ios.yml']
+  pull_request:
+    paths: ['clients/ios/**', 'clients/create/**', '.github/workflows/clients-ios.yml']
+
+jobs:
+  generator-smoke:
+    name: 生成器冒烟（生成 → xcodegen + 构建）
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: brew install xcodegen
+      - name: 生成 ios 工程（yarch-init-app）
+        run: |
+          node clients/create/bin/yarch-init-app.mjs ysaas-demo --platform ios --yes \
+            --registry contract/registry.md --out /tmp/gen-ios
+      - name: 生成工程 xcodegen + 构建（工程名由 appClassName 派生，禁硬编码）
+        run: |
+          cd /tmp/gen-ios
+          xcodegen generate
+          proj=$(basename "$(ls -d ./*.xcodeproj)")
+          xcodebuild -project "$proj" -scheme "${proj%.xcodeproj}" -destination 'generic/platform=iOS' CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO build
+
+  check:
+    name: 契约内核 swift test
+    runs-on: macos-15
+    defaults:
+      run:
+        working-directory: clients/ios
+    steps:
+      - uses: actions/checkout@v4
+      - run: swift test
+
+  template-smoke:
+    name: 模板冒烟 · ${{ matrix.baseline }}（生成 → 测试 + 构建）
+    runs-on: macos-15
+    strategy:
+      fail-fast: false
+      matrix:
+        baseline: ['ios17', 'ios16']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: brew install xcodegen
+      - name: 生成 ${{ matrix.baseline }} 档工程（yarch-init-app --baseline）
+        run: |
+          node clients/create/bin/yarch-init-app.mjs ysaas-demo --platform ios --baseline ${{ matrix.baseline }} --yes \
+            --registry contract/registry.md --out /tmp/gen-${{ matrix.baseline }}
+      - name: feature 包测试（Swift Testing）
+        run: |
+          cd /tmp/gen-${{ matrix.baseline }}/Packages/Features/Login
+          swift test
+          cd ../Users
+          swift test
+      - name: xcodegen 生成 + App 构建（免签名设备目标：不依赖模拟器运行时）
+        run: |
+          cd /tmp/gen-${{ matrix.baseline }}
+          xcodegen generate
+          proj=$(basename "$(ls -d ./*.xcodeproj)")
+          xcodebuild -project "$proj" -scheme "${proj%.xcodeproj}" -destination 'generic/platform=iOS' CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO build
