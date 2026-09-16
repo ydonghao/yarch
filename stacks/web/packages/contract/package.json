@@ -1,10 +1,17 @@
 {
   "name": "@yarch/contract",
-  "version": "0.2.0",
-  "description": "yarch 前端契约 SDK（跨框架，React/Vue 通吃）：RestResponse/PageData 类型与解包、错误码常量表、ApiError、traceId、fetch 封装",
+  "version": "0.3.0",
+  "description": "yarch 前端契约 SDK（三端同源 MP4）：信封解包/错误码表/ApiError 四要素/traceId 会话复用/401 刷新重放——@yarch/contract/core 零环境依赖，/wx 微信小程序适配，主入口含微前端运行时件",
   "type": "module",
   "main": "src/index.ts",
   "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./core": "./src/core.ts",
+    "./wx": "./src/wx.ts",
+    "./fetch": "./src/http.ts",
+    "./cocos": "./src/cocos.ts"
+  },
   "files": [
     "src",
     "README.md"
