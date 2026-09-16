@@ -1,8 +1,9 @@
 {
   "source": "contract/registry.md",
-  "generatedAt": "2026-09-09T11:58:08.798Z",
+  "generatedAt": "2026-09-16T13:10:34.107Z",
   "serviceNames": [
     "yagent",
+    "ybookreading",
     "ysaas"
   ],
   "appNames": [
