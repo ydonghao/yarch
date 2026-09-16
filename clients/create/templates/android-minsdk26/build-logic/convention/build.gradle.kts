@@ -9,6 +9,7 @@ kotlin {
 dependencies {
     compileOnly(libs.android.gradlePlugin)
     compileOnly(libs.kotlin.gradlePlugin)
+    implementation(libs.kotlin.compose.gradlePlugin)
 }
 
 gradlePlugin {

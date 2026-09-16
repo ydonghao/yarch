@@ -1,6 +1,6 @@
 package yarch
 
-import com.android.build.api.dsl.CommonExtension
+import com.android.build.api.dsl.LibraryExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
@@ -14,7 +14,7 @@ class YarchAndroidLibraryConventionPlugin : Plugin<Project> {
             pluginManager.apply("org.jetbrains.kotlin.android")
             pluginManager.apply("org.jlleitschuh.gradle.ktlint")
             pluginManager.apply("io.gitlab.arturbosch.detekt")
-            extensions.configure<CommonExtension<*, *, *, *, *, *>> {
+            extensions.configure<LibraryExtension> {
                 configureKotlinAndroid(this)
             }
             dependencies {

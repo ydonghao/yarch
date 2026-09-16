@@ -22,6 +22,7 @@ junit = "5.10.2"
 # build-logic 插件编译
 android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+kotlin-compose-gradlePlugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
 # yarch 契约内核（includeBuild 替换为源码；发版后改正式版本）
 yarch-client-android = { module = "io.github.ydonghao.yarch:yarch-client-android", version.ref = "yarchClient" }
 # Compose（BOM 统一组件版本）
