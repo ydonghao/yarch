@@ -1,6 +1,6 @@
 module github.com/ydonghao/yarch/stacks/golang
 
-go 1.24
+go 1.26.0
 
 require (
 	github.com/cloudwego/hertz v0.10.2
@@ -10,7 +10,7 @@ require (
 	github.com/jackc/pgx/v5 v5.7.5
 	github.com/redis/go-redis/v9 v9.7.0
 	golang.org/x/image v0.18.0
-	golang.org/x/time v0.11.0
+	golang.org/x/time v0.16.0
 	gorm.io/driver/postgres v1.5.7
 	gorm.io/gorm v1.25.12
 )
