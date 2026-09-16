@@ -22,5 +22,9 @@
 | [android-official-guides-digest.md](references/android-official-guides-digest.md) | Google 官方三份（风格/架构/M3）+ Now in Android 逐项取舍 + 阿里 Android 手册逐块取舍 + Play API 36 时间线（条文已定稿为 [../contract/clients/android.md](../contract/clients/android.md)） |
 | [ios-official-guides-digest.md](references/ios-official-guides-digest.md) | Swift API 设计指南 + Airbnb 逐块取舍与偏差登记 + SwiftLint/SwiftFormat + xcodegen/Tuist 对比 + Swift Testing（条文已定稿为 [../contract/clients/ios.md](../contract/clients/ios.md)） |
 | [miniprogram-game-digest.md](references/miniprogram-game-digest.md) | 小程序与小游戏立项调研：官方规约三层拆解 / 原生 vs Taro vs uni-app / 引擎双档格局 / 分层共享边界；**MP1-MP5 · G1-G4 决策清单在此**（已全部拍板，条文定稿为 [../contract/clients/miniprogram.md](../contract/clients/miniprogram.md) / [game.md](../contract/clients/game.md)） |
+| [enterprise-capability-gap-digest.md](references/enterprise-capability-gap-digest.md) | 企业级能力缺口解析（应用/游戏）：运维可观测 / 游戏实时与生态 / 采购合规三主线 + 元缺口（无生产验证）；**EP1-EP12 定位修订决策清单在此**（2026-09-16 已拍板，口径登记 [../contract/README.md](../contract/README.md) 决策表 EP 行） |
+| [realtime-channel-digest.md](references/realtime-channel-digest.md) | 实时通道立项调研：微信双端平台约束（5 连接 / 强制 wss / 应用层心跳）/ WS 为何是五端唯一默认档 / 连接生命周期业界共识 / PushEnvelope 接缝；**RT1-RT9 决策清单在此**（2026-09-16 已拍板，条文定稿为 [../contract/api/realtime.md](../contract/api/realtime.md)） |
+| [observability-track-digest.md](references/observability-track-digest.md) | 可观测轨立项调研（EP9 第二轨，含审计 EP4）：OTel 三信号现状 / CH 统一后端 vs LGTM 权衡 / ndjson 行协议不搬家的采集路线 / 审计 append-only 留存；**OB1-OB9 + EP2-R/EP3-R 决策清单在此**（2026-09-16 已拍板：logging-trace v1.1 + api/audit.md + infra/prometheus·grafana 定稿） |
+| [telemetry-pipeline-digest.md](references/telemetry-pipeline-digest.md) | 埋点管道轨立项调研（EP9 第三轨）：工业级 SDK 双写队列范式 / onHide flush 与 sendBeacon / tracking plan 治理 / kafka→CH 管道组合；**TM1-TM8 决策清单在此**（2026-09-16 已拍板，条文定稿为 [../contract/api/telemetry.md](../contract/api/telemetry.md)） |
 
 新解析材料（Nacos、消息队列等研究）按需增补进本组，命名 `{来源}-{主题}-digest.md`。
