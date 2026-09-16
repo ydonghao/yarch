@@ -19,14 +19,14 @@ import kotlinx.coroutines.launch
  */
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val repository: LoginRepository,
+    private val repository: LoginRepository
 ) : ViewModel() {
 
     data class UiState(
         val username: String = "",
         val password: String = "",
         val loading: Boolean = false,
-        val errorMessage: String? = null,
+        val errorMessage: String? = null
     )
 
     sealed interface LoginEvent {

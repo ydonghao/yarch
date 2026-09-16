@@ -1,8 +1,8 @@
 package io.github.ydonghao.{{appPackageSegment}}.feature.users
 
-import io.github.ydonghao.{{appPackageSegment}}.core.network.api.UserDto
 import io.github.ydonghao.yarch.client.error.ApiError
 import io.github.ydonghao.yarch.client.error.NetworkError
+import io.github.ydonghao.{{appPackageSegment}}.core.network.api.UserDto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -21,7 +21,9 @@ class UsersViewModelTest {
 
     private val dispatcher = StandardTestDispatcher()
 
-    private class FakeUsersRepository(private val block: suspend () -> List<UserDto>) : UsersRepository {
+    private class FakeUsersRepository(
+        private val block: suspend () -> List<UserDto>
+    ) : UsersRepository {
         override suspend fun users(page: Int): List<UserDto> = block()
     }
 
@@ -38,7 +40,7 @@ class UsersViewModelTest {
     @Test
     fun `成功态加载用户列表`() = runTest(dispatcher) {
         val vm = UsersViewModel(
-            FakeUsersRepository { listOf(UserDto(id = "u1", name = "甲")) },
+            FakeUsersRepository { listOf(UserDto(id = "u1", name = "甲")) }
         )
         dispatcher.scheduler.advanceUntilIdle()
         assertEquals(1, vm.state.value.users.size)
@@ -49,7 +51,9 @@ class UsersViewModelTest {
     @Test
     fun `业务错误透出 message 且清 loading`() = runTest(dispatcher) {
         val vm = UsersViewModel(
-            FakeUsersRepository { throw ApiError(code = 1001, message = "参数校验失败", traceId = "t", httpStatus = 400) },
+            FakeUsersRepository {
+                throw ApiError(code = 1001, message = "参数校验失败", traceId = "t", httpStatus = 400)
+            }
         )
         dispatcher.scheduler.advanceUntilIdle()
         assertTrue(vm.state.value.users.isEmpty())
@@ -60,7 +64,7 @@ class UsersViewModelTest {
     @Test
     fun `传输错误统一网络文案`() = runTest(dispatcher) {
         val vm = UsersViewModel(
-            FakeUsersRepository { throw NetworkError() },
+            FakeUsersRepository { throw NetworkError() }
         )
         dispatcher.scheduler.advanceUntilIdle()
         assertEquals("网络异常，请稍后重试", vm.state.value.errorMessage)

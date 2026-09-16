@@ -9,9 +9,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -28,10 +28,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.ydonghao.{{appPackageSegment}}.feature.login.LoginViewModel.LoginEvent
 
 @Composable
-fun LoginScreen(
-    onLoggedIn: () -> Unit,
-    viewModel: LoginViewModel = hiltViewModel(),
-) {
+fun LoginScreen(onLoggedIn: () -> Unit, viewModel: LoginViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
@@ -43,7 +40,7 @@ fun LoginScreen(
     }
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("登录") }) },
+        topBar = { TopAppBar(title = { Text("登录") }) }
     ) { padding ->
         Column(
             modifier = Modifier
@@ -51,14 +48,14 @@ fun LoginScreen(
                 .padding(padding)
                 .padding(horizontal = 24.dp),
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             OutlinedTextField(
                 value = state.username,
                 onValueChange = viewModel::onUsernameChange,
                 label = { Text("用户名") },
                 singleLine = true,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth()
             )
             Spacer(Modifier.height(12.dp))
             OutlinedTextField(
@@ -66,21 +63,21 @@ fun LoginScreen(
                 onValueChange = viewModel::onPasswordChange,
                 label = { Text("密码") },
                 singleLine = true,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth()
             )
             if (state.errorMessage != null) {
                 Spacer(Modifier.height(8.dp))
                 Text(
                     text = state.errorMessage.orEmpty(),
                     color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodySmall
                 )
             }
             Spacer(Modifier.height(20.dp))
             Button(
                 onClick = viewModel::submit,
                 enabled = !state.loading,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth()
             ) {
                 if (state.loading) {
                     CircularProgressIndicator(modifier = Modifier.height(18.dp))

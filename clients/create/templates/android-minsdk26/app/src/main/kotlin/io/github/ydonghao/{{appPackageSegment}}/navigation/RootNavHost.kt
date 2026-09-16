@@ -17,7 +17,7 @@ fun RootNavHost() {
                     navController.navigate("users") {
                         popUpTo("login") { inclusive = true }
                     }
-                },
+                }
             )
         }
         composable("users") {

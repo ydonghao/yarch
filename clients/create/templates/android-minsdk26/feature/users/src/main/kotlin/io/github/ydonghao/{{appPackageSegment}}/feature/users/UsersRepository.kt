@@ -4,9 +4,9 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import io.github.ydonghao.yarch.client.http.Envelope
 import io.github.ydonghao.{{appPackageSegment}}.core.network.api.SampleApi
 import io.github.ydonghao.{{appPackageSegment}}.core.network.api.UserDto
-import io.github.ydonghao.yarch.client.http.Envelope
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,7 +20,7 @@ interface UsersRepository {
 
 @Singleton
 class ApiUsersRepository @Inject constructor(
-    private val api: SampleApi,
+    private val api: SampleApi
 ) : UsersRepository {
     override suspend fun users(page: Int): List<UserDto> =
         Envelope.call { api.users(page) }?.list ?: emptyList()

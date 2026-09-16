@@ -12,5 +12,5 @@ import kotlinx.coroutines.Dispatchers
 @Singleton
 class AppDispatchers @Inject constructor(
     val io: CoroutineDispatcher = Dispatchers.IO,
-    val default: CoroutineDispatcher = Dispatchers.Default,
+    val default: CoroutineDispatcher = Dispatchers.Default
 )

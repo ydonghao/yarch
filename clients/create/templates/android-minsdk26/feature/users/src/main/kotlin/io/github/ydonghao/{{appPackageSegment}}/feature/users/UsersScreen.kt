@@ -20,13 +20,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
-fun UsersScreen(
-    viewModel: UsersViewModel = hiltViewModel(),
-) {
+fun UsersScreen(viewModel: UsersViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     Scaffold(
@@ -35,31 +33,31 @@ fun UsersScreen(
                 title = { Text("用户") },
                 actions = {
                     TextButton(onClick = viewModel::refresh) { Text("刷新") }
-                },
+                }
             )
-        },
+        }
     ) { padding ->
         when {
             state.loading -> Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding),
-                contentAlignment = Alignment.Center,
+                contentAlignment = Alignment.Center
             ) { CircularProgressIndicator() }
 
             state.errorMessage != null -> Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding),
-                contentAlignment = Alignment.Center,
+                contentAlignment = Alignment.Center
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
+                    verticalArrangement = Arrangement.Center
                 ) {
                     Text(
                         text = state.errorMessage.orEmpty(),
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = MaterialTheme.typography.bodyMedium
                     )
                     TextButton(onClick = viewModel::refresh) { Text("重试") }
                 }
@@ -68,13 +66,13 @@ fun UsersScreen(
             else -> LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(padding),
+                    .padding(padding)
             ) {
                 items(state.users, key = { it.id }) { user ->
                     ListItem(
                         headlineContent = { Text(user.name) },
                         supportingContent = { Text(user.id) },
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth()
                     )
                     HorizontalDivider()
                 }

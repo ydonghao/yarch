@@ -5,10 +5,10 @@ plugins {
 }
 
 android {
-    namespace = "{{appApplicationId}}"
+    namespace = "io.github.ydonghao.{{appPackageSegment}}"
 
     defaultConfig {
-        applicationId = "{{appApplicationId}}"
+        applicationId = "io.github.ydonghao.{{appPackageSegment}}"
         versionCode = 1
         versionName = "0.1.0"
     }
@@ -25,7 +25,10 @@ android {
         release {
             defaultConfig.buildConfigField("String", "API_BASE_URL", "\"https://api.example.com/\"")
             isMinifyEnabled = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 }

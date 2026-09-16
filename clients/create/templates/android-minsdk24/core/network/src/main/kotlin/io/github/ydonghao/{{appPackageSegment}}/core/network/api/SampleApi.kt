@@ -1,15 +1,15 @@
 package io.github.ydonghao.{{appPackageSegment}}.core.network.api
 
-import io.github.ydonghao.yarch.client.model.Page
-import io.github.ydonghao.yarch.client.model.RestResponse
-import javax.inject.Named
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import io.github.ydonghao.{{appPackageSegment}}.core.network.auth.TokenStore
 import io.github.ydonghao.yarch.client.http.RefreshAuthenticator
 import io.github.ydonghao.yarch.client.http.YarchHttp
+import io.github.ydonghao.yarch.client.model.Page
+import io.github.ydonghao.yarch.client.model.RestResponse
+import io.github.ydonghao.{{appPackageSegment}}.core.network.auth.TokenStore
+import javax.inject.Named
 import javax.inject.Singleton
 import kotlinx.serialization.Serializable
 import okhttp3.OkHttpClient
@@ -20,7 +20,7 @@ import retrofit2.http.Query
 @Serializable
 data class UserDto(
     val id: String,
-    val name: String,
+    val name: String
 )
 
 interface SampleApi {
@@ -42,7 +42,7 @@ object NetworkModule {
     fun provideOkHttp(tokenStore: TokenStore): OkHttpClient =
         YarchHttp.okHttp(
             tokens = { tokenStore.current() },
-            authenticator = RefreshAuthenticator { tokenStore.refresh() },
+            authenticator = RefreshAuthenticator { tokenStore.refresh() }
         )
 
     @Provides

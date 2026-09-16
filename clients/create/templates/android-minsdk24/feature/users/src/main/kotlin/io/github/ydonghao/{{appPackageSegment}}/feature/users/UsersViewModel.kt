@@ -3,9 +3,9 @@ package io.github.ydonghao.{{appPackageSegment}}.feature.users
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.github.ydonghao.{{appPackageSegment}}.core.network.api.UserDto
 import io.github.ydonghao.yarch.client.error.ApiError
 import io.github.ydonghao.yarch.client.error.NetworkError
+import io.github.ydonghao.{{appPackageSegment}}.core.network.api.UserDto
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,13 +19,13 @@ import kotlinx.coroutines.launch
  */
 @HiltViewModel
 class UsersViewModel @Inject constructor(
-    private val repository: UsersRepository,
+    private val repository: UsersRepository
 ) : ViewModel() {
 
     data class UiState(
         val loading: Boolean = false,
         val users: List<UserDto> = emptyList(),
-        val errorMessage: String? = null,
+        val errorMessage: String? = null
     )
 
     private val _state = MutableStateFlow(UiState())
