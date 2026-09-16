@@ -28,6 +28,8 @@ internal fun Project.configureKotlinAndroid(commonExtension: CommonExtension<*, 
     tasks.withType(KotlinCompile::class.java).configureEach {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_17)
+            // M3 实验性 API（TopAppBar 等）全工程放行——模板 UI 代码不逐文件 OptIn
+            optIn.add("androidx.compose.material3.ExperimentalMaterial3Api")
         }
     }
 }
