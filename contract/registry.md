@@ -15,6 +15,7 @@
 |---|---|---|---|---|
 | `ysaas` | ysaas（首个客户） | 待登记 | — | 示例行：首个业务工程接入时正式登记 |
 | `yagent` | yagent | 待登记 | — | 示例行 |
+| `ybookreading` | ybookreading | 2026-09-14 | — | 本地 TXT 小说阅读器（Android 原生，纯本地无后端，不启用共享基础设施前缀） |
 
 > 登记方式：PR 修改本表即登记；重名在 CI/评审阶段拒绝。
 
@@ -26,6 +27,8 @@
 |---|---|---|
 | Redis key / Kafka·RocketMQ topic / ES 索引 / Milvus collection / CH·SR 库 | 各业务仓 `docs/`（属主维护） | [infra/redis.md](infra/redis.md) 二-1、[infra/kafka.md](infra/kafka.md) 二-6、[infra/rocketmq.md](infra/rocketmq.md) 二-5 |
 | MinIO bucket、XXL-Job 任务、Nacos Group | 各业务仓 `docs/` | [infra/minio-s3.md](infra/minio-s3.md) 一-4、[infra/xxl-job.md](infra/xxl-job.md) 一-3 |
+| wss 长连接域名（实时通道入口） | 各业务仓 `docs/`（网关入口域名；微信小程序后台 socket 合法域名白名单须同值） | [api/realtime.md](api/realtime.md) 一-4 |
+| 埋点事件注册表（tracking plan：事件名/属性 schema/属主） | 各业务仓 `docs/` | [api/telemetry.md](api/telemetry.md) 一-1 |
 | 错误码 3xxx+ 段位 | 各业务仓 `docs/` | [api/error-codes.md](api/error-codes.md) 段位分配 |
 
 > 派生资源的首段（服务名）必须能在本表查到属主；查不到 = 未登记资源，CI/巡检视为违规。
@@ -53,7 +56,7 @@
 
 | App 名 | 属主服务名 | applicationId / bundle id | 平台（android/ios/双端） | 登记日期 | 备注 |
 |---|---|---|---|---|---|
-| — | — | — | — | — | 首个移动 App 工程创建时正式登记 |
+| `ybookreading-reader` | `ybookreading` | `io.github.ydonghao.ybookreadingreader` | android | 2026-09-14 | 首个移动 App 工程；v1 纯本地无后端，未上架前改名不涉变更评审 |
 
 ## 六、小程序与小游戏登记（clients）
 

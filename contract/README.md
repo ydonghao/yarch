@@ -1,7 +1,7 @@
 # contract/ · 跨栈统一契约与规约
 
 > 多栈脚手架的灵魂：各栈长得不一样没关系，必须说同一种接口语言。
-> 本目录是全部栈实现的**唯一权威来源**，改契约必须先改这里。已落地：java / golang / web / python；clients 移动端规约已定稿（2026-09-09，实现触发式）；**规约已立待施工**：stacks/rust（axum）+ embedded/esp32（esp-idf-hal std，2026-09-14）；规划中：node（触发式）。**agent/ AI 施工规约已定稿**（2026-09-14：约束全部工程的 AI 代理上下文、生态扩展出口与自家 CLI）。
+> 本目录是全部栈实现的**唯一权威来源**，改契约必须先改这里。已落地：java / golang / web / python；clients 移动端规约已定稿（2026-09-09，实现触发式）；**规约已立待施工**：stacks/rust（axum）+ embedded/esp32（esp-idf-hal std，2026-09-14）；规划中：node（触发式）。**agent/ AI 施工规约已定稿**（2026-09-14：约束全部工程的 AI 代理上下文、生态扩展出口与自家 CLI）。**企业级三轨契约已定稿**（2026-09-16：api/realtime · telemetry · audit + infra/prometheus · grafana + logging-trace v1.1，实现触发式）。
 
 ## 规约治理（等级定义 / 豁免与变更 / 机检路线）
 
@@ -39,6 +39,10 @@
 | 规约 | 前置依赖（硬） | 主要协作参考（软） |
 |---|---|---|
 | mysql / postgresql / mongodb / redis / nginx | — | api 四件套（错误码/幂等/traceId 口径） |
+| api/realtime | — | error-codes（13 码表复用）、logging-trace（ndjson/traceId）、rest-conventions（命名/大消息引用化）、clients/client-shared（六节客户端纪律）、nginx/higress（入口透传） |
+| api/telemetry | — | error-codes（13 码表回执）、logging-trace（埋点矩阵行）、kafka（摄入管道）、clickhouse（攒批写入）、clients/client-shared（七节客户端纪律） |
+| api/audit | — | logging-trace（行协议同源）、clickhouse（append-only 存储）、registry（派生资源登记指引同款） |
+| infra/prometheus / infra/grafana | — | api/logging-trace（service/env 标签口径）、api/audit + api/telemetry（CH 数据源共用）、agent/extensions（数据源凭证 ${ENV}） |
 | timescale | postgresql | clickhouse（日志场景分流） |
 | pgvector | postgresql | milvus（升级路径） |
 | redisearch | redis | elasticsearch（搜索分层） |
@@ -82,17 +86,24 @@
 | embedded/esp32 规约 E1-E8（2026-09-14 拍板） | 技术路线 **esp-idf-hal std**（WiFi/MQTT/OTA/TLS 成熟是决定性因素；no_std esp-hal 不入册）；HAL 次版本锁定（~0.46/~0.52）；首档 esp32 经典款；cargo generate + 模板目录；固件不发库模板随仓；clippy+rustfmt+host 单测 CI；与云栈 rust 零共享 crate | 已生效（2026-09-14） |
 | Rust 云栈 R1-R7（2026-09-14 拍板） | **axum 0.8**（crates.io 4.67 亿下载无争议默认）+ sqlx + tokio 单体业务栈；DDD 七包（errors 目录同 python 修正口径）；workspace 两 crate（yarch-contract 零框架 + yarch-axum 装配）；**cargo-generate + 模板目录**（生态标准通道，远期统一 CLI 收编 `--lang rust`）；crates.io 发版 tag `stacks/rust/vX.Y.Z`；clippy deny warnings + rustfmt + cargo-deny + 契约断言；MSRV 1.80 | 已生效（2026-09-14） |
 | AI 施工规约 A1-A6（2026-09-14 拍板） | **新设 contract/agent/ 层**：AGENTS.md 唯一事实源 + CLAUDE.md/GEMINI.md 仅一行 `@AGENTS.md` 派生（禁分叉；目录型配置不生成不维护）；四章节定式（工程地图/命令表/红线清单/契约锚点）+ 篇幅 ≤150 行（Codex 32 KiB 最严口径）；锚点双要素引用 = N2 机器可读出口首个消费场景；扩展出口首批只纳管 .mcp.json（凭证 `${ENV}` 引用）+ skills（`.agents/skills/` 跨厂商位置，`.claude/skills` 链接派生），hooks/subagents 参考级；自家 CLI 交互规约 cli.md（一行命令铁律成文 + `--yes` 非交互 + `--json` + 退出码 0/1/2 + 幂等）。目录命名避开 domains/ai.md「LLM 接入」占位。依据：[ai-cli-ecosystem-digest.md](../docs/references/ai-cli-ecosystem-digest.md) | 已生效（2026-09-14） |
+| 企业级定位修订 EP1-EP12（2026-09-16 拍板） | 定位句不动，目标场景补「**企业级应用/游戏交付**」（EP1 场景定语）；三轨排序 **realtime > 可观测（含审计）> 埋点管道**（EP9）；边界细化：多租户拆两层——**上下文传播机制契约归 yarch、账号模型归业务仓**（EP2），i18n 只做**错误码稳定 key 就绪位**（EP3，随支柱 1 error-codes.json 施工）；施工项：@SignedApi/Masks 跨栈对齐 golang+python（EP5）、CI 安全扫描 Dependabot+CodeQL（EP6）；通知通道领域契约排队三轨后（EP7）、支付协议层触发式登记（EP8）、桌面端触发式登记（EP10）。依据：[enterprise-capability-gap-digest.md](../docs/references/enterprise-capability-gap-digest.md) | 已生效（2026-09-16） |
+| 实时通道规约 RT1-RT9（2026-09-16 拍板） | 新立 [api/realtime.md](api/realtime.md) v1.0 与 REST 四件套并列：**WebSocket（wss）五端默认档**（KCP/UDP 重竞技与 MQTT device 域为触发档）；**首帧 AUTH**（凭证禁入 URL，30s 限时）；**应用层心跳**（30s 发 / 60s 判死，单配置点）；**重连三要素**（指数退避+抖动+封顶）；补投/离线消息触发式（seq 预留）；**独立 PushEnvelope**（type/seq/id/ts/traceId/data）错误口径复用 13 码表、消息级 traceId + 连接级 ndjson；条文覆盖全五端，内核首批 web+miniprogram+cocos。client-shared 同批增六节（长连接客户端纪律）。依据：[realtime-channel-digest.md](../docs/references/realtime-channel-digest.md) | 已生效（2026-09-16） |
+| 可观测轨 OB1-OB9 + EP2-R/EP3-R（2026-09-16 拍板） | 骨架 = **OTel 三信号 + Collector**（厂商中立）；**logging-trace 升 v1.1**（spanId 入上下文与日志、租户上下文 X-Tenant-Id 进传播矩阵——机制归 yarch 隔离模型归业务、埋点上报边界进矩阵）；metrics = **Prometheus**（exposition 标准 + RED 基础集装配件收口，新 infra/prometheus.md）；logs/traces 后端 = **ClickHouse 统一**（官方 ClickStack 路径，不新立 Loki/Tempo/Mimir，LGTM 触发档；新 infra/grafana.md：Grafana 单面板两件制 + Alerting + dashboards/告警规则 provisioning 进 git）；**ndjson 行协议不搬家**（OTel SDK 只管 traces+metrics，采集走 Collector filelog）；traces 默认全量+采样单配置点；**审计 EP4 并轨**：api/audit.md v1.0（最小审计事件面 + 固定字段集 → CH append-only + 保留期 ≥180d，落 OperationLogStore SPI CH 实现件）；EP3-R：error-codes 标识列即稳定 key，error-codes.json 必含 code/key/message + REST Accept-Language 就绪位（多语言 catalog 不做）。依据：[observability-track-digest.md](../docs/references/observability-track-digest.md) | 已生效（2026-09-16） |
+| 埋点管道轨 TM1-TM8（2026-09-16 拍板） | 新立 [api/telemetry.md](api/telemetry.md) v1.0：**tracking plan 登记先行**（事件注册表进业务仓 docs + CI/服务端双校验，登记哲学第三用）；上报走业务域名 `POST /api/v1/telemetry/events`（微信白名单零新增）批量双阈值 20 条/10s + onHide/pagehide 强 flush + web sendBeacon 兜底 + RestResponse 信封回执、fire-and-forget 失败静默；SDK 可靠性纪律（内存队列有界 500 + storage 双写 + 失败回滚重试带上限）；隐私红线（禁 PII/白名单通用属性/采集开关）；SDK 落 **@yarch/contract telemetry 模块**（零新包，首批 web+miniprogram+cocos 对齐 RT9）；管道 = 装配件收口转 **kafka** → 摄入 worker 攒批写 **CH**（业务禁直写）；StarRocks BI 与 CDC（debezium+PG）触发式。client-shared 同批增七节。依据：[telemetry-pipeline-digest.md](../docs/references/telemetry-pipeline-digest.md) | 已生效（2026-09-16） |
 
 **租户边界标识**（服务名）登记处：[registry.md](registry.md)。
 
-## API 契约四件套
+## API 契约（REST 四件套 + 实时通道 + 埋点 + 审计）
 
 | 契约 | 文件 | 一句话 |
 |---|---|---|
 | 响应形状 | [rest-response.md](api/rest-response.md) | code/message/data/traceId 四字段，0 即成功 |
-| 错误码段位 | [error-codes.md](api/error-codes.md) | 一张跨语言 errno 段位表，yarch 拥有 0/1xxx/2xxx |
-| 日志与追踪 | [logging-trace.md](api/logging-trace.md) | 统一 JSON 行协议 + traceId 贯穿（W3C traceparent） |
-| REST 约定 | [rest-conventions.md](api/rest-conventions.md) | 命名/分页/状态码/幂等，无方言 |
+| 错误码段位 | [error-codes.md](api/error-codes.md) | 一张跨语言 errno 段位表，yarch 拥有 0/1xxx/2xxx；标识列即 i18n 稳定 key（EP3-R） |
+| 日志与追踪 | [logging-trace.md](api/logging-trace.md) | 统一 JSON 行协议 + traceId 贯穿（W3C traceparent）；v1.1 增 spanId / 租户上下文 / 埋点矩阵行 |
+| REST 约定 | [rest-conventions.md](api/rest-conventions.md) | 命名/分页/状态码/幂等，无方言；Accept-Language i18n 就绪位（EP3-R） |
+| 实时通道 | [realtime.md](api/realtime.md) | WebSocket 长连接与推送：首帧鉴权 / 应用层心跳 / 退避重连 / PushEnvelope（复用 13 码表与 traceId 口径，独立于 RestResponse） |
+| 埋点管道 | [telemetry.md](api/telemetry.md) | tracking plan 登记先行 / 业务域名批量上报（双阈值 + onHide·sendBeacon 兜底）/ 收口转 kafka 禁直写 CH / SDK 落契约内核首批三端 |
+| 审计留存 | [audit.md](api/audit.md) | 合规通道：最小审计事件面 + ndjson 固定字段集 → CH append-only + 保留期 ≥180d，落 OperationLogStore SPI 的 CH 实现件 |
 
 ## 数据与中间件规约（infra/）
 
@@ -118,6 +129,8 @@
 | 向量 | [Milvus](infra/milvus.md) | v1.0 已定稿 | 三档第三档：亿级/GPU/超大规模保留项；依赖齐套 |
 | 任务队列 | [Celery](infra/celery.md) | v1.0 已定稿 | Python 分布式任务队列；broker 前缀租户纪律；幂等/超时/重试显式 |
 | 调度 | [XXL-Job](infra/xxl-job.md) | v1.0 已定稿 | Java 系时间驱动调度；幂等三级手段；调度只做时间驱动 |
+| 可观测 | [Prometheus](infra/prometheus.md) | v1.0 已定稿 | metrics 唯一默认后端（exposition 标准）；标签基线 service/env；RED 基础指标集由装配件收口 |
+| 可观测 | [Grafana](infra/grafana.md) | v1.0 已定稿 | 统一面板（Prometheus + CH 插件两件制）+ Grafana Alerting；dashboards/告警规则 provisioning 进 git |
 
 ## 前端规约（web/）
 
@@ -160,8 +173,8 @@
 
 ## 契约版本
 
-- API 契约：**v1.0 已定稿**（2026-09-01 评审通过，D1-D6 按"业界标准优先于阿里手册"拍板）
-- infra 规约：**全部 20 份 v1.0 已定稿**（mysql/postgresql/redis/higress 2026-09-01 先行定稿并完成 higress 官方校准；其余 16 份同日评审通过）
+- API 契约：REST **四件套 v1.0 已定稿**（2026-09-01 评审通过，D1-D6 按"业界标准优先于阿里手册"拍板）；**实时通道 realtime.md v1.0 已定稿**（2026-09-16，RT1-RT9 拍板——企业级定位轨第一优先立项）；**埋点管道 telemetry.md v1.0 已定稿**（2026-09-16，TM1-TM8 拍板——第三轨）；**审计留存 audit.md v1.0 已定稿**（2026-09-16，OB7 拍板——EP4 并轨）；logging-trace **v1.1**（2026-09-16：spanId / 租户上下文 / 埋点矩阵行）
+- infra 规约：**全部 22 份 v1.0 已定稿**（mysql/postgresql/redis/higress 2026-09-01 先行定稿并完成 higress 官方校准；其余 16 份同日评审通过；**prometheus + grafana 2026-09-16 增补**——OB3/OB4/OB6 拍板）
 - 前端规约（web/）：**2026-09-07 新设层**，微前端 v1.0 已定稿（经 MF0-MF7 决策清单拍板）
 - 客户端规约（clients/）：**2026-09-09 新设层**，client-shared + android + ios 三份 v1.0 已定稿（经 M1-M7 决策清单拍板）；2026-09-10 增 miniprogram + game 两份 v1.0（经 MP1-MP5/G1-G4 决策清单拍板），共五份
 - 领域契约（domains/）：**2026-09-03 拍板设立**；device.md **v1.0 已定稿**（2026-09-14，Dv1-Dv6 拍板口径），ai.md（LLM 接入）规划中未成文
@@ -187,6 +200,8 @@
 | 2026-09-10 | **clients 层扩两份**：miniprogram + game v1.0 定稿（MP1-MP5/G1-G4 拍板：原生+TS 默认档；渲染与 web 分开、三层共享；Cocos/Unity·团结双档；@yarch/contract 三端同源）；registry.md 新增第六节小程序与小游戏登记；client-shared 约束对象扩 game | 已定稿 |
 | 2026-09-14 | **领域契约首发 + 双轨规约立项**：device.md v1.0 定稿（Dv1-Dv6：设备标识两段/topic 六段/遥测 ndjson/OTA 双分区/影子/信封回执/TLS 一设备一证书）；embedded/esp32 规约 v1.0 定稿（E1-E8：esp-idf-hal std 路线/no_std 不入册）；stacks/rust 规约 v1.0 定稿（R1-R7：axum 默认/cargo-generate 通道/crates.io 发版）——两轨零共享 crate | 已定稿 |
 | 2026-09-14 | **新设 contract/agent/ AI 施工规约层**：agents-md + extensions + cli 三份 v1.0 定稿（A1-A6 拍板：AGENTS.md SSOT + 一行派生 / 四章节定式 / .mcp.json 与 skills 首批纳管 / 自家 CLI 一行命令铁律成文）；yarch 仓根 AGENTS.md 三件套带头合规；生态依据 digest 见 docs/references/ | 已定稿 |
+| 2026-09-16 | **企业级定位修订 + 实时通道定稿**：EP1-EP12 拍板（目标场景补「企业级应用/游戏交付」；三轨排序 realtime > 可观测（含审计）> 埋点；多租户拆两层、i18n 仅就绪位、桌面端/支付协议层触发式登记）；[api/realtime.md](api/realtime.md) v1.0 定稿（RT1-RT9：WS 五端默认档 / 首帧 AUTH / 应用层心跳 / 退避三要素 / PushEnvelope 复用 13 码表）；client-shared 增六节（长连接与推送）；registry 三节增 wss 域名登记行。依据 digest：enterprise-capability-gap / realtime-channel | 已定稿 |
+| 2026-09-16 | **企业级第二三轨定稿（可观测 + 埋点）**：OB1-OB9 + EP2-R/EP3-R、TM1-TM8 拍板——logging-trace **v1.1**（spanId / X-Tenant-Id 租户传播 / 埋点矩阵行，纯增量）；[api/telemetry.md](api/telemetry.md) v1.0（tracking plan 登记先行 / 业务域名批量上报 / 收口转 kafka 禁直写 CH）；[api/audit.md](api/audit.md) v1.0（审计最小事件面 → CH append-only ≥180d）；infra 增 [prometheus.md](infra/prometheus.md) + [grafana.md](infra/grafana.md)（共 22 份）；client-shared 增七节（埋点上报）；error-codes 实现规则 4（标识即稳定 key）+ rest-conventions Accept-Language 就绪位（EP3-R）。依据 digest：observability-track / telemetry-pipeline | 已定稿 |
 | — | 遗留项：低频组件强制级占比复审；机检条文标注启动（下一步：随 stacks 重做启动 `yarch lint`/AI 审查清单） | 待办 |
 
 ## 术语对照（各栈方言）

@@ -49,7 +49,8 @@
 1. `message` 允许在默认文案后追加冒号细节（如 `参数校验失败：pageSize 必须 ≤ 100`），默认文案部分不得改写；
 2. 同一 code 的 HTTP 映射**全栈一致**，以本表为准；
 3. 未注册的业务码（3xxx-8xxx 未登记即用）在 CI 阶段视为违规；
-4. 各栈标识符命名对照：
+4. **标识列即稳定 key（2026-09-16 EP3-R 拍板）**：机器可读出口 `error-codes.json`（支柱 1）必含 `{code, key, message}` 三元组——`key` 是客户端按 locale 渲染本地文案的 catalog 锚点（i18n 就绪位：多语言文案 v1 不做，语言透传见 [rest-conventions.md](rest-conventions.md) 数据表示）；
+5. 各栈标识符命名对照：
 
 | 标识 | java `GlobalErrorCode` | golang `errcode` | python `Code` | ts `errorCodes` |
 |---|---|---|---|---|

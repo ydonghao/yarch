@@ -7,7 +7,7 @@
 
 | 目录 | 职责 |
 |---|---|
-| `contract/` | 全域契约唯一权威：api（四件套）/ infra（20 份）/ web / clients / domains / agent + `registry.md` 命名登记处 |
+| `contract/` | 全域契约唯一权威：api（REST 四件套 + realtime / telemetry / audit）/ infra（22 份）/ web / clients / domains / agent + `registry.md` 命名登记处 |
 | `stacks/` | 云栈实现：java / golang / web / python（rust 规约已立待施工） |
 | `clients/` | 端侧：android / ios / miniprogram / game + `create/` 客户端生成器 |
 | `embedded/esp32/` | 固件轨（esp-idf-hal std，规约已立待施工） |
