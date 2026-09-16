@@ -157,7 +157,11 @@ function renderStr(text, vars) {
 // 通用渲染引擎：遍历模板树，文件名与内容逐个 {{var}} 替换；未命中变量的占位符保留，
 // 由 render 后的残留扫描兜底报错（防模板与变量集漂移）。archetype.json 不进生成物。
 // WXML 残留扫描豁免：微信小程序 WXML 用 {{ }} 做运行期数据绑定，非生成期变量。
+// 二进制文件（jar/png 等）原样拷贝——utf8 往返会打坏（gradle-wrapper.jar 教训：Invalid or corrupt jarfile）。
 const SKIP_LEFTOVER_EXTS = new Set([".wxml"]);
+function isBinaryBuffer(buf) {
+  return buf.subarray(0, 8000).includes(0);
+}
 function renderTree(src, dst, vars, leftovers) {
   let count = 0;
   for (const entry of readdirSync(src, { withFileTypes: true })) {
@@ -168,7 +172,13 @@ function renderTree(src, dst, vars, leftovers) {
       if (SKIP_FILES.has(entry.name)) continue;
       const target = join(dst, renderStr(entry.name, vars));
       mkdirSync(dirname(target), { recursive: true });
-      const rendered = renderStr(readFileSync(join(src, entry.name), "utf8"), vars);
+      const raw = readFileSync(join(src, entry.name));
+      if (isBinaryBuffer(raw)) {
+        writeFileSync(target, raw);
+        count++;
+        continue;
+      }
+      const rendered = renderStr(raw.toString("utf8"), vars);
       const ext = entry.name.slice(entry.name.lastIndexOf("."));
       if (!SKIP_LEFTOVER_EXTS.has(ext)) {
         for (const m of rendered.matchAll(PLACEHOLDER)) {
