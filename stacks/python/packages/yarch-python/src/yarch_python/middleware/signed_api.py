@@ -30,7 +30,7 @@ def hmac_sha256_hex(secret: str, material: str) -> str:
 
 def nonce_key(service: str, app_key: str, nonce: str) -> str:
     """key 摘要化：app_key/nonce 均客户端可控，防注入任意字符进 key（redis.md 二-1 口径）。"""
-    digest = hashlib.sha256(f"{app_key}:{nonce}".encode("utf-8")).hexdigest()
+    digest = hashlib.sha256(f"{app_key}:{nonce}".encode()).hexdigest()
     return f"{service}:signedapi:nonce:{digest}"
 
 
@@ -81,7 +81,8 @@ class SignatureMiddleware:
         if scope["type"] != "http":
             await self.app(scope, receive, send)
             return
-        headers = {k.decode("latin-1"): v.decode("latin-1").strip() for k, v in (scope.get("headers") or [])}
+        raw_headers = scope.get("headers") or []
+        headers = {k.decode("latin-1"): v.decode("latin-1").strip() for k, v in raw_headers}
         app_key = headers.get("x-app-key", "")
         timestamp = headers.get("x-timestamp", "")
         nonce = headers.get("x-nonce", "")

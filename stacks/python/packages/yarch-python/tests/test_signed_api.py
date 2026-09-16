@@ -6,7 +6,6 @@ import time
 
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
-
 from yarch_python.middleware import SignatureMiddleware, hmac_sha256_hex, sign_material
 
 SECRET = "s3cret-key"
@@ -24,7 +23,9 @@ def make_app() -> FastAPI:
     return app
 
 
-def signed_headers(nonce: str, *, ts_ms: int | None = None, sign_override: str | None = None) -> dict:
+def signed_headers(
+    nonce: str, *, ts_ms: int | None = None, sign_override: str | None = None
+) -> dict:
     ts = str(ts_ms if ts_ms is not None else int(time.time() * 1000))
     material = sign_material("POST", "/api/v1/orders", ts, nonce, BODY)
     sign = sign_override if sign_override is not None else hmac_sha256_hex(SECRET, material)
