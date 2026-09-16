@@ -1,0 +1,7 @@
+# .xcodeproj 不入仓（contract/clients/ios.md 三-1）：clone 后 xcodegen generate 产出
+*.xcodeproj
+.build/
+.swiftpm/
+DerivedData/
+xcuserdata/
+.DS_Store

@@ -1,0 +1,76 @@
+name: clients-android
+
+# 移动端 android CI（clients/PLAN.md C8/C9）：
+# check = 契约内核（纯 JVM，无 SDK）；template-smoke = 双基线模板构建（CI 装 cmdline-tools 兜底，本地无 SDK）。
+# ktlint/detekt 已随模板 build-logic 预接线（convention plugins），模板构建即机检。
+
+on:
+  push:
+    branches: [main, dev]
+    paths: ['clients/android/**', 'clients/create/templates/android-*', '.github/workflows/clients-android.yml']
+  pull_request:
+    paths: ['clients/android/**', 'clients/create/templates/android-*', '.github/workflows/clients-android.yml']
+
+jobs:
+  generator-smoke:
+    name: 生成器冒烟（生成 → 构建）
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - run: sdkmanager --install "platforms;android-36" "build-tools;36.0.0" > /dev/null
+      - name: 生成 android 工程（yarch-init-app）
+        run: |
+          node clients/create/bin/yarch-init-app.mjs ysaas-demo --platform android --yes \
+            --registry contract/registry.md --out /tmp/gen-android
+      - name: 生成工程构建（模板正确性兜底）
+        run: |
+          cd /tmp/gen-android
+          chmod +x gradlew && ./gradlew build --no-daemon
+
+  check:
+    name: JDK ${{ matrix.java }} · 契约内核 build + test
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        java: ['17', '21']
+    defaults:
+      run:
+        working-directory: clients/android
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.java }}
+      - uses: gradle/actions/setup-gradle@v4
+      - run: ./gradlew build --no-daemon
+
+  template-smoke:
+    name: 模板构建 · ${{ matrix.baseline }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        baseline: ['android-minsdk26', 'android-minsdk24']
+    defaults:
+      run:
+        working-directory: clients/create/templates/${{ matrix.baseline }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - run: sdkmanager --install "platforms;android-36" "build-tools;36.0.0" > /dev/null
+      - uses: gradle/actions/setup-gradle@v4
+      - run: ./gradlew build --no-daemon

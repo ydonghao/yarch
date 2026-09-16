@@ -1,0 +1,11 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+
+[*.{kt,kts}]
+indent_size = 4
+# ktlint code style 对齐官方 Android Studio 默认（contract/clients/android.md 一-2/九-1）
+ktlint_code_style = android_studio

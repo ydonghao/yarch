@@ -1,0 +1,19 @@
+{
+  "name": "{{packageName}}",
+  "version": "0.1.0",
+  "description": "{{description}}",
+  "private": true,
+  "dependencies": {
+    "@yarch/contract": "{{yarchContractDep}}",
+    "@vant/weapp": "^1.11.7"
+  },
+  "devDependencies": {
+    "miniprogram-ci": "^1.9.0",
+    "typescript": "^5.6.0"
+  },
+  "scripts": {
+    "tsc": "tsc --noEmit",
+    "ci:preview": "node scripts/ci.js preview",
+    "ci:upload": "node scripts/ci.js upload"
+  }
+}

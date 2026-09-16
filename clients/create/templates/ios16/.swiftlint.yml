@@ -1,0 +1,26 @@
+# Airbnb Swift Style Guide 起步配置的裁剪落地（M2 拍板）。
+# 与 Airbnb 的偏差逐条登记在 docs/references/ios-official-guides-digest.md 附 B，禁口头豁免；
+# 格式化归 SwiftFormat（本文件不含格式类规则，防两边打架）。
+opt_in_rules:
+  - force_unwrapping
+  - force_try
+  - empty_count
+  - closure_parameter_position
+  - first_where
+  - sorted_imports
+line_length:
+  warning: 100
+  error: 120
+type_body_length:
+  warning: 300
+  error: 400
+file_length:
+  warning: 400
+  error: 500
+force_unwrapping: error
+force_try: error
+identifier_name:
+  excluded:
+    - id
+    - ok
+reporter: "xcode"
