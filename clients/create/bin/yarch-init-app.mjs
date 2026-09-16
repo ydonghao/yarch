@@ -43,9 +43,10 @@ function usage() {
   return [
     "用法：yarch-init-app <工程名> --platform <android|ios|both|miniprogram|game-cocos>",
     "              [--registry <registry.md>] [--desc <描述>] [--appId <微信AppID>]",
-    "              [--baseUrl <API地址>] [--deps file|version] [--src <模板根>] [--out <目录>] [--yes]",
+    "              [--baseUrl <API地址>] [--baseline <双基线档>] [--deps file|version] [--src <模板根>] [--out <目录>] [--yes]",
     "  --platform  生成目标平台（必填）",
     "  --registry  registry.md 路径（默认用 bin/registry-snapshot.json）",
+    "  --baseline  android/ios 双基线档覆盖（android-minsdk26|android-minsdk24 / ios17|ios16；默认取高版）",
     "  --deps      @yarch/contract 依赖形态：version（默认 ^0.3.0）| file（发版前本地过渡）",
     "  --yes       非交互：缺省项全走默认值（CI 用）",
   ].join("\n");
@@ -301,6 +302,17 @@ async function main() {
       ? YARCH_CONTRACT_VERSION
       : `file:${resolve(PKG_ROOT, "../../stacks/web/packages/contract")}`;
 
+    // --baseline：android/ios 双基线档覆盖（模板冒烟用；both 不支持单档覆盖）
+    const BASELINES = { android: ["android-minsdk26", "android-minsdk24"], ios: ["ios17", "ios16"] };
+    let templateSrc = args.src;
+    if (args.baseline) {
+      if (!(platform in BASELINES)) fatal("--baseline 仅支持 android / ios（双基线平台）");
+      if (!BASELINES[platform].includes(args.baseline)) {
+        fatal(`--baseline 须为 ${BASELINES[platform].join("|")}`);
+      }
+      templateSrc = resolve(PKG_ROOT, "templates", args.baseline);
+    }
+
     const commonVars = {
       packageName: name,
       appName: name,
@@ -320,8 +332,8 @@ async function main() {
       const iosOut = join(outDir, "ios");
       const androidVars = { ...commonVars, ...mobileVars(name, "android") };
       const iosVars = { ...commonVars, ...mobileVars(name, "ios") };
-      const nA = await generatePlatform("android", name, androidVars, androidOut, args.src);
-      const nI = await generatePlatform("ios", name, iosVars, iosOut, args.src);
+      const nA = await generatePlatform("android", name, androidVars, androidOut, templateSrc);
+      const nI = await generatePlatform("ios", name, iosVars, iosOut, templateSrc);
       console.log(`✅ 已生成 ${outDir}（android ${nA} 文件 + ios ${nI} 文件，both 双端）`);
       console.log(`\n下一步：\n  1. cd ${outDir}/android && ./gradlew build\n  2. cd ${outDir}/ios && xcodegen generate && swift build\n  3. registry.md ${registrySection} 节登记 ${name}（双端包标识一致）`);
     } else {
@@ -336,7 +348,7 @@ async function main() {
       if (platform === "android" || platform === "ios") {
         Object.assign(platformVars, mobileVars(name, platform));
       }
-      const n = await generatePlatform(platform, name, platformVars, outDir, args.src);
+      const n = await generatePlatform(platform, name, platformVars, outDir, templateSrc);
       console.log(`✅ 已生成 ${outDir}（${n} 个文件，${platform} 档）—— ${PLATFORMS[platform]}`);
       console.log(`\n下一步：`);
       if (platform === "miniprogram") {

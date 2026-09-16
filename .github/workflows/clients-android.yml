@@ -1,15 +1,15 @@
 name: clients-android
 
 # 移动端 android CI（clients/PLAN.md C8/C9）：
-# check = 契约内核（纯 JVM，无 SDK）；template-smoke = 双基线模板构建（CI 装 cmdline-tools 兜底，本地无 SDK）。
+# check = 契约内核（纯 JVM，无 SDK）；template-smoke = 双基线档经生成器生成后构建（模板正确性由生成后冒烟保证）。
 # ktlint/detekt 已随模板 build-logic 预接线（convention plugins），模板构建即机检。
 
 on:
   push:
     branches: [main, dev]
-    paths: ['clients/android/**', 'clients/create/templates/android-*', '.github/workflows/clients-android.yml']
+    paths: ['clients/android/**', 'clients/create/**', '.github/workflows/clients-android.yml']
   pull_request:
-    paths: ['clients/android/**', 'clients/create/templates/android-*', '.github/workflows/clients-android.yml']
+    paths: ['clients/android/**', 'clients/create/**', '.github/workflows/clients-android.yml']
 
 jobs:
   generator-smoke:
@@ -24,7 +24,10 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
+      # packages 显式覆盖：action 默认含已下架的 'tools' 包，安装即失败
       - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
       - run: sdkmanager --install "platforms;android-36" "build-tools;36.0.0" > /dev/null
       - name: 生成 android 工程（yarch-init-app）
         run: |
@@ -55,22 +58,31 @@ jobs:
       - run: ./gradlew build --no-daemon
 
   template-smoke:
-    name: 模板构建 · ${{ matrix.baseline }}
+    name: 模板冒烟 · ${{ matrix.baseline }}（生成 → 构建）
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         baseline: ['android-minsdk26', 'android-minsdk24']
-    defaults:
-      run:
-        working-directory: clients/create/templates/${{ matrix.baseline }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
       - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
       - run: sdkmanager --install "platforms;android-36" "build-tools;36.0.0" > /dev/null
       - uses: gradle/actions/setup-gradle@v4
-      - run: ./gradlew build --no-daemon
+      - name: 生成 ${{ matrix.baseline }} 档工程（yarch-init-app --baseline）
+        run: |
+          node clients/create/bin/yarch-init-app.mjs ysaas-demo --platform android --baseline ${{ matrix.baseline }} --yes \
+            --registry contract/registry.md --out /tmp/gen-${{ matrix.baseline }}
+      - name: 生成工程构建（模板正确性兜底）
+        run: |
+          cd /tmp/gen-${{ matrix.baseline }}
+          chmod +x gradlew && ./gradlew build --no-daemon

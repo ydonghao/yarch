@@ -34,6 +34,13 @@ jobs:
           languages: ${{ matrix.language }}
 
       # 编译型语言须在 CodeQL 环境内完成构建（monorepo：显式进入子目录）
+      - name: Setup JDK 21（java enforcer 基线）
+        if: matrix.language == 'java-kotlin'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
       - name: Build (java)
         if: matrix.language == 'java-kotlin'
         run: mvn -q -B -DskipTests package
