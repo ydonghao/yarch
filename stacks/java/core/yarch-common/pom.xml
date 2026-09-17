@@ -32,6 +32,12 @@
       <artifactId>junit-jupiter</artifactId>
       <scope>test</scope>
     </dependency>
+    <!-- 契约守护测试解析 contract/dist/error-codes.json（P1 同源断言） -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <scope>test</scope>
+    </dependency>
     <!-- 单测需要真实 MDC（slf4j-api 无绑定时 MDC 为 NOP）；真实应用的绑定由 logging starter 提供 -->
     <dependency>
       <groupId>ch.qos.logback</groupId>

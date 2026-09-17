@@ -45,5 +45,14 @@
         <include>Dockerfile</include>
       </includes>
     </fileSet>
+    <!-- AI 施工守则三件套：纯静态不过 Velocity（filtered 会把 markdown 的 ## 当行注释吞掉） -->
+    <fileSet filtered="false" encoding="UTF-8">
+      <directory></directory>
+      <includes>
+        <include>AGENTS.md</include>
+        <include>CLAUDE.md</include>
+        <include>GEMINI.md</include>
+      </includes>
+    </fileSet>
   </fileSets>
 </archetype-descriptor>

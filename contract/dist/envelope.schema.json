@@ -1,0 +1,87 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/ydonghao/yarch/contract/dist/envelope.schema.json",
+  "title": "yarch RestResponse / PageData（由 contract/api/rest-response.md 派生）",
+  "definitions": {
+    "RestResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "code",
+        "message",
+        "data",
+        "traceId"
+      ],
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "data": {
+          "description": "业务负载：任意 JSON；code != 0 时必须为 null（结构断言见各栈 conformance）"
+        },
+        "traceId": {
+          "type": "string"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "type": "integer",
+                "not": {
+                  "const": 0
+                }
+              }
+            },
+            "required": [
+              "code"
+            ]
+          },
+          "then": {
+            "properties": {
+              "data": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "PageData": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "list",
+        "total",
+        "page",
+        "pageSize"
+      ],
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {}
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "page": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "pageSize": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "nextCursor": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

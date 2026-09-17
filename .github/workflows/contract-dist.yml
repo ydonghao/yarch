@@ -1,0 +1,37 @@
+# contract-dist — 契约机器可读出口漂移门（P1 主引擎）：
+# contract/api markdown 是唯一权威，contract/dist JSON 是派生物；markdown 改动而 dist 未重生成 = CI 拒绝。
+name: contract-dist
+
+on:
+  push:
+    branches: [main, dev]
+    paths: ['contract/**']
+  pull_request:
+    paths: ['contract/**']
+
+jobs:
+  dist-fresh:
+    name: dist 与 markdown 一致性
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: 重生成并比对（diff 非空 = 漂移）
+        run: |
+          node contract/dist/gen-dist.mjs
+          git diff --exit-code contract/dist/
+      - name: schema 结构自检（draft-07 合法性）
+        run: |
+          node -e "
+          const s = require('./contract/dist/envelope.schema.json');
+          const ec = require('./contract/dist/error-codes.json');
+          if (ec.codes.length !== 13) throw new Error('13 码表异常');
+          for (const c of ec.codes) {
+            if (!(c.code > 0) || !c.key || !c.message || !(c.http >= 400)) throw new Error('三元组残缺: ' + JSON.stringify(c));
+          }
+          if (s.definitions.RestResponse.required.length !== 4) throw new Error('信封四字段漂移');
+          if (s.definitions.PageData.required.length !== 4) throw new Error('PageData 四必填漂移');
+          console.log('dist 工件自检通过');
+          "

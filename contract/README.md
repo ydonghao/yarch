@@ -93,6 +93,10 @@
 
 **租户边界标识**（服务名）登记处：[registry.md](registry.md)。
 
+## 机器可读出口（dist/ · P1 主引擎，2026-09-17）
+
+`contract/dist/` 是 markdown 契约的**派生机器工件**（权威仍是本目录 markdown）：`error-codes.json`（13 码全表 `{code, key, message, http, segment}` + success——key 即 i18n 稳定标识，EP3-R）与 `envelope.schema.json`（RestResponse / PageData 的 JSON Schema draft-07）。生成器 `gen-dist.mjs`（零依赖 Node）从 markdown 表格派生；**markdown 改动而 dist 未重生成 = CI 拒绝**（contract-dist workflow，同 registry-snapshot 漂移门机制）。四栈 conformance 测试读同一份 json 断言（java `GlobalErrorCodeContractTest` / golang `errcode_test` / python `test_errcode` / web `contract.test.ts`），不再各养手抄表。
+
 ## API 契约（REST 四件套 + 实时通道 + 埋点 + 审计）
 
 | 契约 | 文件 | 一句话 |
@@ -202,6 +206,7 @@
 | 2026-09-14 | **新设 contract/agent/ AI 施工规约层**：agents-md + extensions + cli 三份 v1.0 定稿（A1-A6 拍板：AGENTS.md SSOT + 一行派生 / 四章节定式 / .mcp.json 与 skills 首批纳管 / 自家 CLI 一行命令铁律成文）；yarch 仓根 AGENTS.md 三件套带头合规；生态依据 digest 见 docs/references/ | 已定稿 |
 | 2026-09-16 | **企业级定位修订 + 实时通道定稿**：EP1-EP12 拍板（目标场景补「企业级应用/游戏交付」；三轨排序 realtime > 可观测（含审计）> 埋点；多租户拆两层、i18n 仅就绪位、桌面端/支付协议层触发式登记）；[api/realtime.md](api/realtime.md) v1.0 定稿（RT1-RT9：WS 五端默认档 / 首帧 AUTH / 应用层心跳 / 退避三要素 / PushEnvelope 复用 13 码表）；client-shared 增六节（长连接与推送）；registry 三节增 wss 域名登记行。依据 digest：enterprise-capability-gap / realtime-channel | 已定稿 |
 | 2026-09-16 | **企业级第二三轨定稿（可观测 + 埋点）**：OB1-OB9 + EP2-R/EP3-R、TM1-TM8 拍板——logging-trace **v1.1**（spanId / X-Tenant-Id 租户传播 / 埋点矩阵行，纯增量）；[api/telemetry.md](api/telemetry.md) v1.0（tracking plan 登记先行 / 业务域名批量上报 / 收口转 kafka 禁直写 CH）；[api/audit.md](api/audit.md) v1.0（审计最小事件面 → CH append-only ≥180d）；infra 增 [prometheus.md](infra/prometheus.md) + [grafana.md](infra/grafana.md)（共 22 份）；client-shared 增七节（埋点上报）；error-codes 实现规则 4（标识即稳定 key）+ rest-conventions Accept-Language 就绪位（EP3-R）。依据 digest：observability-track / telemetry-pipeline | 已定稿 |
+| 2026-09-17 | **P1 契约机器可读出口落地**：`contract/dist/` 派生层开张（error-codes.json + envelope.schema.json，gen-dist.mjs 从 markdown 表格生成，contract-dist CI 漂移门）；四栈 conformance 改读同一份 json（java/golang/python/web 同源断言，缺文件优雅跳过）；N1 收口——java 双 archetype / golang / python 生成器模板补 AGENTS.md 三件套（java archetype 三件套走 unfiltered fileSet：Velocity 会把 markdown 的 ## 当行注释吞掉）+ web 五模板补 CLAUDE/GEMINI 一行派生 | 已生效 |
 | — | 遗留项：低频组件强制级占比复审；机检条文标注启动（下一步：随 stacks 重做启动 `yarch lint`/AI 审查清单） | 待办 |
 
 ## 术语对照（各栈方言）

@@ -1,0 +1,101 @@
+{
+  "version": 1,
+  "source": "contract/api/error-codes.md",
+  "success": {
+    "code": 0,
+    "message": "成功"
+  },
+  "codes": [
+    {
+      "code": 1000,
+      "key": "INTERNAL_ERROR",
+      "message": "内部错误",
+      "http": 500,
+      "segment": "1xxx"
+    },
+    {
+      "code": 1001,
+      "key": "INVALID_ARGUMENT",
+      "message": "参数校验失败",
+      "http": 400,
+      "segment": "1xxx"
+    },
+    {
+      "code": 1002,
+      "key": "MALFORMED_BODY",
+      "message": "请求体格式错误",
+      "http": 400,
+      "segment": "1xxx"
+    },
+    {
+      "code": 1004,
+      "key": "NOT_FOUND",
+      "message": "资源不存在",
+      "http": 404,
+      "segment": "1xxx"
+    },
+    {
+      "code": 1005,
+      "key": "CONFLICT",
+      "message": "资源冲突",
+      "http": 409,
+      "segment": "1xxx"
+    },
+    {
+      "code": 1006,
+      "key": "RATE_LIMITED",
+      "message": "触发限流",
+      "http": 429,
+      "segment": "1xxx"
+    },
+    {
+      "code": 1007,
+      "key": "IDEMPOTENCY_CONFLICT",
+      "message": "幂等冲突：重复提交",
+      "http": 409,
+      "segment": "1xxx"
+    },
+    {
+      "code": 1008,
+      "key": "UPSTREAM_TIMEOUT",
+      "message": "上游依赖超时",
+      "http": 504,
+      "segment": "1xxx"
+    },
+    {
+      "code": 1009,
+      "key": "UNAVAILABLE",
+      "message": "服务暂不可用",
+      "http": 503,
+      "segment": "1xxx"
+    },
+    {
+      "code": 2001,
+      "key": "UNAUTHORIZED",
+      "message": "未认证",
+      "http": 401,
+      "segment": "2xxx"
+    },
+    {
+      "code": 2002,
+      "key": "CREDENTIALS_EXPIRED",
+      "message": "凭证已过期",
+      "http": 401,
+      "segment": "2xxx"
+    },
+    {
+      "code": 2003,
+      "key": "FORBIDDEN",
+      "message": "权限不足",
+      "http": 403,
+      "segment": "2xxx"
+    },
+    {
+      "code": 2004,
+      "key": "ACCOUNT_DISABLED",
+      "message": "账号已禁用",
+      "http": 403,
+      "segment": "2xxx"
+    }
+  ]
+}

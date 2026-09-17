@@ -1,33 +1,41 @@
-/** 契约断言前端版：错误码表与 contract/api/error-codes.md v1.0 逐码核对（防漂移） */
+/**
+ * 契约断言前端版：13 码全表唯一权威 = contract/dist/error-codes.json（由 error-codes.md
+ * 派生，CI 拒双向漂移）——四栈读同一份 json 断言，不再各养手抄表（P1 契约机器可读出口）。
+ * dist 文件不在场（消费方独立环境）则跳过表断言，CI 仓内必跑。
+ */
+import { existsSync, readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { errorCodes, CODE_SUCCESS } from "../src/error-codes";
 import { unwrap } from "../src/rest-response";
 import { ApiError } from "../src/api-error";
 
-const CONTRACT_TABLE: Record<string, number> = {
-  INTERNAL_ERROR: 1000,
-  INVALID_ARGUMENT: 1001,
-  MALFORMED_BODY: 1002,
-  NOT_FOUND: 1004,
-  CONFLICT: 1005,
-  RATE_LIMITED: 1006,
-  IDEMPOTENCY_CONFLICT: 1007,
-  UPSTREAM_TIMEOUT: 1008,
-  UNAVAILABLE: 1009,
-  UNAUTHORIZED: 2001,
-  CREDENTIALS_EXPIRED: 2002,
-  FORBIDDEN: 2003,
-  ACCOUNT_DISABLED: 2004,
-};
+const DIST_PATH = fileURLToPath(new URL("../../../../../contract/dist/error-codes.json", import.meta.url));
 
-describe("@yarch/contract", () => {
-  it("错误码表与契约逐码一致", () => {
+function distTable(): Record<string, number> {
+  if (!existsSync(DIST_PATH)) return {};
+  const dist = JSON.parse(readFileSync(DIST_PATH, "utf8")) as {
+    codes: { key: string; code: number }[];
+  };
+  const table: Record<string, number> = {};
+  for (const c of dist.codes) table[c.key] = c.code;
+  return table;
+}
+
+const CONTRACT_TABLE: Record<string, number> = distTable();
+const DIST_PRESENT = Object.keys(CONTRACT_TABLE).length > 0;
+
+describe.skipIf(!DIST_PRESENT)("dist 同源断言（contract/dist/error-codes.json）", () => {
+  it("错误码表与 dist 契约逐码一致（13 码）", () => {
+    expect(Object.keys(CONTRACT_TABLE)).toHaveLength(13);
     expect(Object.keys(errorCodes).sort()).toEqual(Object.keys(CONTRACT_TABLE).sort());
     for (const [name, code] of Object.entries(CONTRACT_TABLE)) {
       expect(errorCodes[name as keyof typeof errorCodes]).toBe(code);
     }
   });
+});
 
+describe("@yarch/contract", () => {
   it("成功信封解包 data", () => {
     const data = unwrap({ code: CODE_SUCCESS, message: "成功", data: { id: 1 }, traceId: "t" });
     expect(data).toEqual({ id: 1 });

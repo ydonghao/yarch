@@ -1,51 +1,65 @@
 package errcode_test
 
 import (
+	"encoding/json"
+	"os"
+	"strings"
 	"testing"
 
 	"github.com/ydonghao/yarch/stacks/golang/errcode"
 )
 
-// 契约断言：错误码 13 码全表（code / 标识符 / 默认文案 / HTTP 映射），
-// 与 contract/api/error-codes.md 逐行对照，防实现漂移。
+// 契约断言：13 码全表唯一权威 = contract/dist/error-codes.json（由 contract/api/error-codes.md 派生，
+// CI 拒双向漂移）——四栈读同一份 json 断言，不再各养手抄表（P1 契约机器可读出口）。
+// dist 文件不在场（消费方模块独立测试环境）则跳过本表断言，CI 仓内必跑。
 func TestBuiltinTable(t *testing.T) {
-	table := []struct {
-		code       errcode.Code
-		identifier string
-		message    string
-		http       int
-	}{
-		{errcode.InternalError, "InternalError", "内部错误", 500},
-		{errcode.InvalidArgument, "InvalidArgument", "参数校验失败", 400},
-		{errcode.MalformedBody, "MalformedBody", "请求体格式错误", 400},
-		{errcode.NotFound, "NotFound", "资源不存在", 404},
-		{errcode.Conflict, "Conflict", "资源冲突", 409},
-		{errcode.RateLimited, "RateLimited", "触发限流", 429},
-		{errcode.IdempotencyConflict, "IdempotencyConflict", "幂等冲突：重复提交", 409},
-		{errcode.UpstreamTimeout, "UpstreamTimeout", "上游依赖超时", 504},
-		{errcode.Unavailable, "Unavailable", "服务暂不可用", 503},
-		{errcode.Unauthorized, "Unauthorized", "未认证", 401},
-		{errcode.CredentialsExpired, "CredentialsExpired", "凭证已过期", 401},
-		{errcode.Forbidden, "Forbidden", "权限不足", 403},
-		{errcode.AccountDisabled, "AccountDisabled", "账号已禁用", 403},
+	raw, ioErr := os.ReadFile("../../../contract/dist/error-codes.json")
+	if ioErr != nil {
+		t.Skipf("contract dist json 不在场（%v），跳过同源断言", ioErr)
 	}
-	for _, row := range table {
-		if got := row.code.Identifier(); got != row.identifier {
-			t.Errorf("code %d identifier = %q, want %q", row.code, got, row.identifier)
+	var dist struct {
+		Codes []struct {
+			Code    int    `json:"code"`
+			Key     string `json:"key"`
+			Message string `json:"message"`
+			HTTP    int    `json:"http"`
+		} `json:"codes"`
+	}
+	if err := json.Unmarshal(raw, &dist); err != nil {
+		t.Fatalf("dist json 解析失败: %v", err)
+	}
+	if len(dist.Codes) != 13 {
+		t.Fatalf("dist 13 码表异常: %d 条", len(dist.Codes))
+	}
+	for _, row := range dist.Codes {
+		code := errcode.Code(row.Code)
+		if !code.Valid() {
+			t.Errorf("code %d 在 errcode 表中缺失", row.Code)
+			continue
 		}
-		if got := row.code.Message(); got != row.message {
-			t.Errorf("code %d message = %q, want %q", row.code, got, row.message)
+		// dist key 为 UPPER_SNAKE（md 标识列），golang 方言为 CamelCase——归一化对照
+		if got := code.Identifier(); got != camelCase(row.Key) {
+			t.Errorf("code %d identifier = %q, want %q（dist key %s）", row.Code, got, camelCase(row.Key), row.Key)
 		}
-		if got := row.code.HTTP(); got != row.http {
-			t.Errorf("code %d http = %d, want %d", row.code, got, row.http)
+		if got := code.Message(); got != row.Message {
+			t.Errorf("code %d message = %q, want %q", row.Code, got, row.Message)
 		}
-		if !row.code.Valid() {
-			t.Errorf("code %d should be valid", row.code)
+		if got := code.HTTP(); got != row.HTTP {
+			t.Errorf("code %d http = %d, want %d", row.Code, got, row.HTTP)
 		}
 	}
-	if len(table) != 13 {
-		t.Fatalf("builtin table must have 13 codes, got %d", len(table))
+}
+
+// camelCase INTERNAL_ERROR → InternalError（方言标识符对照用）
+func camelCase(upperSnake string) string {
+	parts := strings.Split(strings.ToLower(upperSnake), "_")
+	for i, p := range parts {
+		if p == "" {
+			continue
+		}
+		parts[i] = strings.ToUpper(p[:1]) + p[1:]
 	}
+	return strings.Join(parts, "")
 }
 
 func TestOK(t *testing.T) {
