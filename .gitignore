@@ -2,6 +2,9 @@
 target/
 node_modules/
 dist/
+# contract/dist 是契约机器可读出口（P1），非构建产物
+!contract/dist/
+!contract/dist/**
 *.tsbuildinfo
 
 # java

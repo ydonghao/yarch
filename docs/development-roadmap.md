@@ -19,15 +19,9 @@
 
 ### 支柱 1 · 契约机器可读出口（**主引擎**,market digest N2 升级为主线）
 
-现状痛点：四栈 conformance 断言表（13 码全表、信封形状、PageData 字段）各自手工维护，与 `contract/api/*.md` 的对齐靠人肉同步——markdown 是唯一权威，但它是散文，四栈各抄一遍必然漂移（web depcruise 锚定失效一整年的教训：机检不校准 = 摆设）。
+**进展（2026-09-17）**：P1 主体落地——`contract/dist/` 派生层开张（error-codes.json 含 `{code,key,message}` 三元组即 EP3-R 就绪位 + envelope.schema.json，gen-dist.mjs 从 markdown 表格生成）+ contract-dist CI 漂移门 + **四栈 conformance 改读同一份 json**（java/golang/python/web，缺文件优雅跳过）；N1 三栈 AGENTS.md 三件套收口（java 双 archetype 走 unfiltered fileSet 绕 Velocity `##` 注释坑 + golang/python _template + web 五模板补 CLAUDE/GEMINI 派生）。
 
-方向：`contract/dist/` 新增**派生机器工件**（权威仍是 markdown,json 由脚本从 markdown 表格生成，双向漂移由 CI 拒绝）：
-
-- `error-codes.json`：13 码全表（code/message/段位/语义），四栈 testx/ContractAsserts 改为读同一份 json 断言，不再各养一张表；
-- `envelope.schema.json`：RestResponse 信封 + PageData 的 JSON Schema，四栈契约断言共用；
-- 远期挂档：OpenAPI 骨架导出（N5，API-first 工作流，前后端并行开发 mock——JHipster 标配，yarch 暂挂）。
-
-**为什么是主引擎**：它是其余三支柱的地基——AI 代理消费、conformance 一致性、对外集成全都压在「契约有一份机器可读的唯一出口」上。
+剩余：远期挂档 OpenAPI 骨架导出（N5，API-first 工作流，前后端并行开发 mock——JHipster 标配，yarch 暂挂）。
 
 ### 支柱 2 · AI 代理出口（market digest N1 的剩余部分 + N3）
 
