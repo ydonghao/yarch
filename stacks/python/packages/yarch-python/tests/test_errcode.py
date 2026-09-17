@@ -20,8 +20,12 @@ def _dist_rows() -> list[tuple[int, str, str, int]]:
 
 DIST_TABLE = _dist_rows()
 
+# dist 缺场时给一个带 skip 标记的占位参数（parametrize 空表会静默全过，占位保证显式跳过）
+_SKIP = pytest.mark.skip(reason="contract dist json 不在场")
+_FALLBACK = [pytest.param(0, None, None, None, marks=_SKIP)]
 
-@pytest.mark.parametrize("code,identifier,message,http", DIST_TABLE or [pytest.param(0, None, None, None, marks=pytest.mark.skip(reason="contract dist json 不在场"))])
+
+@pytest.mark.parametrize("code,identifier,message,http", DIST_TABLE or _FALLBACK)
 def test_full_table(code, identifier, message, http):
     assert errcode.identifier_of(code) == identifier
     assert errcode.message_of(code) == message
