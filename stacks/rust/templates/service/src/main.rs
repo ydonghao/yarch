@@ -1,20 +1,15 @@
 //! {{project-name}}：yarch rust 服务入口（axum + DDD 七包）。
 //! 装配序：PG 连接 + 迁移 → 仓储装配 → setup 中间件栈 → serve。
 
-pub mod api;
-pub mod application;
-pub mod crossdomain;
-pub mod domain;
-pub mod errors;
-pub mod infra;
-pub mod types;
-
 use std::sync::Arc;
 use std::time::Duration;
 
 use axum::routing::get;
 use axum::Router;
 
+use {{crate_name}}::api::{self, AppState};
+use {{crate_name}}::errors;
+use {{crate_name}}::infra::user_repo::UserRepoSqlx;
 use yarch_axum::store::{InMemoryIdempotencyStore, InMemoryRateLimiter};
 use yarch_axum::{setup, IdemConfig, Options, RateConfig};
 
@@ -33,11 +28,11 @@ async fn main() {
         .await
         .expect("PG 连接失败");
     if std::env::var("YARCH_SKIP_MIGRATIONS").as_deref() != Ok("true") {
-        sqlx::migrate!("migrations").run(&pool).await.expect("迁移失败");
+        sqlx::migrate!("./migrations").run(&pool).await.expect("迁移失败");
     }
 
-    let state = api::AppState {
-        users: Arc::new(infra::user_repo::UserRepoSqlx::new(pool)),
+    let state = AppState {
+        users: Arc::new(UserRepoSqlx::new(pool)),
     };
     let router = Router::new()
         .route("/healthz", get(api::healthz))

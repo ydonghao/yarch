@@ -1,6 +1,7 @@
 //! 仓储实现：sqlx PG（运行时查询；page_of 下推 + NOT_DELETED 纪律）。
 
 use async_trait::async_trait;
+use sqlx::Arguments;
 
 use super::user_row::UserRow;
 use crate::domain::entity::User;

@@ -1,6 +1,8 @@
-//! 领域实体（零框架：不依赖 axum/sqlx/tokio）。
+//! 领域实体（零框架：不依赖 axum/sqlx/tokio；serde 序列化不在禁列——信封回包需要）。
 
-#[derive(Debug, Clone, PartialEq)]
+use serde::Serialize;
+
+#[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct User {
     pub id: i64,
     pub name: String,

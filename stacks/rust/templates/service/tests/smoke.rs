@@ -100,6 +100,7 @@ async fn idempotency_replays_same_response() {
         (r.status(), envelope(r).await)
     };
     assert_eq!(s1, StatusCode::OK);
-    assert_eq!((s1, v1), (s2, v2), "同键同参回放");
+    assert_eq!(s2, s1, "同键同参回放");
+    assert_eq!(v1, v2, "同键同参回放原响应");
     assert_eq!(v1["data"]["greeting"], "hello, yarch");
 }

@@ -4,13 +4,13 @@ pub mod users;
 
 use std::sync::Arc;
 
-use axum::extract::State;
 use axum::response::Response;
 use serde::Deserialize;
 
 use crate::domain::repository::UserRepository;
 use yarch_axum::web;
 
+#[derive(Clone)]
 pub struct AppState {
     pub users: Arc<dyn UserRepository>,
 }
