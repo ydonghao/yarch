@@ -1,0 +1,15 @@
+# cargo-deny（spec 一-3）：许可证白名单 + 禁重复大版本 + RUSTSEC 咨询。
+[graph]
+all-features = true
+
+[licenses]
+allow = [
+  "MIT",
+  "Apache-2.0",
+  "Apache-2.0 WITH LLVM-exception",
+  "BSD-2-Clause",
+  "BSD-3-Clause",
+  "ISC",
+  "Unicode-3.0",
+  "Zlib",
+]

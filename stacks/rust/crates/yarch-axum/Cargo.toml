@@ -1,0 +1,9 @@
+[package]
+name = "yarch-axum"
+description = "yarch axum 装配层：中间件五件/提取器/分页/幂等（批次二施工，本批为空壳）"
+keywords = ["yarch", "axum", "middleware"]
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
