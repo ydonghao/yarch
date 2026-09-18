@@ -53,7 +53,7 @@ stacks/rust/
 
 ## 五、施工批次
 
-1. **第一批（本批）**：spec.md 成文 + PLAN.md 落位 + workspace 骨架（两 crate 空壳 + 契约内核 response/errcode/trace 三模块 + 13 码全表断言测试）——本地 `cargo test` 绿。
+1. **第一批（已完成 2026-09-18）**：spec.md 成文 + PLAN.md 落位 + workspace 骨架（两 crate + 契约内核 response/errcode/trace 三模块 + 同源 conformance 断言读 contract/dist）——本地 cargo test/fmt/clippy 绿，CI rust-stack.yml 四段门禁 + MSRV 双档。
 2. **第二批**：yarch-axum 中间件五件（Trace/Recovery/AccessLog/Idempotency/Rate，对齐 python 中间件组合语义）+ sqlx 装配（逻辑删除/审计/分页 D6）+ 模板 users 示例。
 3. **第三批**：生成后冒烟（cargo generate → cargo test）+ crates.io 发版流水线（tag 触发）+ conformance 读契约 dist（待 N2 落地后接）。
 

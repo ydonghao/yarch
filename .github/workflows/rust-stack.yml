@@ -1,0 +1,49 @@
+name: rust-stack
+
+# rust 栈 CI：四段门禁（fmt / clippy -D warnings / cargo-deny / test，spec 九-1）+ MSRV 双档（R7）。
+# 模板生成后冒烟（spec 九-3）待批次二模板落地后追加 job。
+# conformance 测试读仓内 contract/dist/error-codes.json（提交态在场，contract-dist 门拒漂移）。
+
+on:
+  push:
+    branches: [main, dev]
+    paths: ['stacks/rust/**', '.github/workflows/rust-stack.yml']
+  pull_request:
+    paths: ['stacks/rust/**', '.github/workflows/rust-stack.yml']
+
+jobs:
+  check:
+    name: Rust ${{ matrix.toolchain }} · 四段门禁
+    strategy:
+      fail-fast: false
+      matrix:
+        # R7：stable + MSRV 1.80 双档（dtolnay 动作以 RUSTUP_TOOLCHAIN 覆盖 rust-toolchain.toml）
+        toolchain: [stable, '1.80']
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: stacks/rust
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.toolchain }}
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: stacks/rust/Cargo.toml
+      - run: cargo fmt --all -- --check
+      - run: cargo clippy --all-targets -- -D warnings
+      - run: cargo test --workspace
+
+  deny:
+    name: cargo-deny · 依赖审计
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: stacks/rust
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: taiki-e/install-action@cargo-deny
+      - run: cargo deny check
