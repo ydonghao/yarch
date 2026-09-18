@@ -3,6 +3,7 @@
 
 pub mod logx;
 pub mod middleware;
+pub mod persist;
 pub mod store;
 pub mod web;
 
