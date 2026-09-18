@@ -5,3 +5,4 @@
 
 pub mod errcode;
 pub mod response;
+pub mod trace;
