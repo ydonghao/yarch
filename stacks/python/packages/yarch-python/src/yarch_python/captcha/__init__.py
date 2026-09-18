@@ -201,8 +201,16 @@ class Challenge:
     image_base64: str
 
 
+class ChallengeStore(Protocol):
+    """challenge 存储端口（一次性 token 语义）——CaptchaStore 为 Redis 实现，测试可注入内存 fake。"""
+
+    def issue(self, key: str, code: str, ttl_s: int) -> None: ...
+
+    def consume(self, key: str) -> str | None: ...
+
+
 class CaptchaStore:
-    """Redis 行为件（一次性 token 语义）；full key 由 Service 经 Keys 生成（三-5）。"""
+    """Redis 行为件；full key 由 Service 经 Keys 生成（三-5）。"""
 
     def __init__(self, redis: Any):
         self._redis = redis
@@ -222,7 +230,7 @@ class CaptchaService:
     default_provider 与 scenes 引用未注册 Provider 即构造失败。
     """
 
-    def __init__(self, store: CaptchaStore, keys: Keys, options: Options | None = None):
+    def __init__(self, store: ChallengeStore, keys: Keys, options: Options | None = None):
         self._store = store
         self._keys = keys
         opts = options or Options()
@@ -257,13 +265,16 @@ class CaptchaService:
             )
         return Issued(provider=provider.id, key=key, payload=challenge.payload)
 
-    def verify(self, scene: str | None, key: str, answer: str | None) -> bool:
+    def verify(self, scene: str | None, key: str | None, answer: str | None) -> bool:
         """校验（六-2：内联受保护业务流）。LOCAL = 原子消费后比对（三-3 对/错均消费）；
-        REMOTE = 外委校验。false 时业务报 2005 CAPTCHA_INVALID（五-2 三态合一禁细分）。"""
+        REMOTE = 外委校验。key 不存在/None/已消费一律 False；false 时业务报
+        2005 CAPTCHA_INVALID（五-2 三态合一禁细分）。"""
         provider = self.route(scene)
         if provider.mode is VerifyMode.REMOTE:
             remote = getattr(provider, "verify_remote", None)
             return bool(remote(answer)) if remote else False
+        if not key:
+            return False
         stored = self._store.consume(self._store_key(provider.id, key))
         return provider.matches(stored, answer)
 

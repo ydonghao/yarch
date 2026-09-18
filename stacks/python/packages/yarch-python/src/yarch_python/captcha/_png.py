@@ -52,7 +52,11 @@ def _chunk(tag: bytes, data: bytes) -> bytes:
     )
 
 
-def _line(px, w, h, x0, y0, x1, y1, color):
+Pixel = tuple[int, int, int]
+Canvas = list[list[Pixel]]
+
+
+def _line(px: Canvas, w: int, h: int, x0: int, y0: int, x1: int, y1: int, color: Pixel) -> None:
     dx, dy = abs(x1 - x0), -abs(y1 - y0)
     sx, sy = (1 if x0 < x1 else -1), (1 if y0 < y1 else -1)
     err = dx + dy
@@ -76,12 +80,12 @@ def render_png_base64(text: str, *, width: int = 150, height: int = 50, scale: i
     样式：白底 + 噪点 + 干扰线 + 随机深色位图字符——渲染样式各栈自由（CP9）。
     """
     rnd = random.Random()
-    px = [[(255, 255, 255)] * width for _ in range(height)]
+    px: Canvas = [[(255, 255, 255)] * width for _ in range(height)]
 
     for _ in range(160):  # 噪点
         px[rnd.randrange(height)][rnd.randrange(width)] = (170, 170, 170)
     for _ in range(3):  # 干扰线
-        c = (rnd.randrange(180), rnd.randrange(180), rnd.randrange(180))
+        noise = (rnd.randrange(180), rnd.randrange(180), rnd.randrange(180))
         _line(
             px,
             width,
@@ -90,30 +94,32 @@ def render_png_base64(text: str, *, width: int = 150, height: int = 50, scale: i
             rnd.randrange(height),
             rnd.randrange(width),
             rnd.randrange(height),
-            c,
+            noise,
         )
 
     cw = 5 * scale  # 单字符像素宽
     gap = 8
-    x0 = max(4, (width - len(text) * cw - (len(text) - 1) * gap) // 2)
-    y0 = max(2, (height - 7 * scale) // 2)
+    origin_x = max(4, (width - len(text) * cw - (len(text) - 1) * gap) // 2)
+    origin_y = max(2, (height - 7 * scale) // 2)
     for i, ch in enumerate(text):
         glyph = _FONT.get(ch)
         if glyph is None:
             raise ValueError(f"字符 {ch!r} 不在契约字符集")
-        rows = glyph.split("/")
-        color = (40 + rnd.randrange(120), 40 + rnd.randrange(120), 40 + rnd.randrange(120))
-        for r, row in enumerate(rows):
-            for c, bit in enumerate(row):
+        glyph_rows = glyph.split("/")
+        ink = (40 + rnd.randrange(120), 40 + rnd.randrange(120), 40 + rnd.randrange(120))
+        for row_idx, glyph_row in enumerate(glyph_rows):
+            for col_idx, bit in enumerate(glyph_row):
                 if bit == "#":
                     for sy in range(scale):
                         for sx in range(scale):
-                            px[y0 + r * scale + sy][x0 + i * (cw + gap) + c * scale + sx] = color
+                            px[origin_y + row_idx * scale + sy][
+                                origin_x + i * (cw + gap) + col_idx * scale + sx
+                            ] = ink
 
     raw = bytearray()
-    for row in px:
+    for pixel_row in px:
         raw.append(0)
-        for r, g, b in row:
+        for r, g, b in pixel_row:
             raw += bytes((r, g, b))
     ihdr = struct.pack(">IIBBBBB", width, height, 8, 2, 0, 0, 0)
     png = (
