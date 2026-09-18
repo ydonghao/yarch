@@ -1,9 +1,23 @@
 [package]
 name = "yarch-axum"
-description = "yarch axum 装配层：中间件五件/提取器/分页/幂等（批次二施工，本批为空壳）"
+description = "yarch axum 装配层：中间件五件/信封回包/（2b）sqlx 装配与分页"
 keywords = ["yarch", "axum", "middleware"]
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 repository.workspace = true
 rust-version.workspace = true
+
+[dependencies]
+yarch-contract = { path = "../yarch-contract" }
+axum = "0.8"
+tokio = { version = "1", features = ["macros", "rt", "sync", "time"] }
+futures-util = "0.3"
+sha2 = "0.10"
+serde = { workspace = true }
+serde_json = { workspace = true }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["fmt", "std"] }
+
+[dev-dependencies]
+tower = { version = "0.5", features = ["util"] }
