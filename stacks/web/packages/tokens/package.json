@@ -1,0 +1,23 @@
+{
+  "name": "@yarch/tokens",
+  "version": "0.1.0",
+  "description": "yarch 设计 token 基线（框架无关）：tokens.json 唯一权威 + CSS custom properties + TS 常量三载体同源（component-library.md 四）",
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./tokens.css": "./src/tokens.css",
+    "./tokens.json": "./tokens.json"
+  },
+  "files": [
+    "src",
+    "tokens.json",
+    "README.md"
+  ],
+  "scripts": { "test": "vitest run" },
+  "publishConfig": { "access": "public" },
+  "repository": { "type": "git", "url": "git+https://github.com/ydonghao/yarch.git", "directory": "stacks/web/packages/tokens" },
+  "license": "Apache-2.0",
+  "devDependencies": { "vitest": "^3.0.0", "typescript": "^5.6.0", "@types/node": "^22.0.0" }
+}
