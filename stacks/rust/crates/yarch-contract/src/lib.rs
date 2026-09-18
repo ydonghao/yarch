@@ -4,3 +4,4 @@
 //! 约束对象：yarch 体系全部 Rust 云端业务服务（与 embedded/esp32 固件轨零共享 crate）。
 
 pub mod errcode;
+pub mod response;
