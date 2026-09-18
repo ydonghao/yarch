@@ -3,6 +3,7 @@
 
 pub mod access_log;
 pub mod idempotency;
+pub mod rate_limit;
 pub mod recovery;
 pub mod trace;
 
