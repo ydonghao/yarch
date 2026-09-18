@@ -57,7 +57,7 @@
     <!-- 与 yarch-bom 的 spring-boot.version 保持同步（插件链用） -->
     <spring-boot.version>4.1.1</spring-boot.version>
     <!-- 与 yarch-bom 同步：annotationProcessorPaths 不走 dependencyManagement，经属性继承供业务工程引用 -->
-    <lombok.version>1.18.46</lombok.version>
+    <lombok.version>1.18.48</lombok.version>
     <mapstruct.version>1.6.3</mapstruct.version>
   </properties>
 
