@@ -2,3 +2,4 @@
 //! 语义唯一权威 = contract/api/ 四件套；中间件组合语义对齐 python 终审口径。
 
 pub mod logx;
+pub mod store;
