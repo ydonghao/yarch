@@ -1,36 +1,39 @@
-// Package captcha 图形验证码（对偶 java yarch-captcha-starter）：
-// 生成 PNG + Redis 一次性 token（校验即消费，TTL 默认 5 分钟）。
-// 标准 GET /api/v1/captcha 端点由 Handler 提供（契约 java 侧同路径）。
+// Package captcha 验证码框架（contract/api/captcha.md v1.0）：
+// Provider SPI 三档（image/sms-otp/turnstile）+ 框架核心（challenge 生命周期一次性原子消费、
+// 场景路由、错误语义 2005）。标准 GET /api/v1/captcha 端点由 Handler 提供（六-1），
+// 校验内联业务流不设独立端点（六-2）。
 package captcha
 
 import (
+	"bytes"
 	"context"
 	"crypto/rand"
+	"encoding/base64"
 	"errors"
 	"image"
 	"image/color"
 	"image/png"
-	"bytes"
-	"encoding/base64"
 	"math/big"
+	"strings"
 	"time"
+
+	"github.com/redis/go-redis/v9"
 
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/basicfont"
 	"golang.org/x/image/math/fixed"
-
-	"github.com/redis/go-redis/v9"
 )
 
 // Store 验证码存储接口（一次性 token 语义）。
 type Store interface {
 	// Issue 签发：id → code，TTL。
 	Issue(ctx context.Context, id, code string, ttl time.Duration) error
-	// Consume 原子取出并删除（一次性）：id 不存在或已消费返回 false。
+	// Consume 原子取出并删除（一次性，三-3/三-4）：id 不存在或已消费返回 false。
 	Consume(ctx context.Context, id string) (string, bool, error)
 }
 
-// RedisStore Redis 实现（key 由调用方经 redix.Keys 生成，首段=服务名）。
+// RedisStore Redis 实现（full key 由框架核心 Service 经 redix.Keys 生成：
+// 服务名:captcha:{provider}:{key}，首段=服务名纪律三-5）。
 type RedisStore struct{ rdb redis.UniversalClient }
 
 func NewRedisStore(rdb redis.UniversalClient) *RedisStore { return &RedisStore{rdb: rdb} }
@@ -39,7 +42,7 @@ func (s *RedisStore) Issue(ctx context.Context, id, code string, ttl time.Durati
 	return s.rdb.Set(ctx, id, code, ttl).Err()
 }
 
-// Consume GETDEL 原子取出删除——一次性保证（校验失败同样消费，防重放爆破）。
+// Consume GETDEL 原子取出删除——一次性保证（校验失败同样消费，防重放爆破三-3）。
 func (s *RedisStore) Consume(ctx context.Context, id string) (string, bool, error) {
 	code, err := s.rdb.GetDel(ctx, id).Result()
 	if errors.Is(err, redis.Nil) {
@@ -51,19 +54,19 @@ func (s *RedisStore) Consume(ctx context.Context, id string) (string, bool, erro
 	return code, true, nil
 }
 
-// alphabet 去混淆字符集（剔除 0O1I）。
+// alphabet 去混淆字符集（二-2【强制】：32 字符，去 0/O/1/I——跨栈 conformance 断言对象）。
 const alphabet = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ"
 
 const (
-	// DefaultLen 验证码字符数。
-	DefaultLen = 5
-	// DefaultTTL 有效期。
-	DefaultTTL = 5 * time.Minute
-	// W/H 图片尺寸。
+	// DefaultLen 验证码字符数（二-2【强制】：4 位）。
+	DefaultLen = 4
+	// DefaultTTL 有效期默认（三-2【推荐】120s，Options.TTL 可配）。
+	DefaultTTL = 2 * time.Minute
+	// W/H 图片尺寸（渲染样式自由，CP9）。
 	W, H = 160, 48
 )
 
-// NewCode 生成随机码。
+// NewCode 生成随机码（安全随机源，三-1 同源要求）。
 func NewCode(n int) string {
 	b := make([]byte, n)
 	for i := range b {
@@ -73,7 +76,7 @@ func NewCode(n int) string {
 	return string(b)
 }
 
-// NewID 生成验证码 ID。
+// NewID 生成验证码 ID（16 字节安全随机 hex = 128 bit 熵，三-1：禁业务可预测值）。
 func NewID() string {
 	var b [16]byte
 	_, _ = rand.Read(b[:])
@@ -102,33 +105,46 @@ func RenderPNG(code string) []byte {
 	// 干扰线
 	for i := 0; i < 3; i++ {
 		c := color.RGBA{R: uint8(randInt(180)), G: uint8(randInt(180)), B: uint8(randInt(180)), A: 120}
-		x, y := randInt(W), randInt(H)
+		_, y := randInt(W), randInt(H)
 		for s := 0; s < W; s += 3 {
 			img.Set(s, (y+s/2+randInt(5))%H, c)
-			_ = x
 		}
 	}
 	// 字符
 	for i := 0; i < len(code); i++ {
-		drawChar(img, rune(code[i]), 12+i*28+randInt(6), 26+randInt(8), rgb())
+		drawChar(img, rune(code[i]), 24+i*32+randInt(6), 30+randInt(8), rgb())
 	}
 	var buf bytes.Buffer
 	_ = png.Encode(&buf, img)
 	return buf.Bytes()
 }
 
-// ImageDataURL PNG → data URL（前端 <img src> 直用）。
-func ImageDataURL(pngBytes []byte) string {
-	return "data:image/png;base64," + base64.StdEncoding.EncodeToString(pngBytes)
+// ImageBase64 PNG → 裸 base64（二-2/六-1：无 data: 前缀，前端自行拼装 dataURL）。
+func ImageBase64(pngBytes []byte) string {
+	return base64.StdEncoding.EncodeToString(pngBytes)
 }
 
-// Verify 校验（大小写不敏感；无论对错 token 均已一次性消费）。
-func Verify(ctx context.Context, s Store, id, input string) bool {
-	code, ok, err := s.Consume(ctx, id)
-	if err != nil || !ok {
+// trimSpace 去首尾空白（比对口径，二-2）。
+func trimSpace(s string) string { return strings.TrimSpace(s) }
+
+// equalFold ASCII 大小写不敏感比较（二-2）。
+func equalFold(a, b string) bool {
+	if len(a) != len(b) {
 		return false
 	}
-	return equalFold(code, input)
+	for i := 0; i < len(a); i++ {
+		ca, cb := a[i], b[i]
+		if 'A' <= ca && ca <= 'Z' {
+			ca += 32
+		}
+		if 'A' <= cb && cb <= 'Z' {
+			cb += 32
+		}
+		if ca != cb {
+			return false
+		}
+	}
+	return true
 }
 
 // drawChar 用 font.Drawer + basicfont.Face7x13 绘制单字符。
@@ -151,23 +167,4 @@ func gray() color.RGBA { return color.RGBA{R: 170, G: 170, B: 170, A: 255} }
 
 func rgb() color.RGBA {
 	return color.RGBA{R: uint8(40 + randInt(120)), G: uint8(40 + randInt(120)), B: uint8(40 + randInt(120)), A: 255}
-}
-
-func equalFold(a, b string) bool {
-	if len(a) != len(b) {
-		return false
-	}
-	for i := 0; i < len(a); i++ {
-		ca, cb := a[i], b[i]
-		if 'A' <= ca && ca <= 'Z' {
-			ca += 32
-		}
-		if 'A' <= cb && cb <= 'Z' {
-			cb += 32
-		}
-		if ca != cb {
-			return false
-		}
-	}
-	return true
 }

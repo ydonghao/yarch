@@ -1,6 +1,6 @@
-# 契约 · 错误码全局段位表（v1.0 已定稿）
+# 契约 · 错误码全局段位表（v1.1 已定稿）
 
-> **状态：已定稿**（2026-09-01 评审通过；D1-D6 已拍板，口径为"业界标准优先于阿里手册"，结论见 [../../docs/references/alibaba-java-manual-digest.md](../../docs/references/alibaba-java-manual-digest.md) D 表）。
+> **状态：已定稿**（2026-09-01 评审通过；D1-D6 已拍板，口径为"业界标准优先于阿里手册"，结论见 [../../docs/references/alibaba-java-manual-digest.md](../../docs/references/alibaba-java-manual-digest.md) D 表。2026-09-18 升 v1.1：纯增量新增 2005 CAPTCHA_INVALID，随 [captcha.md](captcha.md) v1.0）。
 >
 > **D1 已拍板**：采用 `int32 数字段位 + 标识符`（与 HTTP 状态码+reason phrase、gRPC code+name 的业界形态同构）；**不采用**阿里 5 位字符串 A/B/C 方案——按"谁的错"分段偏客服排障视角，与按"谁拥有"分段的多仓治理诉求冲突，且 int32 对四栈类型系统与序列化最友好。
 
@@ -43,6 +43,7 @@
 | 2002 | CREDENTIALS_EXPIRED | 凭证已过期 | 401 |
 | 2003 | FORBIDDEN | 权限不足 | 403 |
 | 2004 | ACCOUNT_DISABLED | 账号已禁用 | 403 |
+| 2005 | CAPTCHA_INVALID | 验证码校验失败 | 400 |
 
 ## 实现规则
 
@@ -67,3 +68,4 @@
 | CREDENTIALS_EXPIRED | `CREDENTIALS_EXPIRED` | `CredentialsExpired` | `CREDENTIALS_EXPIRED` | `CREDENTIALS_EXPIRED` |
 | FORBIDDEN | `FORBIDDEN` | `Forbidden` | `FORBIDDEN` | `FORBIDDEN` |
 | ACCOUNT_DISABLED | `ACCOUNT_DISABLED` | `AccountDisabled` | `ACCOUNT_DISABLED` | `ACCOUNT_DISABLED` |
+| CAPTCHA_INVALID | `CAPTCHA_INVALID` | `CaptchaInvalid` | `CAPTCHA_INVALID` | `CAPTCHA_INVALID` |

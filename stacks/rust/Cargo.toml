@@ -1,0 +1,17 @@
+# yarch rust 栈 workspace：契约内核（零框架）+ axum 装配（批次二施工）。
+# 规约唯一权威：stacks/rust/spec.md（R1-R7）+ contract/api/ 四件套。
+[workspace]
+resolver = "2"
+members = ["crates/yarch-contract", "crates/yarch-axum"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+repository = "https://github.com/ydonghao/yarch"
+rust-version = "1.80"
+
+[workspace.dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+rand = "0.9"

@@ -7,12 +7,13 @@
 
 | 目录 | 职责 |
 |---|---|
-| `contract/` | 全域契约唯一权威：api（REST 四件套 + realtime / telemetry / audit）/ infra（22 份）/ web / clients / domains / agent + `registry.md` 命名登记处 |
+| `contract/` | 全域契约唯一权威：api（REST 四件套 + realtime / telemetry / audit / captcha）/ infra（22 份）/ web / clients / domains / agent + `registry.md` 命名登记处 + `dist/` 机器可读派生层（JSON 由 api markdown 生成，漂移门盯防） |
 | `stacks/` | 云栈实现：java / golang / web / python（rust 规约已立待施工） |
-| `clients/` | 端侧：android / ios / miniprogram / game + `create/` 客户端生成器 |
+| `clients/` | 端侧：android / ios / miniprogram / game（desktop 预留）+ `create/` 客户端生成器 |
 | `embedded/esp32/` | 固件轨（esp-idf-hal std，规约已立待施工） |
+| `tools/` | 模板定位器 `locate-scaffolds.cjs` 与将来的 `yarch init` CLI |
 | `docs/` | 架构与发展策划；`docs/references/` = 调研 digest（分析文体的合法归宿） |
-| `.github/workflows/` | CI（含 template-smoke 生成器冒烟） |
+| `.github/workflows/` | CI（含 template-smoke 生成器冒烟、contract-dist 漂移门） |
 
 ## 命令表
 
@@ -25,6 +26,7 @@
 | android | `cd clients/android && ./gradlew test` |
 | ios | `cd clients/ios && swift test` |
 | 生成器冒烟 | `npm create @yarch/admin@latest` / `npm create @yarch/app@latest`（CI template-smoke 同款） |
+| 契约 dist 重生成 | `node contract/dist/gen-dist.mjs`（改 `contract/api/*.md` 后必跑，否则 contract-dist CI 漂移门红） |
 
 ## 红线清单
 

@@ -1,0 +1,16 @@
+[package]
+name = "yarch-contract"
+description = "yarch 契约内核（Rust 方言）：REST 信封 / 错误码段位表 / traceId——零框架"
+keywords = ["yarch", "contract", "rest", "error-code"]
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+serde = { workspace = true }
+rand = { workspace = true }
+
+[dev-dependencies]
+serde_json = { workspace = true }

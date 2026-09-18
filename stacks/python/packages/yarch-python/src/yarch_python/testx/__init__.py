@@ -3,8 +3,8 @@
 import json
 import re
 
-# error-codes.md v1.0 逐行誊写（0 成功 + 13 码）；与 tests/test_errcode.py 的 CONTRACT_TABLE
-# 同源同值（14 行），业务工程直接 import 本表做跨栈 conformance
+# error-codes.md v1.1 逐行誊写（0 成功 + 14 码）；与 tests/test_errcode.py 的 CONTRACT_TABLE
+# 同源同值（15 行），业务工程直接 import 本表做跨栈 conformance
 CODE_TABLE: list[tuple[int, str, str, int]] = [
     (0, "OK", "成功", 200),
     (1000, "INTERNAL_ERROR", "内部错误", 500),
@@ -20,6 +20,7 @@ CODE_TABLE: list[tuple[int, str, str, int]] = [
     (2002, "CREDENTIALS_EXPIRED", "凭证已过期", 401),
     (2003, "FORBIDDEN", "权限不足", 403),
     (2004, "ACCOUNT_DISABLED", "账号已禁用", 403),
+    (2005, "CAPTCHA_INVALID", "验证码校验失败", 400),
 ]
 
 # 与 logx 行协议同口径：毫秒精度 UTC ts + 大写 level（protocol_fields 全集）

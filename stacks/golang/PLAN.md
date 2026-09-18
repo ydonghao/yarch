@@ -94,6 +94,8 @@ stacks/golang/                      # module github.com/ydonghao/yarch/stacks/go
 
 **触发式增长（一规约一 package，不做配置档）**：mysql 档（`persist/mysql`）、kafka、rocketmq、xxl-job、nacos、minio、es、qdrant、wire 组装校验、`yarch init`。
 
+**captcha 契约对齐（2026-09-18，contract/api/captcha.md v1.0 CP1-CP10 落地）**：五处漂移清偿——长度 5→4、TTL 默认 5min→120s（Options.TTL 可配）、端点字段 id/image→provider/key/imageBase64（裸 base64 去 data: 前缀）、存储 key 加 provider 段（`{服务名}:captcha:{provider}:{key}`，Service 经 redix.Keys 生成）、校验失败 1001→2005 CAPTCHA_INVALID；**SPI 化**：Provider 接口（ID/Mode/Issue/Matches + RemoteVerifier 小接口）+ 框架核心 Service（GETDEL 原子消费/场景路由 Options.Scenes+DefaultProvider/装配 fail fast）+ 三档 Provider（image/SmsOtpProvider 宿主 SmsSender 注入+目标脱敏/TurnstileProvider SiteVerifyCaller 打桩+fail-closed）；Handler.Issue 端点（scene 参数，非 image 档 1001，限流由业务注册时挂 middleware.RateLimit/RateLimitRedis——契约五-1）；测试向量 V1-V11 同源落地（含 8 goroutine 并发恰一过）+ TC 真 Redis 行为级（V6/V7/key 形状）。
+
 ## 七、开放问题与风险
 
 1. Hertz 中间件修改请求 ctx：用 `c.SetCtx` 注入 context value，同时 `c.Set` 双写（handler 两种取法都命中）——已验证 API 存在于 v0.10.x。

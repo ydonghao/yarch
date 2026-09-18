@@ -1,0 +1,4 @@
+# 本地开发钉死 1.95.0（spec 一-1）；CI 矩阵 stable + MSRV 1.80 双档经
+# dtolnay/rust-toolchain 的 RUSTUP_TOOLCHAIN 环境变量覆盖，互不干扰。
+[toolchain]
+channel = "1.95.0"

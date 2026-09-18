@@ -96,6 +96,13 @@
       "message": "账号已禁用",
       "http": 403,
       "segment": "2xxx"
+    },
+    {
+      "code": 2005,
+      "key": "CAPTCHA_INVALID",
+      "message": "验证码校验失败",
+      "http": 400,
+      "segment": "2xxx"
     }
   ]
 }

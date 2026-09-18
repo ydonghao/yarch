@@ -9,7 +9,7 @@ import (
 	"github.com/ydonghao/yarch/stacks/golang/errcode"
 )
 
-// 契约断言：13 码全表唯一权威 = contract/dist/error-codes.json（由 contract/api/error-codes.md 派生，
+// 契约断言：14 码全表唯一权威 = contract/dist/error-codes.json（由 contract/api/error-codes.md 派生，
 // CI 拒双向漂移）——四栈读同一份 json 断言，不再各养手抄表（P1 契约机器可读出口）。
 // dist 文件不在场（消费方模块独立测试环境）则跳过本表断言，CI 仓内必跑。
 func TestBuiltinTable(t *testing.T) {
@@ -28,8 +28,8 @@ func TestBuiltinTable(t *testing.T) {
 	if err := json.Unmarshal(raw, &dist); err != nil {
 		t.Fatalf("dist json 解析失败: %v", err)
 	}
-	if len(dist.Codes) != 13 {
-		t.Fatalf("dist 13 码表异常: %d 条", len(dist.Codes))
+	if len(dist.Codes) != 14 {
+		t.Fatalf("dist 14 码表异常: %d 条", len(dist.Codes))
 	}
 	for _, row := range dist.Codes {
 		code := errcode.Code(row.Code)

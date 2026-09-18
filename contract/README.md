@@ -39,8 +39,8 @@
 | 规约 | 前置依赖（硬） | 主要协作参考（软） |
 |---|---|---|
 | mysql / postgresql / mongodb / redis / nginx | — | api 四件套（错误码/幂等/traceId 口径） |
-| api/realtime | — | error-codes（13 码表复用）、logging-trace（ndjson/traceId）、rest-conventions（命名/大消息引用化）、clients/client-shared（六节客户端纪律）、nginx/higress（入口透传） |
-| api/telemetry | — | error-codes（13 码表回执）、logging-trace（埋点矩阵行）、kafka（摄入管道）、clickhouse（攒批写入）、clients/client-shared（七节客户端纪律） |
+| api/realtime | — | error-codes（14 码表复用）、logging-trace（ndjson/traceId）、rest-conventions（命名/大消息引用化）、clients/client-shared（六节客户端纪律）、nginx/higress（入口透传） |
+| api/telemetry | — | error-codes（14 码表回执）、logging-trace（埋点矩阵行）、kafka（摄入管道）、clickhouse（攒批写入）、clients/client-shared（七节客户端纪律） |
 | api/audit | — | logging-trace（行协议同源）、clickhouse（append-only 存储）、registry（派生资源登记指引同款） |
 | infra/prometheus / infra/grafana | — | api/logging-trace（service/env 标签口径）、api/audit + api/telemetry（CH 数据源共用）、agent/extensions（数据源凭证 ${ENV}） |
 | timescale | postgresql | clickhouse（日志场景分流） |
@@ -90,24 +90,26 @@
 | 实时通道规约 RT1-RT9（2026-09-16 拍板） | 新立 [api/realtime.md](api/realtime.md) v1.0 与 REST 四件套并列：**WebSocket（wss）五端默认档**（KCP/UDP 重竞技与 MQTT device 域为触发档）；**首帧 AUTH**（凭证禁入 URL，30s 限时）；**应用层心跳**（30s 发 / 60s 判死，单配置点）；**重连三要素**（指数退避+抖动+封顶）；补投/离线消息触发式（seq 预留）；**独立 PushEnvelope**（type/seq/id/ts/traceId/data）错误口径复用 13 码表、消息级 traceId + 连接级 ndjson；条文覆盖全五端，内核首批 web+miniprogram+cocos。client-shared 同批增六节（长连接客户端纪律）。依据：[realtime-channel-digest.md](../docs/references/realtime-channel-digest.md) | 已生效（2026-09-16） |
 | 可观测轨 OB1-OB9 + EP2-R/EP3-R（2026-09-16 拍板） | 骨架 = **OTel 三信号 + Collector**（厂商中立）；**logging-trace 升 v1.1**（spanId 入上下文与日志、租户上下文 X-Tenant-Id 进传播矩阵——机制归 yarch 隔离模型归业务、埋点上报边界进矩阵）；metrics = **Prometheus**（exposition 标准 + RED 基础集装配件收口，新 infra/prometheus.md）；logs/traces 后端 = **ClickHouse 统一**（官方 ClickStack 路径，不新立 Loki/Tempo/Mimir，LGTM 触发档；新 infra/grafana.md：Grafana 单面板两件制 + Alerting + dashboards/告警规则 provisioning 进 git）；**ndjson 行协议不搬家**（OTel SDK 只管 traces+metrics，采集走 Collector filelog）；traces 默认全量+采样单配置点；**审计 EP4 并轨**：api/audit.md v1.0（最小审计事件面 + 固定字段集 → CH append-only + 保留期 ≥180d，落 OperationLogStore SPI CH 实现件）；EP3-R：error-codes 标识列即稳定 key，error-codes.json 必含 code/key/message + REST Accept-Language 就绪位（多语言 catalog 不做）。依据：[observability-track-digest.md](../docs/references/observability-track-digest.md) | 已生效（2026-09-16） |
 | 埋点管道轨 TM1-TM8（2026-09-16 拍板） | 新立 [api/telemetry.md](api/telemetry.md) v1.0：**tracking plan 登记先行**（事件注册表进业务仓 docs + CI/服务端双校验，登记哲学第三用）；上报走业务域名 `POST /api/v1/telemetry/events`（微信白名单零新增）批量双阈值 20 条/10s + onHide/pagehide 强 flush + web sendBeacon 兜底 + RestResponse 信封回执、fire-and-forget 失败静默；SDK 可靠性纪律（内存队列有界 500 + storage 双写 + 失败回滚重试带上限）；隐私红线（禁 PII/白名单通用属性/采集开关）；SDK 落 **@yarch/contract telemetry 模块**（零新包，首批 web+miniprogram+cocos 对齐 RT9）；管道 = 装配件收口转 **kafka** → 摄入 worker 攒批写 **CH**（业务禁直写）；StarRocks BI 与 CDC（debezium+PG）触发式。client-shared 同批增七节。依据：[telemetry-pipeline-digest.md](../docs/references/telemetry-pipeline-digest.md) | 已生效（2026-09-16） |
+| 验证码框架 CP1-CP10（2026-09-18 拍板） | 新立 [api/captcha.md](api/captcha.md) v1.0：**Provider SPI + 框架核心**（进程内组件，非独立服务）；**首发三 Provider**（image 默认 / sms-otp / turnstile——OTP 分发通道宿主注入 SmsSender，yarch 不背通知抽象，EP7 届时对齐）；LOCAL/REMOTE 两类校验模式；**框架内置场景路由**（默认 Provider + scene→Provider 覆盖映射，租户覆盖归应用层扩展位）；**一次性原子消费**（GETDEL，java 存量 get→delete 两步视为缺陷随重构修复）；**2005 CAPTCHA_INVALID 三态合一**（error-codes v1.1 纯增量，四栈 conformance 14 码）+ 限流复用 1006；`GET /api/v1/captcha` 存量字段不动 + verify 内联业务流不设独立端点；字符集/长度入契约、渲染样式自由；java 首批 SPI 重构 + golang 对齐（五处漂移清偿）+ python 首批落地，三栈测试向量 V1-V11 同源；web/客户端零动作 | 已生效（2026-09-18） |
 
 **租户边界标识**（服务名）登记处：[registry.md](registry.md)。
 
 ## 机器可读出口（dist/ · P1 主引擎，2026-09-17）
 
-`contract/dist/` 是 markdown 契约的**派生机器工件**（权威仍是本目录 markdown）：`error-codes.json`（13 码全表 `{code, key, message, http, segment}` + success——key 即 i18n 稳定标识，EP3-R）与 `envelope.schema.json`（RestResponse / PageData 的 JSON Schema draft-07）。生成器 `gen-dist.mjs`（零依赖 Node）从 markdown 表格派生；**markdown 改动而 dist 未重生成 = CI 拒绝**（contract-dist workflow，同 registry-snapshot 漂移门机制）。四栈 conformance 测试读同一份 json 断言（java `GlobalErrorCodeContractTest` / golang `errcode_test` / python `test_errcode` / web `contract.test.ts`），不再各养手抄表。
+`contract/dist/` 是 markdown 契约的**派生机器工件**（权威仍是本目录 markdown）：`error-codes.json`（14 码全表 `{code, key, message, http, segment}` + success——key 即 i18n 稳定标识，EP3-R）与 `envelope.schema.json`（RestResponse / PageData 的 JSON Schema draft-07）。生成器 `gen-dist.mjs`（零依赖 Node）从 markdown 表格派生；**markdown 改动而 dist 未重生成 = CI 拒绝**（contract-dist workflow，同 registry-snapshot 漂移门机制）。四栈 conformance 测试读同一份 json 断言（java `GlobalErrorCodeContractTest` / golang `errcode_test` / python `test_errcode` / web `contract.test.ts`），不再各养手抄表。
 
-## API 契约（REST 四件套 + 实时通道 + 埋点 + 审计）
+## API 契约（REST 四件套 + 实时通道 + 埋点 + 审计 + 验证码）
 
 | 契约 | 文件 | 一句话 |
 |---|---|---|
 | 响应形状 | [rest-response.md](api/rest-response.md) | code/message/data/traceId 四字段，0 即成功 |
-| 错误码段位 | [error-codes.md](api/error-codes.md) | 一张跨语言 errno 段位表，yarch 拥有 0/1xxx/2xxx；标识列即 i18n 稳定 key（EP3-R） |
+| 错误码段位 | [error-codes.md](api/error-codes.md) | 一张跨语言 errno 段位表，yarch 拥有 0/1xxx/2xxx；标识列即 i18n 稳定 key（EP3-R）；v1.1 增 2005 |
 | 日志与追踪 | [logging-trace.md](api/logging-trace.md) | 统一 JSON 行协议 + traceId 贯穿（W3C traceparent）；v1.1 增 spanId / 租户上下文 / 埋点矩阵行 |
 | REST 约定 | [rest-conventions.md](api/rest-conventions.md) | 命名/分页/状态码/幂等，无方言；Accept-Language i18n 就绪位（EP3-R） |
-| 实时通道 | [realtime.md](api/realtime.md) | WebSocket 长连接与推送：首帧鉴权 / 应用层心跳 / 退避重连 / PushEnvelope（复用 13 码表与 traceId 口径，独立于 RestResponse） |
+| 实时通道 | [realtime.md](api/realtime.md) | WebSocket 长连接与推送：首帧鉴权 / 应用层心跳 / 退避重连 / PushEnvelope（复用 14 码表与 traceId 口径，独立于 RestResponse） |
 | 埋点管道 | [telemetry.md](api/telemetry.md) | tracking plan 登记先行 / 业务域名批量上报（双阈值 + onHide·sendBeacon 兜底）/ 收口转 kafka 禁直写 CH / SDK 落契约内核首批三端 |
 | 审计留存 | [audit.md](api/audit.md) | 合规通道：最小审计事件面 + ndjson 固定字段集 → CH append-only + 保留期 ≥180d，落 OperationLogStore SPI 的 CH 实现件 |
+| 验证码框架 | [captcha.md](api/captcha.md) | Provider SPI（image/sms-otp/turnstile 三档）+ 框架核心（一次性原子消费 GETDEL / 场景路由 / 限流 1006 / 2005 三态合一）；verify 内联业务流不设独立端点 |
 
 ## 数据与中间件规约（infra/）
 
@@ -207,6 +209,7 @@
 | 2026-09-16 | **企业级定位修订 + 实时通道定稿**：EP1-EP12 拍板（目标场景补「企业级应用/游戏交付」；三轨排序 realtime > 可观测（含审计）> 埋点；多租户拆两层、i18n 仅就绪位、桌面端/支付协议层触发式登记）；[api/realtime.md](api/realtime.md) v1.0 定稿（RT1-RT9：WS 五端默认档 / 首帧 AUTH / 应用层心跳 / 退避三要素 / PushEnvelope 复用 13 码表）；client-shared 增六节（长连接与推送）；registry 三节增 wss 域名登记行。依据 digest：enterprise-capability-gap / realtime-channel | 已定稿 |
 | 2026-09-16 | **企业级第二三轨定稿（可观测 + 埋点）**：OB1-OB9 + EP2-R/EP3-R、TM1-TM8 拍板——logging-trace **v1.1**（spanId / X-Tenant-Id 租户传播 / 埋点矩阵行，纯增量）；[api/telemetry.md](api/telemetry.md) v1.0（tracking plan 登记先行 / 业务域名批量上报 / 收口转 kafka 禁直写 CH）；[api/audit.md](api/audit.md) v1.0（审计最小事件面 → CH append-only ≥180d）；infra 增 [prometheus.md](infra/prometheus.md) + [grafana.md](infra/grafana.md)（共 22 份）；client-shared 增七节（埋点上报）；error-codes 实现规则 4（标识即稳定 key）+ rest-conventions Accept-Language 就绪位（EP3-R）。依据 digest：observability-track / telemetry-pipeline | 已定稿 |
 | 2026-09-17 | **P1 契约机器可读出口落地**：`contract/dist/` 派生层开张（error-codes.json + envelope.schema.json，gen-dist.mjs 从 markdown 表格生成，contract-dist CI 漂移门）；四栈 conformance 改读同一份 json（java/golang/python/web 同源断言，缺文件优雅跳过）；N1 收口——java 双 archetype / golang / python 生成器模板补 AGENTS.md 三件套（java archetype 三件套走 unfiltered fileSet：Velocity 会把 markdown 的 ## 当行注释吞掉）+ web 五模板补 CLAUDE/GEMINI 一行派生 | 已生效 |
+| 2026-09-18 | **验证码框架 CP1-CP10 拍板成文**：新立 [api/captcha.md](api/captcha.md) v1.0（Provider SPI 三档 + 一次性原子消费 GETDEL + 场景路由 + verify 内联业务流 + 跨栈测试向量附录）；error-codes **v1.1** 纯增量 2005 CAPTCHA_INVALID（dist 14 码，四栈 conformance 同步）；java `yarch-captcha-spring-boot-starter` 同批 SPI 重构（image/sms-otp/turnstile + GETDEL 缺陷修复），golang/python captcha 触发档对齐，web/客户端消费面零动作 | 已生效 |
 | — | 遗留项：低频组件强制级占比复审；机检条文标注启动（下一步：随 stacks 重做启动 `yarch lint`/AI 审查清单） | 待办 |
 
 ## 术语对照（各栈方言）
