@@ -1,0 +1,55 @@
+name: rust-publish
+
+# crates.io 发版流水线（R5）：推 tag stacks/rust/vX.Y.Z 即发布两 crate
+# （yarch-contract → yarch-axum，内核先于装配——对偶 web「tag → npm 三包」）。
+# 前置：仓库 Secrets 配置 CARGO_REGISTRY_TOKEN（crates.io 的 publish-update token）。
+# 未配置时作业绿跳过——tag 推送不因凭证缺席而红（发版日人工前置配 token 后重打 tag）。
+# crates.io 同版本不可重发：以 crates.io API 已发布版本为准做幂等跳过。
+
+on:
+  push:
+    tags: ['stacks/rust/v*']
+
+jobs:
+  publish:
+    name: crates.io 发版（两 crate）
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: stacks/rust
+    env:
+      CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: stacks/rust/Cargo.toml
+      - name: 凭证检查（缺席则绿跳过）
+        if: env.CARGO_REGISTRY_TOKEN == ''
+        run: echo "CARGO_REGISTRY_TOKEN 未配置——跳过发布；配置 Secrets 后重打 tag 触发"
+      - name: 已发布版本查询
+        if: env.CARGO_REGISTRY_TOKEN != ''
+        run: |
+          echo "contract@$(curl -sf https://crates.io/api/v1/crates/yarch-contract | jq -r .crate.max_version) / axum@$(curl -sf https://crates.io/api/v1/crates/yarch-axum | jq -r .crate.max_version)"
+      - name: 发布 yarch-contract（幂等）
+        if: env.CARGO_REGISTRY_TOKEN != ''
+        run: |
+          ver="$(grep -m1 '^version' Cargo.toml | sed 's/.*"\(.*\)".*/\1/')"
+          published="$(curl -sf https://crates.io/api/v1/crates/yarch-contract | jq -r .crate.max_version)"
+          if [ "$published" = "$ver" ]; then
+            echo "跳过 yarch-contract@$ver（registry 已有同版本）"
+          else
+            cargo publish -p yarch-contract
+          fi
+      - name: 发布 yarch-axum（幂等，等 contract 索引生效）
+        if: env.CARGO_REGISTRY_TOKEN != ''
+        run: |
+          ver="$(grep -m1 '^version' Cargo.toml | sed 's/.*"\(.*\)".*/\1/')"
+          published="$(curl -sf https://crates.io/api/v1/crates/yarch-axum | jq -r .crate.max_version)"
+          if [ "$published" = "$ver" ]; then
+            echo "跳过 yarch-axum@$ver（registry 已有同版本）"
+          else
+            sleep 15
+            cargo publish -p yarch-axum
+          fi

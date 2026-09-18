@@ -144,6 +144,7 @@
 | 规约 | 状态 | 一句话 |
 |---|---|---|
 | [微前端](web/micro-frontend.md) | v1.0 已定稿 | 基座↔子应用彼此之间的契约：应用名一名三用（路由前缀/storage 前缀/事件前缀）/ 职责分界 / 通信三通道 / 登录态与 401 跳转唯一归基座 / 独立·集成双模式 / 独立发版；**条文载器无关**，载器分档见关键架构决策登记表 |
+| [组件库](web/component-library.md) | v1.0 已定稿 | 前端资产包（组件/token/区块）的形态约定：包命名 @yarch/tokens·pro-react·pro-vue / 按框架各选生态（React=antd v5、Vue=ElementPlus；单体系内「档唯一」仍硬约束）/ demo manifest `./demos` 子路径导出（source+render 容器注入+清理约定）/ tokens.json 五组必备三载体同源 / 数据流走 @yarch/contract 信封解包 / 条文边界=资产包自带什么，平台渲染机制留实现 |
 
 ## 客户端规约（clients/ · 2026-09-09 新设层）
 
@@ -182,7 +183,7 @@
 
 - API 契约：REST **四件套 v1.0 已定稿**（2026-09-01 评审通过，D1-D6 按"业界标准优先于阿里手册"拍板）；**实时通道 realtime.md v1.0 已定稿**（2026-09-16，RT1-RT9 拍板——企业级定位轨第一优先立项）；**埋点管道 telemetry.md v1.0 已定稿**（2026-09-16，TM1-TM8 拍板——第三轨）；**审计留存 audit.md v1.0 已定稿**（2026-09-16，OB7 拍板——EP4 并轨）；logging-trace **v1.1**（2026-09-16：spanId / 租户上下文 / 埋点矩阵行）
 - infra 规约：**全部 22 份 v1.0 已定稿**（mysql/postgresql/redis/higress 2026-09-01 先行定稿并完成 higress 官方校准；其余 16 份同日评审通过；**prometheus + grafana 2026-09-16 增补**——OB3/OB4/OB6 拍板）
-- 前端规约（web/）：**2026-09-07 新设层**，微前端 v1.0 已定稿（经 MF0-MF7 决策清单拍板）
+- 前端规约（web/）：**2026-09-07 新设层**，微前端 v1.0 已定稿（经 MF0-MF7 决策清单拍板）；组件库 v1.0 已定稿（2026-09-18，CL1-CL6 随 ycomp 立项拍板）
 - 客户端规约（clients/）：**2026-09-09 新设层**，client-shared + android + ios 三份 v1.0 已定稿（经 M1-M7 决策清单拍板）；2026-09-10 增 miniprogram + game 两份 v1.0（经 MP1-MP5/G1-G4 决策清单拍板），共五份
 - 领域契约（domains/）：**2026-09-03 拍板设立**；device.md **v1.0 已定稿**（2026-09-14，Dv1-Dv6 拍板口径），ai.md（LLM 接入）规划中未成文
 - AI 施工规约（agent/）：**2026-09-14 新设层**，agents-md + extensions + cli 三份 v1.0 已定稿（经 A1-A6 决策清单拍板）
@@ -212,6 +213,7 @@
 | 2026-09-17 | **P1 契约机器可读出口落地**：`contract/dist/` 派生层开张（error-codes.json + envelope.schema.json，gen-dist.mjs 从 markdown 表格生成，contract-dist CI 漂移门）；四栈 conformance 改读同一份 json（java/golang/python/web 同源断言，缺文件优雅跳过）；N1 收口——java 双 archetype / golang / python 生成器模板补 AGENTS.md 三件套（java archetype 三件套走 unfiltered fileSet：Velocity 会把 markdown 的 ## 当行注释吞掉）+ web 五模板补 CLAUDE/GEMINI 一行派生 | 已生效 |
 | 2026-09-18 | **验证码框架 CP1-CP10 拍板成文**：新立 [api/captcha.md](api/captcha.md) v1.0（Provider SPI 三档 + 一次性原子消费 GETDEL + 场景路由 + verify 内联业务流 + 跨栈测试向量附录）；error-codes **v1.1** 纯增量 2005 CAPTCHA_INVALID（dist 14 码，四栈 conformance 同步）；java `yarch-captcha-spring-boot-starter` 同批 SPI 重构（image/sms-otp/turnstile + GETDEL 缺陷修复），golang/python captcha 触发档对齐，web/客户端消费面零动作 | 已生效 |
 | 2026-09-18 | **ycomp 组件资产平台立项登记（D1-D9 拍板）**：registry 二节增服务名 `ycomp`（PG 库 ycomp，首个完整 dogfood 消费工程）+ 四节增应用名 `ycomp-console`（单应用非微前端）；决策入登记表；同批同步 rust 栈状态——批次一契约内核已落地（术语表 rust 列以实入表，stacks/rust 进入施工中） | 已生效 |
+| 2026-09-18 | **组件库规约成文（CL1-CL6 拍板，web/ 第二份）**：新立 [web/component-library.md](web/component-library.md) v1.0——资产包命名（@yarch/tokens·pro-react·pro-vue）/ 按框架各选生态基线锁定 / demo manifest `./demos` 子路径导出约定（source+render 容器注入）/ tokens.json 五组必备三载体同源 / 数据流信封解包 / 条文边界（渲染机制留平台实现）/ create-admin antd 档预装；rust 栈批次三发版链路就位（rust-publish.yml tag→crates.io，凭证缺席绿跳过） | 已生效 |
 | — | 遗留项：低频组件强制级占比复审；机检条文标注启动（下一步：随 stacks 重做启动 `yarch lint`/AI 审查清单） | 待办 |
 
 ## 术语对照（各栈方言）
