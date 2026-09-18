@@ -2,6 +2,7 @@
 //! 模块随任务逐件落地，本文件逐件挂载。
 
 pub mod access_log;
+pub mod idempotency;
 pub mod recovery;
 pub mod trace;
 
