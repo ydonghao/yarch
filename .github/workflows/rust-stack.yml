@@ -20,6 +20,10 @@ jobs:
         # R7：stable + MSRV 1.80 双档（dtolnay 动作以 RUSTUP_TOOLCHAIN 覆盖 rust-toolchain.toml）
         toolchain: [stable, '1.80']
     runs-on: ubuntu-latest
+    # job 级 env 压过目录级 rust-toolchain.toml（1.95.0 本地档）——否则矩阵 toolchain
+    # 被覆盖、rustfmt/clippy 组件缺失即红（RUSTUP_TOOLCHAIN 优先级 > toolchain file）
+    env:
+      RUSTUP_TOOLCHAIN: ${{ matrix.toolchain }}
     defaults:
       run:
         working-directory: stacks/rust
