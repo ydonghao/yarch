@@ -7,8 +7,8 @@ from yarch_python.testx import CODE_TABLE, assert_envelope, assert_ndjson, asser
 pytest_plugins = ("yarch_python.testx.fixtures",)
 
 
-def test_code_table_has_14_rows():
-    assert len(CODE_TABLE) == 14 and CODE_TABLE[0] == (0, "OK", "成功", 200)
+def test_code_table_has_15_rows():
+    assert len(CODE_TABLE) == 15 and CODE_TABLE[0] == (0, "OK", "成功", 200)
 
 
 @pytest.mark.parametrize("code,identifier,message,http", CODE_TABLE)

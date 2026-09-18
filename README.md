@@ -23,7 +23,7 @@
 
 ## 从 0 到 1：一条命令生成工程
 
-四个栈同一套契约，全部**生成即合规**——统一信封 · 13 码错误码 · traceId 贯穿 · 分页（页码 D6 + keyset 游标）· 幂等 · 逻辑删除 · 机检预置，业务代码只写业务。
+四个栈同一套契约，全部**生成即合规**——统一信封 · 14 码错误码 · traceId 贯穿 · 分页（页码 D6 + keyset 游标）· 幂等 · 逻辑删除 · 机检预置，业务代码只写业务。
 
 ### Java · Maven archetype（零 clone，Central 已发版）
 
@@ -171,7 +171,7 @@ yarch/
 | 构件 | 能力 |
 |---|---|
 | `yarch-parent` + `yarch-bom` | 构建基线 + 版本唯一仲裁（Boot 4.1 / JDK 25 编 21 / Spotless 4 空格） |
-| `yarch-common` | 信封 / 13 码错误码表 / PageData / BusinessException / Asserts / Masks / TraceIds |
+| `yarch-common` | 信封 / 14 码错误码表 / PageData / BusinessException / Asserts / Masks / TraceIds |
 | `yarch-web-…` | 异常矩阵 / 分页 / **幂等** / **@RateLimited(1006)** / **@OperationLog** / **@SignedApi** |
 | `yarch-logging-…` | **ndjson 行协议** / TraceIdFilter（traceparent 优先） |
 | `yarch-persistence-…` | PG + MyBatis-Plus：**逻辑删除** / 审计填充 / **分页下推** / keyset 游标 |
@@ -209,7 +209,7 @@ yarch/
 
 | 层 | Java | Web | Python |
 |---|---|---|---|
-| 契约断言 | 错误码 13 码逐码核对 + 信封形状 + ndjson 字段 | 错误码表逐码核对 + 解包语义 | testx：13 码全表 + 信封/ndjson/PageData（跨栈 conformance 同表） |
+| 契约断言 | 错误码 14 码逐码核对 + 信封形状 + ndjson 字段 | 错误码表逐码核对 + 解包语义 | testx：14 码全表 + 信封/ndjson/PageData（跨栈 conformance 同表） |
 | 架构守卫 | ArchUnit（DDD 依赖倒置 / 五层单向） | depcruise（pages 薄入口 / 禁反向 / contract 零框架） | import-linter（契约内核零框架 + 禁反向依赖） |
 | 代码风格 | Spotless AOSP 4 空格（check 挂 verify） | biome（规范单点） | ruff check + format + mypy |
 

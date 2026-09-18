@@ -36,7 +36,7 @@
 | `id` | string | 消息标识：上行请求帧由客户端生成，服务端响应帧回带同值（请求-响应关联）；服务端推送自生成 |
 | `ts` | ISO-8601 UTC | D4 同源 |
 | `traceId` | string | 32 位小写 hex，见四-2 |
-| `data` | object | 载荷，字段 camelCase；错误帧为 `code` / `message`（复用 13 码表，见四-1） |
+| `data` | object | 载荷，字段 camelCase；错误帧为 `code` / `message`（复用 14 码表，见四-1） |
 
 2. 【强制】请求-响应 over 通道：客户端上行带 `id`，服务端回执帧（业务响应或 `error` 帧）回带同 `id`；`error` 帧形状 `{type:"error", id, code, message, traceId}`。
 3. 【强制】单帧载荷 ≤ 64KB：超限内容走 REST 或对象存储引用化传递（对齐 [../infra/kafka.md](../infra/kafka.md) 大消息引用化先例）。
@@ -67,7 +67,7 @@
 | 二-4 退避三要素 | 内核重连序列单测（指数 + 抖动 + 封顶断言） | 单测 |
 | 三-1 信封字段恒在 | 内核序列化单测（缺字段即构造失败） | 单测 |
 | 三-1 系统保留 type 冲突 | 业务 type 注册表校验（CI 枚举检查） | CI |
-| 四-1 错误码复用 | 契约断言（同 13 码表，随支柱 1 error-codes.json 同源） | 单测 |
+| 四-1 错误码复用 | 契约断言（同 14 码表，随支柱 1 error-codes.json 同源） | 单测 |
 
 ---
 

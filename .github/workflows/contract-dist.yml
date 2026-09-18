@@ -27,7 +27,7 @@ jobs:
           node -e "
           const s = require('./contract/dist/envelope.schema.json');
           const ec = require('./contract/dist/error-codes.json');
-          if (ec.codes.length !== 13) throw new Error('13 码表异常');
+          if (ec.codes.length !== 14) throw new Error('14 码表异常');
           for (const c of ec.codes) {
             if (!(c.code > 0) || !c.key || !c.message || !(c.http >= 400)) throw new Error('三元组残缺: ' + JSON.stringify(c));
           }

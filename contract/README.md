@@ -39,8 +39,8 @@
 | 规约 | 前置依赖（硬） | 主要协作参考（软） |
 |---|---|---|
 | mysql / postgresql / mongodb / redis / nginx | — | api 四件套（错误码/幂等/traceId 口径） |
-| api/realtime | — | error-codes（13 码表复用）、logging-trace（ndjson/traceId）、rest-conventions（命名/大消息引用化）、clients/client-shared（六节客户端纪律）、nginx/higress（入口透传） |
-| api/telemetry | — | error-codes（13 码表回执）、logging-trace（埋点矩阵行）、kafka（摄入管道）、clickhouse（攒批写入）、clients/client-shared（七节客户端纪律） |
+| api/realtime | — | error-codes（14 码表复用）、logging-trace（ndjson/traceId）、rest-conventions（命名/大消息引用化）、clients/client-shared（六节客户端纪律）、nginx/higress（入口透传） |
+| api/telemetry | — | error-codes（14 码表回执）、logging-trace（埋点矩阵行）、kafka（摄入管道）、clickhouse（攒批写入）、clients/client-shared（七节客户端纪律） |
 | api/audit | — | logging-trace（行协议同源）、clickhouse（append-only 存储）、registry（派生资源登记指引同款） |
 | infra/prometheus / infra/grafana | — | api/logging-trace（service/env 标签口径）、api/audit + api/telemetry（CH 数据源共用）、agent/extensions（数据源凭证 ${ENV}） |
 | timescale | postgresql | clickhouse（日志场景分流） |
@@ -96,7 +96,7 @@
 
 ## 机器可读出口（dist/ · P1 主引擎，2026-09-17）
 
-`contract/dist/` 是 markdown 契约的**派生机器工件**（权威仍是本目录 markdown）：`error-codes.json`（13 码全表 `{code, key, message, http, segment}` + success——key 即 i18n 稳定标识，EP3-R）与 `envelope.schema.json`（RestResponse / PageData 的 JSON Schema draft-07）。生成器 `gen-dist.mjs`（零依赖 Node）从 markdown 表格派生；**markdown 改动而 dist 未重生成 = CI 拒绝**（contract-dist workflow，同 registry-snapshot 漂移门机制）。四栈 conformance 测试读同一份 json 断言（java `GlobalErrorCodeContractTest` / golang `errcode_test` / python `test_errcode` / web `contract.test.ts`），不再各养手抄表。
+`contract/dist/` 是 markdown 契约的**派生机器工件**（权威仍是本目录 markdown）：`error-codes.json`（14 码全表 `{code, key, message, http, segment}` + success——key 即 i18n 稳定标识，EP3-R）与 `envelope.schema.json`（RestResponse / PageData 的 JSON Schema draft-07）。生成器 `gen-dist.mjs`（零依赖 Node）从 markdown 表格派生；**markdown 改动而 dist 未重生成 = CI 拒绝**（contract-dist workflow，同 registry-snapshot 漂移门机制）。四栈 conformance 测试读同一份 json 断言（java `GlobalErrorCodeContractTest` / golang `errcode_test` / python `test_errcode` / web `contract.test.ts`），不再各养手抄表。
 
 ## API 契约（REST 四件套 + 实时通道 + 埋点 + 审计 + 验证码）
 
@@ -106,7 +106,7 @@
 | 错误码段位 | [error-codes.md](api/error-codes.md) | 一张跨语言 errno 段位表，yarch 拥有 0/1xxx/2xxx；标识列即 i18n 稳定 key（EP3-R）；v1.1 增 2005 |
 | 日志与追踪 | [logging-trace.md](api/logging-trace.md) | 统一 JSON 行协议 + traceId 贯穿（W3C traceparent）；v1.1 增 spanId / 租户上下文 / 埋点矩阵行 |
 | REST 约定 | [rest-conventions.md](api/rest-conventions.md) | 命名/分页/状态码/幂等，无方言；Accept-Language i18n 就绪位（EP3-R） |
-| 实时通道 | [realtime.md](api/realtime.md) | WebSocket 长连接与推送：首帧鉴权 / 应用层心跳 / 退避重连 / PushEnvelope（复用 13 码表与 traceId 口径，独立于 RestResponse） |
+| 实时通道 | [realtime.md](api/realtime.md) | WebSocket 长连接与推送：首帧鉴权 / 应用层心跳 / 退避重连 / PushEnvelope（复用 14 码表与 traceId 口径，独立于 RestResponse） |
 | 埋点管道 | [telemetry.md](api/telemetry.md) | tracking plan 登记先行 / 业务域名批量上报（双阈值 + onHide·sendBeacon 兜底）/ 收口转 kafka 禁直写 CH / SDK 落契约内核首批三端 |
 | 审计留存 | [audit.md](api/audit.md) | 合规通道：最小审计事件面 + ndjson 固定字段集 → CH append-only + 保留期 ≥180d，落 OperationLogStore SPI 的 CH 实现件 |
 | 验证码框架 | [captcha.md](api/captcha.md) | Provider SPI（image/sms-otp/turnstile 三档）+ 框架核心（一次性原子消费 GETDEL / 场景路由 / 限流 1006 / 2005 三态合一）；verify 内联业务流不设独立端点 |
