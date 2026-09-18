@@ -1,7 +1,7 @@
 # contract/ · 跨栈统一契约与规约
 
 > 多栈脚手架的灵魂：各栈长得不一样没关系，必须说同一种接口语言。
-> 本目录是全部栈实现的**唯一权威来源**，改契约必须先改这里。已落地：java / golang / web / python；clients 移动端规约已定稿（2026-09-09，实现触发式）；**规约已立待施工**：stacks/rust（axum）+ embedded/esp32（esp-idf-hal std，2026-09-14）；规划中：node（触发式）。**agent/ AI 施工规约已定稿**（2026-09-14：约束全部工程的 AI 代理上下文、生态扩展出口与自家 CLI）。**企业级三轨契约已定稿**（2026-09-16：api/realtime · telemetry · audit + infra/prometheus · grafana + logging-trace v1.1，实现触发式）。
+> 本目录是全部栈实现的**唯一权威来源**，改契约必须先改这里。已落地：java / golang / web / python；stacks/rust **施工中**（批次一契约内核 + CI 已落地 2026-09-18）；clients 移动端规约已定稿（2026-09-09，实现触发式）；**规约已立待施工**：embedded/esp32（esp-idf-hal std，2026-09-14）；规划中：node（触发式）。**agent/ AI 施工规约已定稿**（2026-09-14：约束全部工程的 AI 代理上下文、生态扩展出口与自家 CLI）。**企业级三轨契约已定稿**（2026-09-16：api/realtime · telemetry · audit + infra/prometheus · grafana + logging-trace v1.1，实现触发式）。
 
 ## 规约治理（等级定义 / 豁免与变更 / 机检路线）
 
@@ -91,6 +91,7 @@
 | 可观测轨 OB1-OB9 + EP2-R/EP3-R（2026-09-16 拍板） | 骨架 = **OTel 三信号 + Collector**（厂商中立）；**logging-trace 升 v1.1**（spanId 入上下文与日志、租户上下文 X-Tenant-Id 进传播矩阵——机制归 yarch 隔离模型归业务、埋点上报边界进矩阵）；metrics = **Prometheus**（exposition 标准 + RED 基础集装配件收口，新 infra/prometheus.md）；logs/traces 后端 = **ClickHouse 统一**（官方 ClickStack 路径，不新立 Loki/Tempo/Mimir，LGTM 触发档；新 infra/grafana.md：Grafana 单面板两件制 + Alerting + dashboards/告警规则 provisioning 进 git）；**ndjson 行协议不搬家**（OTel SDK 只管 traces+metrics，采集走 Collector filelog）；traces 默认全量+采样单配置点；**审计 EP4 并轨**：api/audit.md v1.0（最小审计事件面 + 固定字段集 → CH append-only + 保留期 ≥180d，落 OperationLogStore SPI CH 实现件）；EP3-R：error-codes 标识列即稳定 key，error-codes.json 必含 code/key/message + REST Accept-Language 就绪位（多语言 catalog 不做）。依据：[observability-track-digest.md](../docs/references/observability-track-digest.md) | 已生效（2026-09-16） |
 | 埋点管道轨 TM1-TM8（2026-09-16 拍板） | 新立 [api/telemetry.md](api/telemetry.md) v1.0：**tracking plan 登记先行**（事件注册表进业务仓 docs + CI/服务端双校验，登记哲学第三用）；上报走业务域名 `POST /api/v1/telemetry/events`（微信白名单零新增）批量双阈值 20 条/10s + onHide/pagehide 强 flush + web sendBeacon 兜底 + RestResponse 信封回执、fire-and-forget 失败静默；SDK 可靠性纪律（内存队列有界 500 + storage 双写 + 失败回滚重试带上限）；隐私红线（禁 PII/白名单通用属性/采集开关）；SDK 落 **@yarch/contract telemetry 模块**（零新包，首批 web+miniprogram+cocos 对齐 RT9）；管道 = 装配件收口转 **kafka** → 摄入 worker 攒批写 **CH**（业务禁直写）；StarRocks BI 与 CDC（debezium+PG）触发式。client-shared 同批增七节。依据：[telemetry-pipeline-digest.md](../docs/references/telemetry-pipeline-digest.md) | 已生效（2026-09-16） |
 | 验证码框架 CP1-CP10（2026-09-18 拍板） | 新立 [api/captcha.md](api/captcha.md) v1.0：**Provider SPI + 框架核心**（进程内组件，非独立服务）；**首发三 Provider**（image 默认 / sms-otp / turnstile——OTP 分发通道宿主注入 SmsSender，yarch 不背通知抽象，EP7 届时对齐）；LOCAL/REMOTE 两类校验模式；**框架内置场景路由**（默认 Provider + scene→Provider 覆盖映射，租户覆盖归应用层扩展位）；**一次性原子消费**（GETDEL，java 存量 get→delete 两步视为缺陷随重构修复）；**2005 CAPTCHA_INVALID 三态合一**（error-codes v1.1 纯增量，四栈 conformance 14 码）+ 限流复用 1006；`GET /api/v1/captcha` 存量字段不动 + verify 内联业务流不设独立端点；字符集/长度入契约、渲染样式自由；java 首批 SPI 重构 + golang 对齐（五处漂移清偿）+ python 首批落地，三栈测试向量 V1-V11 同源；web/客户端零动作 | 已生效（2026-09-18） |
+| ycomp 组件资产平台立项 D1-D9（2026-09-18 拍板） | **yarch 首个完整 dogfood 消费工程**（独立仓，与 yarch 同级）：重平台形态（登记/预览/同步/追踪）+ 个人自用**无认证**（后续接 ysaas SSO，触发式）+ 资产四类（React/Vue 业务组件 · design token · 页面区块）+ **按框架各选生态**（React=antd v5 / Vue=ElementPlus，微前端「档唯一」仅约束单体系内部）+ 分发走公共 npm @yarch org（平台只管元数据/预览/检索）+ **后端 Rust——平台即 rust 栈触发工程**（批次三 crates.io 发版后置，git tag 依赖过渡）+ 技术核心方案 A 轻运行时（rust 元数据服务 + iframe sandbox + esm.sh import map 零构建预览 + npm registry 轮询同步 + lockfile 扫描追踪）；服务名 `ycomp` / 应用名 `ycomp-console` 见 registry 二/四节；组件库首批 `@yarch/tokens` + `@yarch/pro-react`（CRUD 三件套）进 yarch stacks/web/packages/；新契约 contract/web/component-library.md（demo manifest + tokens schema，CL1-CL6 决策清单成文前拍板）；设计文档 = yarch 仓 docs/superpowers/specs/2026-09-18-ycomp-component-platform-design.md | 已生效（2026-09-18） |
 
 **租户边界标识**（服务名）登记处：[registry.md](registry.md)。
 
@@ -210,16 +211,17 @@
 | 2026-09-16 | **企业级第二三轨定稿（可观测 + 埋点）**：OB1-OB9 + EP2-R/EP3-R、TM1-TM8 拍板——logging-trace **v1.1**（spanId / X-Tenant-Id 租户传播 / 埋点矩阵行，纯增量）；[api/telemetry.md](api/telemetry.md) v1.0（tracking plan 登记先行 / 业务域名批量上报 / 收口转 kafka 禁直写 CH）；[api/audit.md](api/audit.md) v1.0（审计最小事件面 → CH append-only ≥180d）；infra 增 [prometheus.md](infra/prometheus.md) + [grafana.md](infra/grafana.md)（共 22 份）；client-shared 增七节（埋点上报）；error-codes 实现规则 4（标识即稳定 key）+ rest-conventions Accept-Language 就绪位（EP3-R）。依据 digest：observability-track / telemetry-pipeline | 已定稿 |
 | 2026-09-17 | **P1 契约机器可读出口落地**：`contract/dist/` 派生层开张（error-codes.json + envelope.schema.json，gen-dist.mjs 从 markdown 表格生成，contract-dist CI 漂移门）；四栈 conformance 改读同一份 json（java/golang/python/web 同源断言，缺文件优雅跳过）；N1 收口——java 双 archetype / golang / python 生成器模板补 AGENTS.md 三件套（java archetype 三件套走 unfiltered fileSet：Velocity 会把 markdown 的 ## 当行注释吞掉）+ web 五模板补 CLAUDE/GEMINI 一行派生 | 已生效 |
 | 2026-09-18 | **验证码框架 CP1-CP10 拍板成文**：新立 [api/captcha.md](api/captcha.md) v1.0（Provider SPI 三档 + 一次性原子消费 GETDEL + 场景路由 + verify 内联业务流 + 跨栈测试向量附录）；error-codes **v1.1** 纯增量 2005 CAPTCHA_INVALID（dist 14 码，四栈 conformance 同步）；java `yarch-captcha-spring-boot-starter` 同批 SPI 重构（image/sms-otp/turnstile + GETDEL 缺陷修复），golang/python captcha 触发档对齐，web/客户端消费面零动作 | 已生效 |
+| 2026-09-18 | **ycomp 组件资产平台立项登记（D1-D9 拍板）**：registry 二节增服务名 `ycomp`（PG 库 ycomp，首个完整 dogfood 消费工程）+ 四节增应用名 `ycomp-console`（单应用非微前端）；决策入登记表；同批同步 rust 栈状态——批次一契约内核已落地（术语表 rust 列以实入表，stacks/rust 进入施工中） | 已生效 |
 | — | 遗留项：低频组件强制级占比复审；机检条文标注启动（下一步：随 stacks 重做启动 `yarch lint`/AI 审查清单） | 待办 |
 
 ## 术语对照（各栈方言）
 
-| 概念 | java | golang | web | python |
-|---|---|---|---|---|
-| 响应体 | `RestResponse<T>` | `response.Response` | `RestResponse<T>` | `yarch_python.response.Response` |
-| 分页负载 | `PageData<T>` | `response.PageData` | `PageData<T>` | `yarch_python.response.PageData` |
-| 错误码 | `GlobalErrorCode` | `errcode.Code` | `errorCodes` 常量 | `errcode.Code` |
-| 业务异常 | `BusinessException` | `xerror.BizError` | `ApiError` | `xerror.BizError` |
-| 追踪 ID | `TraceIdFilter`(MDC) | `middleware.Trace()` | `apiClient` 注入/透出 | `middleware.TraceMiddleware`(contextvars) |
+| 概念 | java | golang | web | python | rust |
+|---|---|---|---|---|---|
+| 响应体 | `RestResponse<T>` | `response.Response` | `RestResponse<T>` | `yarch_python.response.Response` | `RestResponse<T>`（yarch_contract::response） |
+| 分页负载 | `PageData<T>` | `response.PageData` | `PageData<T>` | `yarch_python.response.PageData` | —（批次二 sqlx 装配） |
+| 错误码 | `GlobalErrorCode` | `errcode.Code` | `errorCodes` 常量 | `errcode.Code` | `errcode::ErrCode` 常量表 |
+| 业务异常 | `BusinessException` | `xerror.BizError` | `ApiError` | `xerror.BizError` | —（批次二 errors 七包） |
+| 追踪 ID | `TraceIdFilter`(MDC) | `middleware.Trace()` | `apiClient` 注入/透出 | `middleware.TraceMiddleware`(contextvars) | `yarch_contract::trace`（中间件批次二） |
 
-> **rust 两轨**（2026-09-14 立项，规约已立、工程未动工，实现落地后以实为准入表）：云栈 `stacks/rust`（axum，workspace 两 crate——`yarch_contract::response/errcode/trace` + `yarch_axum::middleware`）；固件轨 `embedded/esp32`（esp-idf-hal std，device.md 方言——非 REST 语义，信封哲学映射 MQTT resp 回执）。两轨零共享 crate。
+> **rust 两轨**（云栈 2026-09-18 批次一落地：workspace 两 crate + 契约内核三模块 + conformance 同源断言 + rust-stack CI 四段门禁——术语表已以实入表，批次二施工中）：云栈 `stacks/rust`（axum，`yarch_contract::response/errcode/trace` 已落 + `yarch_axum::middleware` 批次二）；固件轨 `embedded/esp32`（规约已立待施工；esp-idf-hal std，device.md 方言——非 REST 语义，信封哲学映射 MQTT resp 回执）。两轨零共享 crate。

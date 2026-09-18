@@ -16,6 +16,7 @@
 | `ysaas` | ysaas（首个客户） | 待登记 | — | 示例行：首个业务工程接入时正式登记 |
 | `yagent` | yagent | 待登记 | — | 示例行 |
 | `ybookreading` | ybookreading | 2026-09-14 | — | 本地 TXT 小说阅读器（Android 原生，纯本地无后端，不启用共享基础设施前缀） |
+| `ycomp` | ycomp（组件资产平台） | 2026-09-18 | PG 库 ycomp | yarch 首个完整 dogfood 消费工程：前端组件资产平台（登记/预览/同步/追踪），独立仓与 yarch 同级；后端 rust（rust 栈触发工程）；设计定稿见 yarch 仓 docs/superpowers/specs/2026-09-18-ycomp-component-platform-design.md |
 
 > 登记方式：PR 修改本表即登记；重名在 CI/评审阶段拒绝。
 
@@ -45,6 +46,7 @@
 |---|---|---|---|---|---|
 | `ysaas-console` | 基座 | `ysaas` | `/` | 2026-09-09 | 微前端首批示例（仓内 stacks/web/examples/ysaas-console） |
 | `ysaas-billing` | 子应用 | `ysaas` | `/ysaas-billing` | 2026-09-09 | 微前端首批示例（仓内 stacks/web/examples/ysaas-billing） |
+| `ycomp-console` | 单应用（非微前端） | `ycomp` | `/` | 2026-09-18 | 组件资产平台 console（`npm create @yarch/admin --ui antd` 产出；micro-frontend.md 一-4：单团队不为微前端而微前端） |
 
 ## 五、移动 App 登记（clients）
 
