@@ -7,14 +7,14 @@
 
 用户要在 yarch 规约体系之上建一个**前端组件资产平台**（重平台形态：登记 / 版本管理 / 在线预览 / 使用追踪），服务于个人名下各系统（ysaas、ybookreading、microduck 及后续工程）的构建复用。平台本身是 **yarch 首个完整 dogfood 消费工程**，同时充当 **rust 云栈的触发工程**。
 
-**边界（明确不做）**：不做分发（npm `@yarch` org 是唯一分发通道）、不做构建流水线（预览零构建）、不做多租户/多贡献者（个人自用，单管理员）、不做私有 registry。
+**边界（明确不做）**：不做分发（npm `@yarch` org 是唯一分发通道）、不做构建流水线（预览零构建）、不做多租户/多贡献者（个人自用）、不做私有 registry、**不自建认证/用户体系（后续接 ysaas 平台 SSO，触发式——届时再立决策清单）**。
 
 ## 二、拍板记录（2026-09-18 本对话）
 
 | # | 议题 | 结论 |
 |---|---|---|
 | D1 | 平台形态 | 组件资产平台（重平台）：登记 + 预览 + 同步 + 追踪 |
-| D2 | 受众 | 个人自用；无多租户与权限分级，单管理员 |
+| D2 | 受众 | 个人自用；**无认证/用户体系（后续接 ysaas SSO，触发式）**、无多租户与权限分级 |
 | D3 | 资产范围 | React 业务组件、Vue 业务组件、design token/主题包、页面模板/区块（四类全管） |
 | D4 | UI 档关系 | 按框架各选生态：React → antd v5；Vue → ElementPlus。微前端「档唯一」仅约束单体系内部，不约束组件库 |
 | D5 | 分发通道 | 公共 npm `@yarch` org；平台只管元数据/预览/检索，不碰分发 |
@@ -86,13 +86,13 @@ sources/ycomp/
 
 - rust axum 单体（cargo generate 产出，DDD 七包）+ sqlx + 共享 PG 库 `ycomp`。
 - **单二进制**：rust-embed 内嵌 frontend/dist（tower-http ServeDir + history 路由 fallback），systemd 或 docker 部署 yuandonghao-linux；Dockerfile 多阶段（cargo release 构建 + 静态资源 + slim runtime）。
-- 个人自用：内网/反代后暴露即可；观测 = tracing + ndjson（rust 栈中间件自带 AccessLog/Trace），prometheus 触发式后置。
+- **无认证暴露面**：服务只绑内网地址或反代限内网访问（不公网裸奔）；ysaas SSO 接入前保持此口径。
+- 观测 = tracing + ndjson（rust 栈中间件自带 AccessLog/Trace），prometheus 触发式后置。
 
 ### 数据模型（postgresql.md 口径：snake_case/单数表/`is_` 布尔/timestamptz/逻辑删除）
 
 | 表 | 要点 |
 |---|---|
-| `admin_user` | 单管理员，argon2 密码哈希 |
 | `package` | npm_name 唯一；kind（component/token/block）；framework（react/vue/none）；ecosystem（antd/element-plus/none）；title/description/repo_url |
 | `package_version` | version、dist_tag、manifest jsonb、readme_md、published_at、synced_at |
 | `consumer_repo` | name、git_url、branch、is_active、last_scan_at、last_scan_status |
@@ -101,7 +101,7 @@ sources/ycomp/
 
 ### API（REST 四件套口径：信封 + 错误码 + traceId；错误码 3xxx 段登记 ycomp/docs/errno.md）
 
-- 认证：`POST /api/v1/auth/login`（单管理员 → token），全 API bearer 校验。
+- 认证：**无**（见一、边界；后续 ysaas SSO 接入为触发项）。
 - 包：`POST /api/v1/packages`（登记 npm 包名，首次即拉元数据）、`GET /api/v1/packages`（kind/framework/关键词筛选，keyset 分页）、`GET /api/v1/packages/{id}`、`GET /api/v1/packages/{id}/versions`、`GET .../versions/{version}`。
 - 仓：`POST /api/v1/repos`、`GET /api/v1/repos`、`GET /api/v1/repos/{id}`（含 usage）。
 - 触发：`POST /api/v1/syncs/npm`、`POST /api/v1/scans/repo`（手动按钮同 job 逻辑）。
@@ -126,7 +126,7 @@ sources/ycomp/
 
 ### 平台前端自举
 
-`npm create @yarch/admin --ui antd` 产出（登录/布局/CRUD 范式现成），console 自身消费 `@yarch/pro-react` 管理包元数据——组件库第零号消费者，狗粮闭环。
+`npm create @yarch/admin --ui antd` 产出（布局/CRUD 范式现成；**模板登录流剔除**——暂无认证，接入路由直进），console 自身消费 `@yarch/pro-react` 管理包元数据——组件库第零号消费者，狗粮闭环。
 
 ## 七、组件库契约决策清单（成文前须正式拍板）
 
@@ -147,7 +147,7 @@ sources/ycomp/
 批次 2（SP0-二）：yarch-axum 五中间件 + sqlx + 模板       DoD：cargo test/clippy/rustfmt 绿 + 模板生成冒烟
      ∥（SP1）：CL1-CL6 拍板 → component-library.md 成文 → tokens + pro-react 三件套
                                                           DoD：pnpm test 绿 + 包可发版
-批次 3（SP2-骨架）：cargo generate ycomp 仓 + PG 库 + 迁移 + 登录    DoD：healthz + 登录闭环
+批次 3（SP2-骨架）：cargo generate ycomp 仓 + PG 库 + 迁移          DoD：healthz + 包登记 API 闭环
 批次 4（SP2-API/jobs）：包/仓/版本 API + 同步 job + 追踪 job        DoD：集成测试（真实 PG）绿
 批次 5（SP2-前端/沙箱）：console 页面 + 预览沙箱 + usage 总览       DoD：端到端剧本绿
 批次 6（部署）：单二进制内嵌前端 → yuandonghao-linux 上线           DoD：curl healthz + 预览可访问
@@ -162,5 +162,6 @@ sources/ycomp/
 | esm.sh 第三方 CDN 可用性 | 降级不致命（预览报错 + 外链）；观察哨：连续不可用再评估自举 CDN 或快照方案（方案 B 退路） |
 | rust 栈施工超预期（async 上下文/tower 版本矩阵） | PLAN 已列；平台后端如被阻塞可临时以更薄手写 axum 骨架先行、回头对齐（须登记 waiver） |
 | 追踪 job clone 凭证管理 | PAT 走环境变量；只读最小权限 token |
+| 服务无认证被公网暴露 | 只绑内网/反代限内网；接入 ysaas SSO 前不公网开放 |
 | sqlx 离线 CI 校验 | 预置 `.sqlx/` 快照（PLAN 七-1） |
 | 组件库与平台互相等待 | SP1 与 SP0 并行；沙箱开发期可用本地 mock manifest 先行 |
