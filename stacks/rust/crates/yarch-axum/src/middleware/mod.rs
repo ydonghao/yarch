@@ -1,6 +1,8 @@
 //! 中间件五件（组合语义 spec 六-2；外→内 AccessLog > Trace > Recovery > Rate > Idem）。
 //! 模块随任务逐件落地，本文件逐件挂载。
 
+pub mod access_log;
+pub mod recovery;
 pub mod trace;
 
 use std::sync::Arc;
