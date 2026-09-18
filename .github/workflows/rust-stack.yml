@@ -61,7 +61,8 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
-      - uses: taiki-e/install-action@cargo-generate
+      # cargo-generate 0.22.1：最新版依赖链要求 rustc 1.96（超 stable 档）——钉版本源装
+      - run: cargo install cargo-generate --locked --version 0.22.1
       - name: 生成（yarch 依赖以 path 覆盖 git tag 默认——发版前过渡，golang replace 行对偶）
         run: |
           cargo generate --path stacks/rust/templates/service --name smoke-svc \
