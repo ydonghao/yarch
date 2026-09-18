@@ -65,6 +65,7 @@ stacks/rust/
 
 ## 七、已知风险
 
-1. sqlx 编译期 SQL 校验依赖 DATABASE_URL（离线 CI 用 `sqlx prepare` 快照模式）——模板须预置 `.sqlx/` 缓存或离线模式说明；
+1. sqlx 编译期 SQL 校验依赖 DATABASE_URL（离线 CI 用 `sqlx prepare` 快照模式）——模板须预置 `.sqlx/` 缓存或离线模式说明；**当前口径：运行时查询（query_as_with 非 query! 宏），零 DATABASE_URL 编译前提，宏档随发版批评估**；
 2. axum 0.8 中间件生态（tower-http 版本矩阵）与 tracing 的 async 上下文传播需逐项对齐 python 中间件组合语义（Rate 在 Idem 外层等）——施工时对照 python test_middleware_composition.py 逐条翻译；
 3. crates.io 发布凭证与 GPG 签名流程与 Maven Central 不同（token + cargo publish），首版需走通。
+4. **MSRV 1.80 依赖钉子（2026-09-18 批次二实证）**：当前 registry 的传递依赖大量转 edition2024/rust-version>1.80，锁文件须持钉：`idna_adapter=1.2.0`（连带 icu 1.5 全链）、`home=0.5.9`、`indexmap=2.9.0`、`litemap=0.7.4`、`crc=3.3.0`。**凡动依赖（cargo update 全量刷新会重置钉子）后必须 `cargo +1.80 clippy --all-targets` 验证并重钉**；钉子维护成本若持续上升（每轮 update 数枚），R7 的 MSRV 1.80 档视情升 1.85 走变更口径。
