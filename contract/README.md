@@ -219,7 +219,7 @@
 | 概念 | java | golang | web | python | rust |
 |---|---|---|---|---|---|
 | 响应体 | `RestResponse<T>` | `response.Response` | `RestResponse<T>` | `yarch_python.response.Response` | `RestResponse<T>`（yarch_contract::response） |
-| 分页负载 | `PageData<T>` | `response.PageData` | `PageData<T>` | `yarch_python.response.PageData` | —（批次二 sqlx 装配） |
+| 分页负载 | `PageData<T>` | `response.PageData` | `PageData<T>` | `yarch_python.response.PageData` | `PageData<T>`（yarch_contract::page） |
 | 错误码 | `GlobalErrorCode` | `errcode.Code` | `errorCodes` 常量 | `errcode.Code` | `errcode::ErrCode` 常量表 |
 | 业务异常 | `BusinessException` | `xerror.BizError` | `ApiError` | `xerror.BizError` | —（批次二 errors 七包） |
 | 追踪 ID | `TraceIdFilter`(MDC) | `middleware.Trace()` | `apiClient` 注入/透出 | `middleware.TraceMiddleware`(contextvars) | `yarch_contract::trace`（中间件批次二） |
