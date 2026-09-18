@@ -1,4 +1,4 @@
-// Package errcode 实现契约「错误码全局段位表」（contract/api/error-codes.md v1.0）。
+// Package errcode 实现契约「错误码全局段位表」（contract/api/error-codes.md v1.1）。
 // yarch 只拥有 0、1xxx、2xxx；3xxx-8xxx 由业务仓注册后方可使用，9xxx 预留不得使用。
 package errcode
 
@@ -31,6 +31,7 @@ const (
 	CredentialsExpired Code = 2002 // CREDENTIALS_EXPIRED / 凭证已过期 / 401
 	Forbidden          Code = 2003 // FORBIDDEN / 权限不足 / 403
 	AccountDisabled    Code = 2004 // ACCOUNT_DISABLED / 账号已禁用 / 403
+	CaptchaInvalid     Code = 2005 // CAPTCHA_INVALID / 验证码校验失败 / 400（captcha.md 五-2：三态合一禁细分）
 )
 
 type meta struct {
@@ -53,6 +54,7 @@ var builtin = map[Code]meta{
 	CredentialsExpired:  {"CredentialsExpired", "凭证已过期", 401},
 	Forbidden:           {"Forbidden", "权限不足", 403},
 	AccountDisabled:     {"AccountDisabled", "账号已禁用", 403},
+	CaptchaInvalid:      {"CaptchaInvalid", "验证码校验失败", 400},
 }
 
 var (

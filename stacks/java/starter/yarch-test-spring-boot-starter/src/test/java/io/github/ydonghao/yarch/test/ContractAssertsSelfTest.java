@@ -16,7 +16,7 @@ class ContractAssertsSelfTest {
 
     @Test
     void errorCodeTableAssertsPass() {
-        // 全表核对（13 码 + HTTP 映射 + 默认文案），任何漂移在此失败
+        // 全表核对（14 码 + HTTP 映射 + 默认文案），任何漂移在此失败
         ContractAsserts.assertErrorCodeTable();
     }
 

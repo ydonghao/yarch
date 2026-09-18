@@ -3,7 +3,7 @@ package io.github.ydonghao.yarch.common.code;
 import java.util.Optional;
 
 /**
- * yarch 内置错误码全表（契约唯一权威：contract/api/error-codes.md v1.0）。 本枚举与契约表不一致即 bug——由
+ * yarch 内置错误码全表（契约唯一权威：contract/api/error-codes.md v1.1）。 本枚举与契约表不一致即 bug——由
  * yarch-test-spring-boot-starter 的契约断言测试守护。
  */
 public enum GlobalErrorCode implements ErrorCode {
@@ -25,7 +25,10 @@ public enum GlobalErrorCode implements ErrorCode {
     UNAUTHORIZED(2001, "未认证", 401),
     CREDENTIALS_EXPIRED(2002, "凭证已过期", 401),
     FORBIDDEN(2003, "权限不足", 403),
-    ACCOUNT_DISABLED(2004, "账号已禁用", 403);
+    ACCOUNT_DISABLED(2004, "账号已禁用", 403),
+
+    /** 验证码校验失败：key 无效/已消费/答案错误三态合一，禁细分（captcha.md 五-2） */
+    CAPTCHA_INVALID(2005, "验证码校验失败", 400);
 
     private final int code;
     private final String defaultMessage;

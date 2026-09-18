@@ -179,7 +179,9 @@ uvx yarch-init@latest --service ysaas-scan --out ysaas-scan
 12. `python-stack.yml`（全量机检 + 生成后冒烟 + 双矩阵 3.12/3.13）；
 13. README + 架构图 + **随批登记**：stacks/README 状态行、docs/architecture.md 第三节与三·五、contract/README 术语对照表加 python 列、tools/locate-scaffolds.cjs 的 STACKS 表。
 
-**触发式增长（一规约一 module，不做配置档）**：auth（JWT 2xxx，golang 第二批对偶件）、captcha、kafka、minio、async 档（AsyncSession + asyncpg）、simple 档模板、qdrant/es 等数据件。
+**触发式增长（一规约一 module，不做配置档）**：auth（JWT 2xxx，golang 第二批对偶件）、kafka、minio、async 档（AsyncSession + asyncpg）、simple 档模板、qdrant/es 等数据件。
+
+**captcha module 首批落地（2026-09-18，contract/api/captcha.md v1.0 CP1-CP10）**：`yarch_python.captcha`——Provider SPI 三档（image/SmsOtpProvider 宿主 SmsSender 注入+目标脱敏/TurnstileProvider SiteVerifyCaller 打桩+fail-closed）+ 框架核心 CaptchaService（GETDEL 原子消费/场景路由 Options.scenes+default_provider/装配 fail fast/非 image 场景经端点 1001）+ CaptchaStore（redis getdel）+ create_router（GET /api/v1/captcha + 默认 per-IP 限流 LocalLimiter，redis 档传 FixedWindowLimiter，超限 1006）；PNG 渲染纯 stdlib（位图字模 + zlib/struct 编码，零 Pillow——CP9 渲染自由）；校验失败 2005 CAPTCHA_INVALID 三态合一；测试向量 V1-V11 同源落地（单测 12 + TC 真 Redis 3 + 端点限流）。
 
 ## 八、开放问题与风险
 

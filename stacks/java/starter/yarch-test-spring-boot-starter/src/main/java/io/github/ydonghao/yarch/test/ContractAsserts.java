@@ -17,7 +17,7 @@ public final class ContractAsserts {
 
     private ContractAsserts() {}
 
-    /** contract/api/error-codes.md v1.0 全表：code → identifier|message|http */
+    /** contract/api/error-codes.md v1.1 全表：code → identifier|message|http */
     private static final Map<Integer, String> CONTRACT_TABLE =
             Map.ofEntries(
                     Map.entry(1000, "INTERNAL_ERROR|内部错误|500"),
@@ -32,9 +32,10 @@ public final class ContractAsserts {
                     Map.entry(2001, "UNAUTHORIZED|未认证|401"),
                     Map.entry(2002, "CREDENTIALS_EXPIRED|凭证已过期|401"),
                     Map.entry(2003, "FORBIDDEN|权限不足|403"),
-                    Map.entry(2004, "ACCOUNT_DISABLED|账号已禁用|403"));
+                    Map.entry(2004, "ACCOUNT_DISABLED|账号已禁用|403"),
+                    Map.entry(2005, "CAPTCHA_INVALID|验证码校验失败|400"));
 
-    /** 全表核对 GlobalErrorCode 与契约字面量（13 码 + HTTP 映射 + 默认文案） */
+    /** 全表核对 GlobalErrorCode 与契约字面量（14 码 + HTTP 映射 + 默认文案） */
     public static void assertErrorCodeTable() {
         assertEquals(
                 CONTRACT_TABLE.size(),

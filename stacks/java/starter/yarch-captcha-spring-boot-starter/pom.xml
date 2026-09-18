@@ -31,5 +31,11 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- Boot 4 拆分后 @AutoConfigureMockMvc 在 webmvc 测试模块（同 web starter） -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc-test</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

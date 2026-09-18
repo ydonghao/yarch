@@ -62,7 +62,7 @@ function genErrorCodes() {
   };
   parse(seg1, "1xxx", seg2);
   parse(seg2, "2xxx", impl);
-  if (codes.length !== 13) throw new Error(`13 码全表解析异常：得到 ${codes.length} 条`);
+  if (codes.length !== 14) throw new Error(`14 码全表解析异常：得到 ${codes.length} 条`);
 
   // 段位分配表的 0 成功行（key 由四栈方言持有：OK / SUCCESS / CODE_SUCCESS）
   const alloc = tableRows(md.slice(0, seg1));

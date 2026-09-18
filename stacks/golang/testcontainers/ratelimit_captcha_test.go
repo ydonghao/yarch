@@ -2,6 +2,8 @@ package testcontainers
 
 import (
 	"context"
+	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -55,5 +57,65 @@ func TestCaptchaRedisStore(t *testing.T) {
 	}
 	if _, ok, _ := store.Consume(ctx, key); ok {
 		t.Fatal("一次性：二次消费必须失败")
+	}
+}
+
+// V6/V7 行为级：Service 全链路（GETDEL 原子消费并发恰一过 + TTL 生效 + 存储 key 形状）。
+func TestCaptchaServiceWithRedis(t *testing.T) {
+	addr := StartRedis(t)
+	rdb := redis.NewClient(&redis.Options{Addr: addr})
+	defer rdb.Close()
+	ctx := context.Background()
+
+	keys, _ := redix.NewKeys("mysvc")
+	svc, err := captcha.NewService(captcha.NewRedisStore(rdb), keys, captcha.Options{})
+	if err != nil {
+		t.Fatalf("NewService: %v", err)
+	}
+	issued, err := svc.Issue(ctx, "", "")
+	if err != nil {
+		t.Fatalf("issue: %v", err)
+	}
+	if issued.Provider != "image" || issued.Key == "" {
+		t.Fatalf("issued = %+v", issued)
+	}
+
+	// 三-5：存储 key 形状 {服务名}:captcha:{provider}:{key}
+	storeKey := "mysvc:captcha:image:" + issued.Key
+	ttl, err := rdb.TTL(ctx, storeKey).Result()
+	if err != nil || ttl <= 0 || ttl > 2*time.Minute {
+		t.Fatalf("V7：TTL 异常 %v err=%v", ttl, err)
+	}
+
+	answer, err := rdb.Get(ctx, storeKey).Result()
+	if err != nil {
+		t.Fatalf("peek: %v", err)
+	}
+
+	// V6：8 并发校验恰一过（GETDEL 原子）
+	const threads = 8
+	var wg sync.WaitGroup
+	wins := 0
+	var mu sync.Mutex
+	start := make(chan struct{})
+	for i := 0; i < threads; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			<-start
+			if svc.Verify(ctx, "", issued.Key, strings.ToLower(answer)) {
+				mu.Lock()
+				wins++
+				mu.Unlock()
+			}
+		}()
+	}
+	close(start)
+	wg.Wait()
+	if wins != 1 {
+		t.Fatalf("V6：并发校验应恰一过，实际 %d", wins)
+	}
+	if _, err := rdb.Get(ctx, storeKey).Result(); err == nil {
+		t.Fatal("V2：校验后 key 已消费")
 	}
 }

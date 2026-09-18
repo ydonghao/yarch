@@ -1,5 +1,5 @@
 /**
- * 契约断言前端版：13 码全表唯一权威 = contract/dist/error-codes.json（由 error-codes.md
+ * 契约断言前端版：14 码全表唯一权威 = contract/dist/error-codes.json（由 error-codes.md
  * 派生，CI 拒双向漂移）——四栈读同一份 json 断言，不再各养手抄表（P1 契约机器可读出口）。
  * dist 文件不在场（消费方独立环境）则跳过表断言，CI 仓内必跑。
  */
@@ -26,8 +26,8 @@ const CONTRACT_TABLE: Record<string, number> = distTable();
 const DIST_PRESENT = Object.keys(CONTRACT_TABLE).length > 0;
 
 describe.skipIf(!DIST_PRESENT)("dist 同源断言（contract/dist/error-codes.json）", () => {
-  it("错误码表与 dist 契约逐码一致（13 码）", () => {
-    expect(Object.keys(CONTRACT_TABLE)).toHaveLength(13);
+  it("错误码表与 dist 契约逐码一致（14 码）", () => {
+    expect(Object.keys(CONTRACT_TABLE)).toHaveLength(14);
     expect(Object.keys(errorCodes).sort()).toEqual(Object.keys(CONTRACT_TABLE).sort());
     for (const [name, code] of Object.entries(CONTRACT_TABLE)) {
       expect(errorCodes[name as keyof typeof errorCodes]).toBe(code);

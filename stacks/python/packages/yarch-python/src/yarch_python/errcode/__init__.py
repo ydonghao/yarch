@@ -1,5 +1,5 @@
 # stacks/python/packages/yarch-python/src/yarch_python/errcode/__init__.py
-"""契约内核②：错误码全局段位表（error-codes.md v1.0，13 码全表 + HTTP 映射 + 业务码注册）。"""
+"""契约内核②：错误码全局段位表（error-codes.md v1.1，14 码全表 + HTTP 映射 + 业务码注册）。"""
 
 import re
 from enum import IntEnum
@@ -20,6 +20,7 @@ class Code(IntEnum):
     CREDENTIALS_EXPIRED = 2002
     FORBIDDEN = 2003
     ACCOUNT_DISABLED = 2004
+    CAPTCHA_INVALID = 2005  # captcha.md 五-2：key 无效/已消费/答案错误三态合一，禁细分
 
 
 _MESSAGES = {
@@ -37,6 +38,7 @@ _MESSAGES = {
     2002: "凭证已过期",
     2003: "权限不足",
     2004: "账号已禁用",
+    2005: "验证码校验失败",
 }
 _HTTP = {
     0: 200,
@@ -53,6 +55,7 @@ _HTTP = {
     2002: 401,
     2003: 403,
     2004: 403,
+    2005: 400,
 }
 _IDENTIFIERS = {c.value: c.name for c in Code}
 # 业务码登记表（3xxx-8xxx，业务仓 docs 登记后 register）

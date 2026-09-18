@@ -1,5 +1,5 @@
 # stacks/python/packages/yarch-python/tests/test_errcode.py
-"""错误码契约断言：13 码全表唯一权威 = contract/dist/error-codes.json（由 error-codes.md
+"""错误码契约断言：14 码全表唯一权威 = contract/dist/error-codes.json（由 error-codes.md
 派生，CI 拒双向漂移）——四栈读同一份 json 断言，不再各养手抄表（P1 契约机器可读出口）。
 dist 文件不在场（消费方独立环境）则整表跳过，CI 仓内必跑。"""
 
@@ -42,7 +42,7 @@ def test_ok_success_constant():
 def test_dist_table_complete_when_present():
     if not _DIST.exists():
         pytest.skip("contract dist json 不在场")
-    assert len(DIST_TABLE) == 13
+    assert len(DIST_TABLE) == 14
 
 
 def test_1003_reserved_absent():

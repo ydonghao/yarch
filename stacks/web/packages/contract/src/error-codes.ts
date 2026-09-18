@@ -1,4 +1,4 @@
-/** 错误码常量表 —— 与 contract/api/error-codes.md v1.0 同源（0/1xxx/2xxx 归 yarch；3xxx+ 业务侧扩展） */
+/** 错误码常量表 —— 与 contract/api/error-codes.md v1.1 同源（0/1xxx/2xxx 归 yarch；3xxx+ 业务侧扩展） */
 export const CODE_SUCCESS = 0;
 
 export const errorCodes = {
@@ -15,6 +15,7 @@ export const errorCodes = {
   CREDENTIALS_EXPIRED: 2002,
   FORBIDDEN: 2003,
   ACCOUNT_DISABLED: 2004,
+  CAPTCHA_INVALID: 2005,
 } as const;
 
 export type YarchErrorCode = (typeof errorCodes)[keyof typeof errorCodes];

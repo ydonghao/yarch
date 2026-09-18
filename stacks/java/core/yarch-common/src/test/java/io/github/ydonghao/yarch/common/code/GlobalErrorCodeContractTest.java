@@ -12,7 +12,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 /**
- * 错误码契约守护：13 码全表唯一权威 = contract/dist/error-codes.json（由 error-codes.md 派生， CI 拒双向漂移）——四栈读同一份 json
+ * 错误码契约守护：14 码全表唯一权威 = contract/dist/error-codes.json（由 error-codes.md 派生， CI 拒双向漂移）——四栈读同一份 json
  * 断言，不再各养手抄表（P1 契约机器可读出口）。 dist 文件不在场（消费方独立测试环境）则跳过表断言，CI 仓内必跑。
  */
 class GlobalErrorCodeContractTest {
@@ -39,7 +39,7 @@ class GlobalErrorCodeContractTest {
     @Test
     void enumMatchesContractTable() throws Exception {
         List<Object[]> contractTable = loadContractTable();
-        assertEquals(13, contractTable.size(), "dist 码表条数异常");
+        assertEquals(14, contractTable.size(), "dist 码表条数异常");
         assertEquals(contractTable.size(), GlobalErrorCode.values().length, "码表条数与契约不一致");
         for (Object[] row : contractTable) {
             int code = (int) row[0];
