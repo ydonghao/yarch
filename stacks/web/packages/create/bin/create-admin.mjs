@@ -32,7 +32,8 @@ const MICRO_KINDS = {
   sub: "微前端子应用（micro-frontend.md 一-3：独立·集成双运行形态，只做域内页面）",
 };
 // @yarch 底座版本依赖（--deps version 形态）；与本仓发版版本同步 bump。
-const YARCH_VERSION = "^0.2.0";
+const YARCH_VERSION = "^0.3.0";
+const YARCH_PRO_REACT_VERSION = "^0.1.0";
 
 const servicePattern = /^[a-z][a-z0-9-]{1,31}$/;
 // 禁裸通用词（registry.md 一-1/一-2 口径摘录，与 golang yarch-init 同款；完整表以 contract/registry.md 为准）。
@@ -277,6 +278,7 @@ async function main() {
     const depsMode = args.deps === "file" ? "file" : "version";
     const yarchContractDep = depsMode === "version" ? YARCH_VERSION : `file:${resolve(PKG_ROOT, "../contract")}`;
     const yarchReactDep = depsMode === "version" ? YARCH_VERSION : `file:${resolve(PKG_ROOT, "../react")}`;
+    const yarchProReactDep = depsMode === "version" ? YARCH_PRO_REACT_VERSION : `file:${resolve(PKG_ROOT, "../pro-react")}`;
 
     const vars = {
       packageName: name,
@@ -287,6 +289,7 @@ async function main() {
       proxyTarget,
       yarchContractDep,
       yarchReactDep,
+      yarchProReactDep,
     };
 
     const outDir = resolve(args.out || (args._.length > 0 ? args._[args._.length - 1] : name));

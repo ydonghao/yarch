@@ -1,7 +1,7 @@
 name: web-publish
 
-# npm 发版流水线（W6）：推 tag stacks/web/vX.Y.Z 即发布三包
-# （@yarch/contract → @yarch/react → @yarch/create-admin，底座先于生成器）。
+# npm 发版流水线（W6）：推 tag stacks/web/vX.Y.Z 即发布五包
+# （contract → tokens → pro-react → react → create-admin，底座先于组件先于生成器）。
 # = golang 栈「tag stacks/golang/vX.Y.Z → Go module proxy 自动收录」的 npm 对偶。
 # 前置：仓库 Secrets 配置 NPM_TOKEN（npmjs.com 的 Automation token）。
 
@@ -52,5 +52,7 @@ jobs:
             fi
           }
           publish contract @yarch/contract
+          publish tokens @yarch/tokens
+          publish pro-react @yarch/pro-react
           publish react @yarch/react
           publish create @yarch/create-admin
