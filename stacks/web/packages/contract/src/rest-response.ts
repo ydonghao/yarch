@@ -8,6 +8,12 @@ export interface RestResponse<T> {
   traceId: string;
 }
 
+/** 分页查询参数（rest-conventions D6：1-based，pageSize 1~100；校验在服务端，前端仅形状——rust/python 内核同形） */
+export interface PageQuery {
+  page: number;
+  pageSize: number;
+}
+
 export interface PageData<T> {
   list: T[];
   total: number;
