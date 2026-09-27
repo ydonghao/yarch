@@ -8,6 +8,9 @@
 | 包 | 描述 | 对应 java/golang |
 |---|---|---|
 | `packages/contract` | @yarch/contract：信封类型/解包、错误码常量表、ApiError、traceId、fetch 封装、导航端口——全 .ts、零框架依赖 | yarch-common + yarch-http |
+| `packages/tokens` | @yarch/tokens：design token 三载体同源（tokens.json 权威 + CSS 变量 + TS 常量），框架无关 | —（组件库规约四） |
+| `packages/pro-react` | @yarch/pro-react：React 业务组件（antd v5 基线）——ProTable/ProForm/信封 hooks + ./demos | —（组件库规约五） |
+| `packages/pro-vue` | @yarch/pro-vue：Vue 业务组件（ElementPlus 基线，CL6 锁定）——ProTable/ProForm/信封 hooks + ./demos | —（组件库规约五） |
 | `packages/react` | @yarch/react：注入 react-router 导航（薄适配） | starter |
 | `packages/vue` | @yarch/vue：注入 vue-router 导航（薄适配） | starter |
 | `packages/create` | **@yarch/create-admin：工程生成器（W6-W9）**——交互问答 + archetype 全量渲染 + registry 命名校验；模板资产在其 `templates/` 下 | golang `cmd/yarch-init` |
