@@ -1,6 +1,6 @@
 {
   "name": "@yarch/contract",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "yarch 前端契约 SDK（三端同源 MP4）：信封解包/错误码表/ApiError 四要素/traceId 会话复用/401 刷新重放——@yarch/contract/core 零环境依赖，/wx 微信小程序适配，主入口含微前端运行时件",
   "type": "module",
   "main": "src/index.ts",

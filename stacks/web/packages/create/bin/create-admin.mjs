@@ -32,7 +32,10 @@ const MICRO_KINDS = {
   sub: "微前端子应用（micro-frontend.md 一-3：独立·集成双运行形态，只做域内页面）",
 };
 // @yarch 底座版本依赖（--deps version 形态）；与本仓发版版本同步 bump。
-const YARCH_VERSION = "^0.2.0";
+// 各底座包版本线独立维护（contract 0.3.x / react 0.2.x——0.x 语义 ^ 只匹配同 minor）
+const YARCH_CONTRACT_VERSION = "^0.3.0";
+const YARCH_REACT_VERSION = "^0.2.0";
+const YARCH_PRO_REACT_VERSION = "^0.1.0";
 
 const servicePattern = /^[a-z][a-z0-9-]{1,31}$/;
 // 禁裸通用词（registry.md 一-1/一-2 口径摘录，与 golang yarch-init 同款；完整表以 contract/registry.md 为准）。
@@ -275,8 +278,9 @@ async function main() {
     // @yarch 底座依赖形态（W8）：version = 版本依赖（标准形态，@yarch/contract、@yarch/react 已发 npm）；
     // file: 绝对路径 = golang replace 行对偶（发版前本地过渡，yarch 源码变更后重跑 pnpm install 刷新）。
     const depsMode = args.deps === "file" ? "file" : "version";
-    const yarchContractDep = depsMode === "version" ? YARCH_VERSION : `file:${resolve(PKG_ROOT, "../contract")}`;
-    const yarchReactDep = depsMode === "version" ? YARCH_VERSION : `file:${resolve(PKG_ROOT, "../react")}`;
+    const yarchContractDep = depsMode === "version" ? YARCH_CONTRACT_VERSION : `file:${resolve(PKG_ROOT, "../contract")}`;
+    const yarchReactDep = depsMode === "version" ? YARCH_REACT_VERSION : `file:${resolve(PKG_ROOT, "../react")}`;
+    const yarchProReactDep = depsMode === "version" ? YARCH_PRO_REACT_VERSION : `file:${resolve(PKG_ROOT, "../pro-react")}`;
 
     const vars = {
       packageName: name,
@@ -287,6 +291,7 @@ async function main() {
       proxyTarget,
       yarchContractDep,
       yarchReactDep,
+      yarchProReactDep,
     };
 
     const outDir = resolve(args.out || (args._.length > 0 ? args._[args._.length - 1] : name));
@@ -327,7 +332,7 @@ async function main() {
 下一步：
   1. cd ${outDir} && pnpm install && pnpm dev        # http://localhost:${port}
 ${registryHint}
-  ${micro ? "4" : "3"}. @yarch 底座为 ${depsMode === "version" ? `${YARCH_VERSION} 版本依赖（升级 = pnpm update @yarch/contract @yarch/react）` : "file: 本地依赖（发版前过渡；正式发版后改用默认 version 形态重新生成或手动替换）"}
+  ${micro ? "4" : "3"}. @yarch 底座为 ${depsMode === "version" ? `版本依赖（升级 = pnpm update @yarch/contract @yarch/react）` : "file: 本地依赖（发版前过渡；正式发版后改用默认 version 形态重新生成或手动替换）"}
 `);
   } finally {
     if (rl) rl.close();

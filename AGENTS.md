@@ -8,7 +8,7 @@
 | 目录 | 职责 |
 |---|---|
 | `contract/` | 全域契约唯一权威：api（REST 四件套 + realtime / telemetry / audit / captcha）/ infra（22 份）/ web / clients / domains / agent + `registry.md` 命名登记处 + `dist/` 机器可读派生层（JSON 由 api markdown 生成，漂移门盯防） |
-| `stacks/` | 云栈实现：java / golang / web / python（rust 规约已立待施工） |
+| `stacks/` | 云栈实现：java / golang / web / python / rust（rust 施工中：批次一契约内核已落地，批次二装配层进行） |
 | `clients/` | 端侧：android / ios / miniprogram / game（desktop 预留）+ `create/` 客户端生成器 |
 | `embedded/esp32/` | 固件轨（esp-idf-hal std，规约已立待施工） |
 | `tools/` | 模板定位器 `locate-scaffolds.cjs` 与将来的 `yarch init` CLI |
@@ -23,6 +23,7 @@
 | golang | `cd stacks/golang && go test ./...` |
 | python | `cd stacks/python && uv run pytest` |
 | java | `cd stacks/java && mvn -q test` |
+| rust | `cd stacks/rust && cargo test --workspace`（机检：`cargo fmt --all -- --check` + `cargo clippy --all-targets -- -D warnings`） |
 | android | `cd clients/android && ./gradlew test` |
 | ios | `cd clients/ios && swift test` |
 | 生成器冒烟 | `npm create @yarch/admin@latest` / `npm create @yarch/app@latest`（CI template-smoke 同款） |

@@ -1,0 +1,6 @@
+[template]
+cargo_generate_version = ">=0.21.0"
+
+[placeholders]
+yarch_contract_dep = { type = "string", prompt = "yarch-contract 依赖形态（TOML 值；发版后默认 git tag，本地开发可换 path）", default = '{ git = "https://github.com/ydonghao/yarch.git", tag = "stacks/rust/v0.1.0" }' }
+yarch_axum_dep = { type = "string", prompt = "yarch-axum 依赖形态（TOML 值；同上）", default = '{ git = "https://github.com/ydonghao/yarch.git", tag = "stacks/rust/v0.1.0" }' }

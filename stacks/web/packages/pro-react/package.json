@@ -1,0 +1,39 @@
+{
+  "name": "@yarch/pro-react",
+  "version": "0.1.0",
+  "description": "yarch React 业务组件（antd v5 基线，component-library.md 五）：ProTable 分页表格 / ProForm 查询表单 / useApiQuery·useApiMutation 信封 hooks / ./demos 预览清单",
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./demos": "./src/demos.tsx"
+  },
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "scripts": { "test": "vitest run" },
+  "publishConfig": { "access": "public" },
+  "repository": { "type": "git", "url": "git+https://github.com/ydonghao/yarch.git", "directory": "stacks/web/packages/pro-react" },
+  "license": "Apache-2.0",
+  "dependencies": { "@yarch/contract": "^0.3.0" },
+  "peerDependencies": {
+    "react": "^18 || ^19",
+    "react-dom": "^18 || ^19",
+    "antd": "^5"
+  },
+  "devDependencies": {
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "antd": "^5.21.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "@testing-library/react": "^16.0.0",
+    "@testing-library/user-event": "^14.5.0",
+    "jsdom": "^25.0.0",
+    "vitest": "^3.0.0",
+    "typescript": "^5.6.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0"
+  }
+}

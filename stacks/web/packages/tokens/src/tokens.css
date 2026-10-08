@@ -1,0 +1,50 @@
+/* yarch 设计 token（由 tokens.json 同源承载——component-library.md 四-3，键集合一致性由包内测试断言） */
+:root {
+  --yarch-color-primary: #1E86FF;
+  --yarch-color-semantic-success: #52C41A;
+  --yarch-color-semantic-warning: #FFC036;
+  --yarch-color-semantic-error: #FF4C4C;
+  --yarch-color-semantic-info: #1E86FF;
+  --yarch-color-neutral-bg: #FFFFFF;
+  --yarch-color-neutral-bg-raised: #F8F9FA;
+  --yarch-color-neutral-border: #E5E8EB;
+  --yarch-color-neutral-text: #434B5B;
+  --yarch-color-neutral-text-secondary: #7A828F;
+  --yarch-color-neutral-text-disabled: #B8BEC7;
+  --yarch-typography-font-family: -apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --yarch-typography-font-size-xs: 12px;
+  --yarch-typography-font-size-sm: 13px;
+  --yarch-typography-font-size-md: 14px;
+  --yarch-typography-font-size-lg: 16px;
+  --yarch-typography-font-size-xl: 20px;
+  --yarch-typography-line-height-tight: 1.4;
+  --yarch-typography-line-height-normal: 1.6;
+  --yarch-spacing-xs: 4px;
+  --yarch-spacing-sm: 8px;
+  --yarch-spacing-md: 12px;
+  --yarch-spacing-lg: 16px;
+  --yarch-spacing-xl: 24px;
+  --yarch-spacing-xxl: 32px;
+  --yarch-radius-sm: 4px;
+  --yarch-radius-md: 6px;
+  --yarch-radius-lg: 8px;
+  --yarch-radius-full: 9999px;
+  --yarch-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.08);
+  --yarch-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
+  --yarch-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.16);
+}
+
+/* 暗色模式：只覆盖 color 组（四-1） */
+[data-theme="dark"] {
+  --yarch-color-primary: #4096FF;
+  --yarch-color-semantic-success: #6ABF3F;
+  --yarch-color-semantic-warning: #E6B33D;
+  --yarch-color-semantic-error: #E55C5C;
+  --yarch-color-semantic-info: #4096FF;
+  --yarch-color-neutral-bg: #1B1F27;
+  --yarch-color-neutral-bg-raised: #232935;
+  --yarch-color-neutral-border: #333B49;
+  --yarch-color-neutral-text: #D5DAE2;
+  --yarch-color-neutral-text-secondary: #9AA2B0;
+  --yarch-color-neutral-text-disabled: #5C6470;
+}

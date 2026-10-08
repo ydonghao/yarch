@@ -54,7 +54,7 @@ stacks/rust/
 ## 五、施工批次
 
 1. **第一批（已完成 2026-09-18）**：spec.md 成文 + PLAN.md 落位 + workspace 骨架（两 crate + 契约内核 response/errcode/trace 三模块 + 同源 conformance 断言读 contract/dist）——本地 cargo test/fmt/clippy 绿，CI rust-stack.yml 四段门禁 + MSRV 双档。
-2. **第二批**：yarch-axum 中间件五件（Trace/Recovery/AccessLog/Idempotency/Rate，对齐 python 中间件组合语义）+ sqlx 装配（逻辑删除/审计/分页 D6）+ 模板 users 示例。
+2. **第二批（拆 2a/2b 执行，已全部完成 2026-09-18）**：2a = yarch-axum 中间件五件（Trace/Recovery/AccessLog/Idempotency/Rate，组合序外→内 AccessLog>Trace>Recovery>Rate>Idem——Rate 压 Idem 外层防 429 落库毒化）+ logx 契约 ndjson（tracing-subscriber 自定义 FormatEvent：ts/level/service/env/traceId/logger/msg+kv 平铺）+ 存储 trait 与 InMemory 实现（Redis 触发式）+ setup 一行装配 + 组合语义测试四例（镜像 python test_middleware_composition.py）。2b = 契约内核 page.rs（PageQuery/PageData）+ persist 装配（sqlx 运行时查询口径：page_of 下推 D6 + NOT_DELETED；真库集成 YARCH_PG_URL 门控专用测试库）+ cargo-generate 模板（DDD 七包 users 全链路 + AGENTS 三件套 + 迁移）+ 生成后冒烟（本地 + CI template-smoke job：生成 → 零残留 → test → clippy）。
 3. **第三批**：生成后冒烟（cargo generate → cargo test）+ crates.io 发版流水线（tag 触发）+ conformance 读契约 dist（待 N2 落地后接）。
 
 ## 六、验收口径
@@ -65,6 +65,7 @@ stacks/rust/
 
 ## 七、已知风险
 
-1. sqlx 编译期 SQL 校验依赖 DATABASE_URL（离线 CI 用 `sqlx prepare` 快照模式）——模板须预置 `.sqlx/` 缓存或离线模式说明；
+1. sqlx 编译期 SQL 校验依赖 DATABASE_URL（离线 CI 用 `sqlx prepare` 快照模式）——模板须预置 `.sqlx/` 缓存或离线模式说明；**当前口径：运行时查询（query_as_with 非 query! 宏），零 DATABASE_URL 编译前提，宏档随发版批评估**；
 2. axum 0.8 中间件生态（tower-http 版本矩阵）与 tracing 的 async 上下文传播需逐项对齐 python 中间件组合语义（Rate 在 Idem 外层等）——施工时对照 python test_middleware_composition.py 逐条翻译；
 3. crates.io 发布凭证与 GPG 签名流程与 Maven Central 不同（token + cargo publish），首版需走通。
+4. **MSRV 1.80 依赖钉子（2026-09-18 批次二实证）**：当前 registry 的传递依赖大量转 edition2024/rust-version>1.80，锁文件须持钉：`idna_adapter=1.2.0`（连带 icu 1.5 全链）、`home=0.5.9`、`indexmap=2.9.0`、`litemap=0.7.4`、`crc=3.3.0`。**凡动依赖（cargo update 全量刷新会重置钉子）后必须 `cargo +1.80 clippy --all-targets` 验证并重钉**；钉子维护成本若持续上升（每轮 update 数枚），R7 的 MSRV 1.80 档视情升 1.85 走变更口径。
