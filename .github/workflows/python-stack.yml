@@ -23,8 +23,8 @@ jobs:
       run:
         working-directory: stacks/python
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v5
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
         with:
           python-version: ${{ matrix.python-version }}
       # uv 0.11.8 语义：裸 uv sync 只装 workspace 根（package=false 即空集），成员包须 --all-packages
@@ -52,8 +52,8 @@ jobs:
           --health-timeout 3s
           --health-retries 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v5
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
         with:
           python-version: '3.12'
       - name: 生成（CWD 须在 stacks/python）
