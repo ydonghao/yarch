@@ -74,5 +74,7 @@ jobs:
           cd /tmp/smoke-svc
           RESIDUAL=$(grep -rln '{{' --include='*.rs' --include='*.toml' --include='*.md' . || true)
           [ -z "$RESIDUAL" ] || { echo "残留占位符: $RESIDUAL"; exit 1; }
+          # extensions.md 三-5a：生成物 .gitignore 落地且含 AI 运行产物前缀
+          grep -qxF '.superpowers/' .gitignore && grep -qxF '.claude/' .gitignore
           cargo test
           cargo clippy --all-targets -- -D warnings

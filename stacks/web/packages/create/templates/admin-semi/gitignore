@@ -1,5 +1,9 @@
-/target
+node_modules/
+dist/
+*.tsbuildinfo
 .env
+.env.local
+.DS_Store
 
 # AI 工作流运行产物目录（contract/agent/extensions.md 三-5）
 .superpowers/

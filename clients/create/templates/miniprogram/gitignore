@@ -1,5 +1,8 @@
-/target
-.env
+node_modules/
+miniprogram/miniprogram_npm/
+dist/
+*.log
+.DS_Store
 
 # AI 工作流运行产物目录（contract/agent/extensions.md 三-5）
 .superpowers/

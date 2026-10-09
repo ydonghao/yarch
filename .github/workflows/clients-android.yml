@@ -33,6 +33,8 @@ jobs:
         run: |
           node clients/create/bin/yarch-init-app.mjs ysaas-demo --platform android --yes \
             --registry contract/registry.md --out /tmp/gen-android
+          # extensions.md 三-5a：生成物 .gitignore 落地且含 AI 运行产物前缀
+          grep -qxF '.superpowers/' /tmp/gen-android/.gitignore && grep -qxF '.claude/' /tmp/gen-android/.gitignore
       - name: 生成工程构建（模板正确性兜底）
         run: |
           cd /tmp/gen-android

@@ -36,6 +36,8 @@ const genericWords = new Set([
 ]);
 
 const SKIP_FILES = new Set(["archetype.json"]);
+// npm 打包剔除点号 .gitignore（contract/agent/extensions.md 三-5a）：模板以无点 gitignore 存名，渲染时还原。
+const RENAME_FILES = { gitignore: ".gitignore" };
 const SKIP_DIRS = new Set(["node_modules", "dist", "build", ".build", ".gradle", ".swiftpm", "library", "temp", "local", "profiles"]);
 const PLACEHOLDER = /\{\{\s*([a-zA-Z][a-zA-Z0-9]*)\s*\}\}/g;
 
@@ -170,7 +172,7 @@ function renderTree(src, dst, vars, leftovers) {
       count += renderTree(join(src, entry.name), join(dst, renderStr(entry.name, vars)), vars, leftovers);
     } else if (entry.isFile()) {
       if (SKIP_FILES.has(entry.name)) continue;
-      const target = join(dst, renderStr(entry.name, vars));
+      const target = join(dst, renderStr(RENAME_FILES[entry.name] ?? entry.name, vars));
       mkdirSync(dirname(target), { recursive: true });
       const raw = readFileSync(join(src, entry.name));
       if (isBinaryBuffer(raw)) {

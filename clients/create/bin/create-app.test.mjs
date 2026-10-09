@@ -60,6 +60,10 @@ test("生成后冒烟：android/ios/both 三口径零残留占位符 + 身份同
   const iosYml = readFileSync(join(both, "ios/project.yml"), "utf8");
   assert.match(iosYml, /bundleIdPrefix: io\.github\.ydonghao/);
   assert.ok(existsSync(join(both, "android/app/src/main/kotlin/io/github/ydonghao/ysaascompanion/YsaasCompanion.kt")));
+  // 三-5a：生成物含 .gitignore（模板无点存名 → 渲染还原）且带 AI 运行产物前缀
+  const gitignore = readFileSync(join(both, "android/.gitignore"), "utf8");
+  assert.match(gitignore, /(^|\n)\.superpowers\//);
+  assert.match(gitignore, /(^|\n)\.claude\//);
 });
 
 test("registry 五-1：未登记服务名首段被拒（非挂起）", () => {

@@ -1,0 +1,54 @@
+# ai-artifact-gate — AI 工作流运行产物目录禁入库门（contract/agent/extensions.md 三-5）：
+# 1) git ls-files 前缀扫描：.superpowers/ .claude/ .zcode/ .codegraph/ .reasonix/ .playwright-mcp/ 命中即失败（含嵌套路径）；
+#    已入库的条目仅加 .gitignore 不生效，须 git rm -r --cached 移出（三-5b）。
+# 2) 生成器模板 .gitignore 前缀完备性断言（三-5a 机检化）+ 仓根带头合规。
+name: ai-artifact-gate
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+
+jobs:
+  gate:
+    name: 运行产物目录禁入库扫描
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: 1) ls-files 前缀扫描（命中即失败）
+        run: |
+          hits=$(git ls-files | grep -E '(^|/)\.(superpowers|claude|zcode|codegraph|reasonix|playwright-mcp)/' || true)
+          if [ -n "$hits" ]; then
+            echo "::error::AI 运行产物目录已入库（extensions.md 三-5）：仅加 ignore 无效，须 git rm -r --cached 移出"
+            echo "$hits"
+            exit 1
+          fi
+          echo "扫描通过：树中无 AI 运行产物目录"
+      - name: 2) 生成器模板 .gitignore 前缀完备性
+        run: |
+          set -e
+          prefixes=('.superpowers/' '.claude/' '.zcode/' '.codegraph/' '.reasonix/' '.playwright-mcp/')
+          fail=0
+          check() {
+            local f="$1"
+            if [ ! -f "$f" ]; then echo "::error::缺失模板 .gitignore：$f"; fail=1; return; fi
+            for p in "${prefixes[@]}"; do
+              grep -qxF "$p" "$f" || { echo "::error::$f 缺前缀 $p（extensions.md 三-5a）"; fail=1; }
+            done
+          }
+          # npm 分发生走无点 gitignore 存名（npm 打包剔除点号 .gitignore）
+          for f in clients/create/templates/*/gitignore stacks/web/packages/create/templates/*/gitignore; do
+            [ -e "$f" ] || { echo "::error::glob 未命中：$f"; fail=1; continue; }
+            check "$f"
+          done
+          # git/源码分发生（cargo-generate / go run）保点号原名
+          for f in stacks/rust/templates/service/.gitignore stacks/golang/_template/.gitignore; do
+            check "$f"
+          done
+          # 仓根带头合规
+          for p in "${prefixes[@]}"; do
+            grep -qxF "$p" .gitignore || { echo "::error::根 .gitignore 缺 $p"; fail=1; }
+          done
+          exit $fail

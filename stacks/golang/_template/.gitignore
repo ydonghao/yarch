@@ -1,5 +1,13 @@
-/target
+# 构建与本地环境
 .env
+*.exe
+*.test
+*.out
+
+# IDE / os
+.idea/
+*.iml
+.DS_Store
 
 # AI 工作流运行产物目录（contract/agent/extensions.md 三-5）
 .superpowers/

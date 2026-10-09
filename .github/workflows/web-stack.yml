@@ -43,6 +43,8 @@ jobs:
             echo "=== admin-$t ==="
             # --deps file：CI 用仓内底座源码，不依赖 registry（发版前/测试未发布变更均成立）
             node packages/create/bin/create-admin.mjs "smoke-$t" --ui "$t" --yes --deps file --out "$SMOKE/admin-$t"
+            # extensions.md 三-5a：生成物 .gitignore 落地且含 AI 运行产物前缀（npm 剔点号，无点存名渲染还原）
+            grep -qxF '.superpowers/' "$SMOKE/admin-$t/.gitignore" && grep -qxF '.claude/' "$SMOKE/admin-$t/.gitignore"
             ( cd "$SMOKE/admin-$t" && pnpm install --no-frozen-lockfile && pnpm exec tsc --noEmit && pnpm exec vite build )
           done
       - name: 微前端集成 e2e（双示例构建 + playwright 真浏览器）

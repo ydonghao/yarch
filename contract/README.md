@@ -176,7 +176,7 @@
 | 规约 | 状态 | 一句话 |
 |---|---|---|
 | [agents-md.md](agent/agents-md.md) | v1.0 已定稿 | AGENTS.md 唯一事实源 + CLAUDE.md/GEMINI.md 一行派生 / 四章节定式（工程地图·命令表·红线清单·契约锚点）/ 篇幅 ≤150 行 / 锚点双要素引用 |
-| [extensions.md](agent/extensions.md) | v1.0 已定稿 | 扩展出口纳管：.mcp.json 唯一入库位置 + 凭证 `${ENV}` 引用 / skills 走 `.agents/skills/` 跨厂商位置（.claude/skills 链接派生）/ hooks·subagents 参考级 |
+| [extensions.md](agent/extensions.md) | v1.1 已定稿 | 扩展出口纳管：.mcp.json 唯一入库位置 + 凭证 `${ENV}` 引用 / skills 走 `.agents/skills/` 跨厂商位置（.claude/skills 链接派生）/ hooks·subagents 参考级 / 运行产物目录禁入库（三-5，v1.1） |
 | [cli.md](agent/cli.md) | v1.0 已定稿 | 自家 CLI 交互：一行命令铁律成文 / `--yes` 全非交互 / `--json` stdout 纯净 / 退出码 0·1·2 / 幂等与 `--force` / 成员登记表 |
 
 ## 契约版本
@@ -214,6 +214,7 @@
 | 2026-09-18 | **验证码框架 CP1-CP10 拍板成文**：新立 [api/captcha.md](api/captcha.md) v1.0（Provider SPI 三档 + 一次性原子消费 GETDEL + 场景路由 + verify 内联业务流 + 跨栈测试向量附录）；error-codes **v1.1** 纯增量 2005 CAPTCHA_INVALID（dist 14 码，四栈 conformance 同步）；java `yarch-captcha-spring-boot-starter` 同批 SPI 重构（image/sms-otp/turnstile + GETDEL 缺陷修复），golang/python captcha 触发档对齐，web/客户端消费面零动作 | 已生效 |
 | 2026-09-18 | **ycomp 组件资产平台立项登记（D1-D9 拍板）**：registry 二节增服务名 `ycomp`（PG 库 ycomp，首个完整 dogfood 消费工程）+ 四节增应用名 `ycomp-console`（单应用非微前端）；决策入登记表；同批同步 rust 栈状态——批次一契约内核已落地（术语表 rust 列以实入表，stacks/rust 进入施工中） | 已生效 |
 | 2026-09-18 | **组件库规约成文（CL1-CL6 拍板，web/ 第二份）**：新立 [web/component-library.md](web/component-library.md) v1.0——资产包命名（@yarch/tokens·pro-react·pro-vue）/ 按框架各选生态基线锁定 / demo manifest `./demos` 子路径导出约定（source+render 容器注入）/ tokens.json 五组必备三载体同源 / 数据流信封解包 / 条文边界（渲染机制留平台实现）/ create-admin antd 档预装；rust 栈批次三发版链路就位（rust-publish.yml tag→crates.io，凭证缺席绿跳过） | 已生效 |
+| 2026-10-08 | **[agent/extensions.md](agent/extensions.md) v1.1**：增三-5 AI 工作流运行产物目录禁入库【强制】（.superpowers/.claude/.zcode/.codegraph/.reasonix/.playwright-mcp 开放式清单；生成器 .gitignore 必含前缀 / 已跟踪须 `git rm -r --cached` 移出 / 开源快照重建含前缀即事故回退重发；`.claude` 整目录口径与二-3 三-1 本地派生对齐）。实现同批：根 .gitignore 补缺前缀；**clients/create 六模板 .gitignore 改无点存名——npm 打包剔除点号 .gitignore，此前从未随 @yarch/create-app 发布过（生成工程一直无 .gitignore，随批修复）**；create-admin 五模板与 golang `_template/` 补 .gitignore；rust service 模板补前缀；新 CI `ai-artifact-gate`（ls-files 前缀扫描 + 模板完备性断言） | 已生效 |
 | — | 遗留项：低频组件强制级占比复审；机检条文标注启动（下一步：随 stacks 重做启动 `yarch lint`/AI 审查清单） | 待办 |
 
 ## 术语对照（各栈方言）

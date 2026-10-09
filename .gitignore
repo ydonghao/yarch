@@ -29,7 +29,6 @@ dist/
 dependency-reduced-pom.xml
 logs/
 *.log
-.superpowers/
 __pycache__/
 *.pyc
 
@@ -40,5 +39,10 @@ playwright-report/
 # 微前端集成构建产物（dist/ 规则覆盖不到 dist-micro）
 dist-micro/
 
-# AI 会话本地产物
+# AI 工作流运行产物目录（contract/agent/extensions.md 三-5；清单开放式，新工具即补）
+.superpowers/
+.claude/
 .zcode/
+.codegraph/
+.reasonix/
+.playwright-mcp/

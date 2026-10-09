@@ -1,5 +1,11 @@
-/target
-.env
+.gradle/
+build/
+local.properties
+.idea/
+*.iml
+.DS_Store
+captures/
+.kotlin/
 
 # AI 工作流运行产物目录（contract/agent/extensions.md 三-5）
 .superpowers/

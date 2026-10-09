@@ -25,6 +25,8 @@ jobs:
         run: |
           node clients/create/bin/yarch-init-app.mjs ysaas-demo --platform ios --yes \
             --registry contract/registry.md --out /tmp/gen-ios
+          # extensions.md 三-5a：生成物 .gitignore 落地且含 AI 运行产物前缀
+          grep -qxF '.superpowers/' /tmp/gen-ios/.gitignore && grep -qxF '.claude/' /tmp/gen-ios/.gitignore
       - name: 生成工程 xcodegen + 构建（工程名由 appClassName 派生，禁硬编码）
         run: |
           cd /tmp/gen-ios

@@ -60,3 +60,5 @@ jobs:
         run: |
           go run ./cmd/yarch-init -module github.com/smoke/order-svc -out /tmp/order-svc
           cd /tmp/order-svc && go mod tidy && go build ./... && go test ./...
+          # extensions.md 三-5a：生成物 .gitignore 落地且含 AI 运行产物前缀
+          grep -qxF '.superpowers/' .gitignore && grep -qxF '.claude/' .gitignore
