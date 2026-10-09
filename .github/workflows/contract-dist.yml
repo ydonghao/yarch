@@ -14,8 +14,8 @@ jobs:
     name: dist 与 markdown 一致性
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
         with:
           node-version: '22'
       - name: 重生成并比对（diff 非空 = 漂移）
