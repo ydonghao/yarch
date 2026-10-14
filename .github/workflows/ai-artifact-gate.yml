@@ -14,7 +14,7 @@ jobs:
     name: 运行产物目录禁入库扫描
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: 1) ls-files 前缀扫描（命中即失败）

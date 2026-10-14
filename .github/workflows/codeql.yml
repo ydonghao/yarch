@@ -27,16 +27,16 @@ jobs:
           - language: python
           - language: go
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: github/codeql-action/init@v3
+      - uses: github/codeql-action/init@v4
         with:
           languages: ${{ matrix.language }}
 
       # 编译型语言须在 CodeQL 环境内完成构建（monorepo：显式进入子目录）
       - name: Setup JDK 21（java enforcer 基线）
         if: matrix.language == 'java-kotlin'
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: '21'
@@ -51,6 +51,6 @@ jobs:
         run: go build ./...
         working-directory: stacks/golang
 
-      - uses: github/codeql-action/analyze@v3
+      - uses: github/codeql-action/analyze@v4
         with:
           category: "/language:${{ matrix.language }}"
