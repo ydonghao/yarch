@@ -16,7 +16,7 @@ yarch-init = { workspace = true }
 [dependency-groups]
 dev = [
     "pytest>=8.3",
-    "ruff>=0.6",
+    "ruff>=0.16.7",
     "mypy>=1.11",
     "import-linter>=2.0",
     "testcontainers[postgres,redis]>=4.8",
